@@ -26,13 +26,21 @@ class AuthenticationServices {
                   },
                 );
               } else {
-                await createUser(userCredential: userCredential);
+                await createUserWithCredentials(userCredential: userCredential);
               }
             }
           );
         }
       },
     );
+  }
+
+  void signUpWithEmail(String email, String password) async {
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+    } on FirebaseAuthException catch (excep) {
+      return showAlertMessage(excep.code);
+    }
   }
 
   Future<UserCredential> signInWithGoogle() async {
@@ -48,7 +56,30 @@ class AuthenticationServices {
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
-  Future<bool> createUser({required UserCredential userCredential}) async {
+  void signInWithEmail(String email, String password) async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password).then((userCredential) => null);
+      User? currentUser = FirebaseAuth.instance.currentUser;
+
+      await FirebaseMessaging.instance.getToken().then(
+      (token) async {
+        await usersCollection.doc(FirebaseAuth.instance.currentUser!.uid).set(
+          {
+            'uid': currentUser?.uid,
+            'email': currentUser?.email,
+            'isAdmin': false,
+            'token': token,
+          },
+        );
+        developer.log("Log: user ${currentUser?.email} has been added to collection");
+      },
+    );
+    } on FirebaseAuthException catch (excep) {
+      return showAlertMessage(excep.code);
+    }
+  }
+
+  Future<bool> createUserWithCredentials({required UserCredential userCredential}) async {
     bool userCreated = false;
     
     await FirebaseMessaging.instance.getToken().then(
@@ -61,16 +92,17 @@ class AuthenticationServices {
             'token': token,
           },
         ).then((value) => userCreated = true);
+        developer.log("Log: user ${userCredential.user?.email} has been added to collection");
       },
     );
 
     return userCreated;
   }
 
-  void userSignOut(String currentUser) async{
+  void userSignOut(String uid) async {
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
-        await FirebaseFirestore.instance.collection('users').where('uid', isEqualTo: currentUser).get();
+        await FirebaseFirestore.instance.collection('users').where('uid', isEqualTo: uid).get();
 
       await FirebaseFirestore.instance.collection("users").doc(querySnapshot.docs.first.id).update(
         {
@@ -80,6 +112,7 @@ class AuthenticationServices {
 
       developer.log("Log: token is now empty");
       FirebaseAuth.instance.signOut();
+      developer.log("Log: user has been signed out");
     } catch (e){
       developer.log("Log: can't delete token value");
     }
@@ -94,9 +127,9 @@ class AuthenticationServices {
     );
 
     if (exists) {
-      developer.log("Log: user exists");
+      developer.log("Log: user with $uid already exists");
     } else {
-      developer.log("Log: user does not exist");
+      developer.log("Log: user with $uid does not exist");
     }
 
     return exists;
