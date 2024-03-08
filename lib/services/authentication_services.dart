@@ -26,7 +26,7 @@ class AuthenticationServices {
                   },
                 );
               } else {
-                await createUserWithCredentials(userCredential: userCredential);
+                await addUserToCollection(userCredential: userCredential);
               }
             }
           );
@@ -38,27 +38,7 @@ class AuthenticationServices {
   void signUpWithEmail(String email, String password) async {
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
-    } on FirebaseAuthException catch (excep) {
-      return showAlertMessage(excep.code);
-    }
-  }
 
-  Future<UserCredential> signInWithGoogle() async {
-    final GoogleSignInAccount? googleSignInAccount = await GoogleSignIn().signIn();
-
-    final GoogleSignInAuthentication? googleSignInAuthentication = await googleSignInAccount?.authentication;
-
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleSignInAuthentication?.accessToken,
-      idToken: googleSignInAuthentication?.idToken
-    );
-
-    return await FirebaseAuth.instance.signInWithCredential(credential);
-  }
-
-  void signInWithEmail(String email, String password) async {
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password).then((userCredential) => null);
       User? currentUser = FirebaseAuth.instance.currentUser;
 
       await FirebaseMessaging.instance.getToken().then(
@@ -79,7 +59,39 @@ class AuthenticationServices {
     }
   }
 
-  Future<bool> createUserWithCredentials({required UserCredential userCredential}) async {
+  Future<UserCredential> signInWithGoogle() async {
+    final GoogleSignInAccount? googleSignInAccount = await GoogleSignIn().signIn();
+
+    final GoogleSignInAuthentication? googleSignInAuthentication = await googleSignInAccount?.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleSignInAuthentication?.accessToken,
+      idToken: googleSignInAuthentication?.idToken
+    );
+
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
+  void signInWithEmail(String email, String password) async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+
+      FirebaseMessaging.instance.getToken().then(
+        (token) async {
+          await usersCollection.doc(FirebaseAuth.instance.currentUser!.uid).update(
+            {
+              'token': token,
+            },
+          );
+        },
+      );
+
+    } on FirebaseAuthException catch (excep) {
+      return showAlertMessage(excep.code);
+    }
+  }
+
+  Future<bool> addUserToCollection({required UserCredential userCredential}) async {
     bool userCreated = false;
     
     await FirebaseMessaging.instance.getToken().then(
