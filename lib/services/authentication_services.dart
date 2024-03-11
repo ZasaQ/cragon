@@ -35,8 +35,12 @@ class AuthenticationServices {
     );
   }
 
-  void signUpWithEmail(String email, String password) async {
+  void signUpWithEmail(String email, String password, String confirmPassword) async {
     try {
+      if (password != confirmPassword) {
+        return showAlertMessage("Password must be the same");
+      }
+
       await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
 
       User? currentUser = FirebaseAuth.instance.currentUser;
@@ -114,9 +118,11 @@ class AuthenticationServices {
   void userSignOut(String uid) async {
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
-        await FirebaseFirestore.instance.collection('users').where('uid', isEqualTo: uid).get();
+        await FirebaseFirestore.instance.collection('users')
+        .where('uid', isEqualTo: uid).get();
 
-      await FirebaseFirestore.instance.collection("users").doc(querySnapshot.docs.first.id).update(
+      await FirebaseFirestore.instance.collection("users")
+      .doc(querySnapshot.docs.first.id).update(
         {
           'token': "",
         },

@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'dart:developer' as developer;
 
+import 'package:flutter_statusbarcolor_ns/flutter_statusbarcolor_ns.dart';
+
 import 'package:cragon/pages/login_page.dart';
 import 'package:cragon/pages/register_page.dart';
 import 'package:cragon/firebase_options.dart';
@@ -14,6 +16,7 @@ import 'package:cragon/pages/home_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  FlutterStatusbarcolor.setStatusBarColor(const Color.fromRGBO(128, 128, 0, 0.85));
 
   runApp(const MyApp());
 }
@@ -27,6 +30,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
   List<Route<dynamic>> onGeneratedInitialRoutes(String initialRouteName) {
     List<Route<dynamic>> pageStack = [];
 
@@ -57,7 +61,7 @@ class _MyAppState extends State<MyApp> {
       onGenerateRoute: onGenerateRoute,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromRGBO(128, 128, 0, 1)),
         useMaterial3: true,
       ),
     );
