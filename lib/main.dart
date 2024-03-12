@@ -85,11 +85,15 @@ class _CheckAuthenticationStatusState extends State<CheckAuthenticationStatus> {
           MaterialPageRoute(builder: (context) => const HomePage()),
         );
 
+        developer.log("Log: current user is not null, pushing HomePage");
+
         developer.log("Log: ${MyApp.navigatorKey.currentState}");
       } else {
         MyApp.navigatorKey.currentState!.pushReplacement(
           MaterialPageRoute(builder: (context) => const LoginPage()),
         );
+
+        developer.log("Log: current user is null, pushing LoginPage");
 
         developer.log("Log: ${MyApp.navigatorKey.currentState}");
       }

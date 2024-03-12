@@ -36,6 +36,14 @@ class AuthenticationServices {
   }
 
   void signUpWithEmail(String email, String password, String confirmPassword) async {
+    if (email.isEmpty) {
+      return showAlertMessage('Email can not be empty');
+    }
+
+    if (password.isEmpty || confirmPassword.isEmpty) {
+      return showAlertMessage('Password can not be empty');
+    }
+
     try {
       if (password != confirmPassword) {
         return showAlertMessage("Password must be the same");
@@ -58,8 +66,16 @@ class AuthenticationServices {
         developer.log("Log: user ${currentUser?.email} has been added to collection");
       },
     );
-    } on FirebaseAuthException catch (excep) {
-      return showAlertMessage(excep.code);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        return showAlertMessage('The account already exists for that email.');
+      } else if (e.code == 'weak-password') {
+        return showAlertMessage('The password provided is too weak.');
+      }
+
+      return showAlertMessage(e.code);
+    } catch (e) {
+      developer.log("Log: signUpWithEmail -> exception: $e");
     }
   }
 
@@ -77,6 +93,14 @@ class AuthenticationServices {
   }
 
   void signInWithEmail(String email, String password) async {
+    if (email.isEmpty) {
+      return showAlertMessage('Email can not be empty');
+    }
+
+    if (password.isEmpty) {
+      return showAlertMessage('Password can not be empty');
+    }
+
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
 
@@ -90,8 +114,20 @@ class AuthenticationServices {
         },
       );
 
-    } on FirebaseAuthException catch (excep) {
-      return showAlertMessage(excep.code);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'invalid-credential') {
+        return showAlertMessage('Wrong email or password');
+      } else if (e.code == 'user-not-found') {
+        return showAlertMessage('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        return showAlertMessage('Wrong password provided for that user.');
+      } else if (e.code == 'email-already-in-use') {
+        return showAlertMessage('The account already exists for that email.');
+      }
+
+      return showAlertMessage(e.code);
+    } catch (e) {
+      developer.log("Log: signInWithEmail -> exception: $e");
     }
   }
 
@@ -115,14 +151,20 @@ class AuthenticationServices {
     return userCreated;
   }
 
-  void userSignOut(String uid) async {
+  void signOutCurrentUser() async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser == null) {
+      developer.log("Log: signOutCurrentUser() -> currentUser is null");
+    }
+
     try {
-      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+      QuerySnapshot<Map<String, dynamic>> userQuerySnapshot =
         await FirebaseFirestore.instance.collection('users')
-        .where('uid', isEqualTo: uid).get();
+        .where('uid', isEqualTo: currentUser!.uid).get();
 
       await FirebaseFirestore.instance.collection("users")
-      .doc(querySnapshot.docs.first.id).update(
+      .doc(userQuerySnapshot.docs.first.id).update(
         {
           'token': "",
         },
@@ -130,9 +172,9 @@ class AuthenticationServices {
 
       developer.log("Log: token is now empty");
       FirebaseAuth.instance.signOut();
-      developer.log("Log: user has been signed out");
+      developer.log("Log: current user has been signed out");
     } catch (e){
-      developer.log("Log: can't delete token value");
+      developer.log("Log: signOutCurrentUser() -> exception: $e");
     }
   }
 
@@ -151,5 +193,30 @@ class AuthenticationServices {
     }
 
     return exists;
+  }
+
+  deleteCurrentUser() async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser == null) {
+      developer.log("Log: deleteUser() -> currentUser is null");
+      return;
+    }
+
+    try {
+      await FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUser.uid)
+        .delete();
+
+      String userName = currentUser.email.toString();
+      
+      await currentUser.delete();
+      FirebaseAuth.instance.signOut();
+
+      developer.log("Log: user $userName has been deleted correctly");
+    } catch (e){
+      developer.log("Log: exception -> $e");
+    }
   }
 }

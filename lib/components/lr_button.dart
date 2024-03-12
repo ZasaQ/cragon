@@ -17,7 +17,11 @@ class LRButton extends StatelessWidget {
       child: TextButton(
         onPressed: onPressed, 
         child: Center(child: Text(inText,
-            style: const TextStyle(color: Color.fromRGBO(128, 128, 0, 1), fontSize: 16, fontWeight: FontWeight.bold)
+            style: const TextStyle(
+              color: Color.fromRGBO(128, 128, 0, 1),
+              fontSize: 16,
+              fontWeight: FontWeight.bold
+            )
           ),
         )
       ),
