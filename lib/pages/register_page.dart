@@ -27,7 +27,7 @@ class _RegisterPageState extends State<RegisterPage> {
       body: SafeArea(
         top: true,
         child: Container(
-          decoration: const BoxDecoration(color: Color.fromRGBO(128, 128, 0, 0.85)),
+          decoration: const BoxDecoration(color: Color.fromRGBO(128, 128, 0, 1)),
           child: Column(
             children: <Widget>[
               const Align(

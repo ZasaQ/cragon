@@ -7,6 +7,7 @@ import 'package:cragon/components/login_textfield.dart';
 import 'package:cragon/components/password_textfield.dart';
 import 'package:cragon/components/lr_button.dart';
 import 'package:cragon/services/authentication_services.dart';
+import 'package:cragon/pages/forgot_password_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -27,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
       body: SafeArea(
         top: true,
         child: Container(
-          decoration: const BoxDecoration(color: Color.fromRGBO(128, 128, 0, 0.85)),
+          decoration: const BoxDecoration(color: Color.fromRGBO(128, 128, 0, 1)),
           child: Column(
             children: <Widget>[
               const Align(
@@ -73,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
                           GestureDetector(
                             onTap: () {
                               MyApp.navigatorKey.currentState!.push(
-                                MaterialPageRoute(builder: (context) => const Placeholder()),
+                                MaterialPageRoute(builder: (context) => ForgotPasswordPage()),
                               );
                             },
                             child: const Text('Forgot password?',
