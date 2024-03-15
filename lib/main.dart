@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-import 'dart:developer' as developer;
-
 import 'package:flutter_statusbarcolor_ns/flutter_statusbarcolor_ns.dart';
-
+import 'dart:developer' as developer;
 import 'package:cragon/pages/login_page.dart';
 import 'package:cragon/pages/register_page.dart';
 import 'package:cragon/firebase_options.dart';
 import 'package:cragon/pages/home_page.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +25,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   List<Route<dynamic>> onGeneratedInitialRoutes(String initialRouteName) {
     List<Route<dynamic>> pageStack = [];
 

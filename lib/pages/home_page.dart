@@ -1,5 +1,9 @@
-import 'package:cragon/services/authentication_services.dart';
+import 'package:camera/camera.dart';
+import 'package:cragon/main.dart';
+import 'package:cragon/pages/camera_page.dart';
 import 'package:flutter/material.dart';
+import 'package:cragon/services/authentication_services.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,6 +14,26 @@ class HomePage extends StatefulWidget {
 
 class _HomeState extends State<HomePage> {
   AuthenticationServices authenticationServices = AuthenticationServices();
+  late CameraDescription firstCamera;
+
+  Future<CameraDescription?> initBackCamera() async {
+  final cameras = await availableCameras();
+
+  for (var inCamera in cameras) {
+    if (inCamera.lensDirection == CameraLensDirection.back) {
+      return inCamera;
+    }
+  }
+  
+  return null;
+}
+
+  @override
+  initState() {
+    super.initState();
+
+    initBackCamera().then((value) => firstCamera = value!);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +41,16 @@ class _HomeState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(128, 128, 0, 1),
         title: const Text("Home Page"),
-        actions: [],
+        actions: <Widget> [
+          IconButton(
+            icon: const Icon(Icons.camera, color: Colors.black,),
+            tooltip: 'Open Camera',
+            onPressed: () {
+              MyApp.navigatorKey.currentState!.push(
+                MaterialPageRoute(builder: (context) => CameraPage(camera: firstCamera)));
+            },
+          ),
+        ],
       ),
       drawer: Drawer(
         child: ListView(
