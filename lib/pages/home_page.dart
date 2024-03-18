@@ -59,22 +59,26 @@ class _HomeState extends State<HomePage> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            DrawerHeader(
-              child: Column(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.grey[300],
-                    maxRadius: 45,
-                    child: Text(
-                      FirebaseAuth.instance.currentUser!.email.toString()[0].toUpperCase(),
-                      style: const TextStyle(fontSize: 25)
-                    ), //first letter of username
-                  ),
-                  Text(FirebaseAuth.instance.currentUser!.email.toString(),
-                    style: const TextStyle(color: Color.fromRGBO(128, 128, 0, 1))
-                  ),
-                ],
+            UserAccountsDrawerHeader(
+              accountEmail: Text(
+                FirebaseAuth.instance.currentUser!.email.toString(),
+                style: const TextStyle(color:  Color.fromRGBO(38, 45, 53, 1), fontSize: 20)
               ),
+              accountName: null,
+              currentAccountPicture: GestureDetector(
+                onTap: () {
+                  MyApp.navigatorKey.currentState!.push(
+                    MaterialPageRoute(builder: (context) => Placeholder()));
+                },
+                child: CircleAvatar(
+                  backgroundColor: Colors.grey[300],
+                  child: Text(
+                    FirebaseAuth.instance.currentUser!.email.toString()[0].toUpperCase(),
+                    style: const TextStyle(fontSize: 25)
+                  ), //first letter of username
+                ),
+              ),
+              currentAccountPictureSize: const Size.fromRadius(40),
             ),
 
             ListTile(
