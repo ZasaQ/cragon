@@ -5,7 +5,7 @@ import 'package:cragon/services/store_data.dart';
 
 
 Future<Widget> userAvatar({required double radius}) async {
-  String imageUrl = await StoreData().getUserAvatar();
+  String imageUrl = await FirestoreDataHandler().getUserAvatar();
   return imageUrl.isNotEmpty ? Container(
     decoration: BoxDecoration(
       shape: BoxShape.circle,

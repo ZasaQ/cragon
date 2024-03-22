@@ -58,7 +58,7 @@ class _UserPageState extends State<UserPage> {
                       if (image.isEmpty) {
                         return;
                       }
-                      StoreData().updateAvatarImage(image: image);
+                      FirestoreDataHandler().updateAvatarImage(image: image);
                       setState(() {});
                     }, icon: const Icon(Icons.add_a_photo), color: Colors.black),
                   ) 
@@ -79,7 +79,7 @@ class _UserPageState extends State<UserPage> {
                     const SizedBox(height: 60),
 
                     LRButton(inText: "Change password", onPressed: () {}),
-                    
+
                     const SizedBox(height: 60),
 
                     LRButton(inText: "Change password", onPressed: () {})

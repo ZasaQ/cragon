@@ -6,7 +6,7 @@ import 'dart:developer' as developer;
 import 'package:cragon/services/utilities.dart';
 
 
-class StoreData {
+class FirestoreDataHandler {
   final FirebaseStorage firebaseStorage = FirebaseStorage.instance;
   final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   final String avatarImageDirectory = "avatarImages";
