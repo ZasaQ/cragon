@@ -1,8 +1,9 @@
-import 'package:cragon/main.dart';
 import 'package:flutter/material.dart';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:developer' as developer;
+import 'dart:typed_data';
+import 'package:image_picker/image_picker.dart';
+import 'package:cragon/main.dart';
 
 
 CollectionReference usersCollection = FirebaseFirestore.instance.collection("users");
@@ -34,4 +35,16 @@ void showAlertMessage(final String message) {
       )
     )
   ));
+}
+
+Future<Uint8List> pickImage(ImageSource source) async {
+  final ImagePicker imagePicker = ImagePicker();
+  XFile? pickedImage = await imagePicker.pickImage(source: source);
+
+  if (pickedImage == null) {
+    developer.log("Log: No image picked");
+    return Uint8List(0);
+  }
+
+  return await pickedImage.readAsBytes();
 }

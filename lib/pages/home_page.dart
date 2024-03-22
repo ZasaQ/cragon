@@ -1,9 +1,12 @@
 import 'package:camera/camera.dart';
+import 'package:cragon/components/user_avatar.dart';
 import 'package:cragon/main.dart';
 import 'package:cragon/pages/camera_page.dart';
+import 'package:cragon/pages/user_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cragon/services/authentication_services.dart';
+import 'dart:developer' as developer;
 
 
 class HomePage extends StatefulWidget {
@@ -68,14 +71,23 @@ class _HomeState extends State<HomePage> {
               currentAccountPicture: GestureDetector(
                 onTap: () {
                   MyApp.navigatorKey.currentState!.push(
-                    MaterialPageRoute(builder: (context) => Placeholder()));
+                    MaterialPageRoute(builder: (context) => const UserPage()));
                 },
-                child: CircleAvatar(
-                  backgroundColor: Colors.grey[300],
-                  child: Text(
-                    FirebaseAuth.instance.currentUser!.email.toString()[0].toUpperCase(),
-                    style: const TextStyle(fontSize: 25)
-                  ), //first letter of username
+                child: FutureBuilder<Widget>(
+                  future: userAvatar(radius: 40),
+                  builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      developer.log("Log: Snapshot error -> ${snapshot.error}");
+                      return Text("Log: Snapshot error -> ${snapshot.error}");
+                    } else {
+                      return Align(
+                        alignment: Alignment.topCenter,
+                        child: snapshot.data!,
+                      );
+                    }
+                  },
                 ),
               ),
               currentAccountPictureSize: const Size.fromRadius(40),

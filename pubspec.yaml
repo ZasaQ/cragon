@@ -39,8 +39,11 @@ dependencies:
   firebase_auth: ^4.17.7
   firebase_messaging: ^14.7.18
   cloud_firestore: ^4.15.7
+  firebase_storage: ^11.6.10
   google_sign_in: ^6.2.1
   flutter_statusbarcolor_ns: ^0.5.0
+  cached_network_image: ^3.3.1
+  image_picker: ^1.0.7
   camera: ^0.10.5+9
   path_provider: ^2.1.2
   path: ^1.9.0

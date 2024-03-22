@@ -8,10 +8,11 @@ import 'package:cragon/pages/register_page.dart';
 import 'package:cragon/firebase_options.dart';
 import 'package:cragon/pages/home_page.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  FlutterStatusbarcolor.setStatusBarColor(const Color.fromRGBO(128, 128, 0, 0.85));
+  FlutterStatusbarcolor.setStatusBarColor(const Color.fromRGBO(128, 128, 0, 1));
 
   runApp(const MyApp());
 }
@@ -80,7 +81,6 @@ class _CheckAuthenticationStatusState extends State<CheckAuthenticationStatus> {
         );
 
         developer.log("Log: current user is not null, pushing HomePage");
-
         developer.log("Log: ${MyApp.navigatorKey.currentState}");
       } else {
         MyApp.navigatorKey.currentState!.pushReplacement(
@@ -88,7 +88,6 @@ class _CheckAuthenticationStatusState extends State<CheckAuthenticationStatus> {
         );
 
         developer.log("Log: current user is null, pushing LoginPage");
-
         developer.log("Log: ${MyApp.navigatorKey.currentState}");
       }
     });

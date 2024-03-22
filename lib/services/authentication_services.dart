@@ -61,6 +61,7 @@ class AuthenticationServices {
             'email': currentUser?.email,
             'isAdmin': false,
             'token': token,
+            'avatarImage': ""
           },
         );
         developer.log("Log: user ${currentUser?.email} has been added to collection");
@@ -142,6 +143,7 @@ class AuthenticationServices {
             'email': userCredential.user?.email,
             'isAdmin': false,
             'token': token,
+            'avatarImage': ""
           },
         ).then((value) => userCreated = true);
         developer.log("Log: user ${userCredential.user?.email} has been added to collection");
