@@ -34,14 +34,20 @@ Future<Widget> userAvatar({required double radius, double? fontSize}) async {
           ),
         ),
       ) 
-    : CircleAvatar(
-        radius: radius,
-        backgroundColor: Colors.grey[300],
-        child: Text(
-          FirebaseAuth.instance.currentUser!.email.toString()[0].toUpperCase(),
-          style: (fontSize == null) 
-            ? const TextStyle(fontSize: 25)
-            : TextStyle(fontSize: fontSize)
+    : Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(width: 6, color: const Color.fromRGBO(38, 45, 53, 1))
+      ),
+      child: CircleAvatar(
+          radius: radius,
+          backgroundColor: Colors.grey[300],
+          child: Text(
+            FirebaseAuth.instance.currentUser!.email.toString()[0].toUpperCase(),
+            style: (fontSize == null) 
+              ? const TextStyle(fontSize: 25)
+              : TextStyle(fontSize: fontSize)
+          ),
         ),
-      );
+    );
 }

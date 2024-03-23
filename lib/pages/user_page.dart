@@ -61,13 +61,12 @@ class _UserPageState extends State<UserPage> {
                         return;
                       }
                       FirestoreDataHandler().updateUserAvatarImage(image: image);
-                      setState(() {});
+                      
                     }, icon: const Icon(Icons.add_a_photo), color: Colors.black),
                   ) 
                 ],
               ),
               
-        
               const SizedBox(height: 30),
         
               Expanded(
