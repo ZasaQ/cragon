@@ -37,7 +37,7 @@ class _UserPageState extends State<UserPage> {
               Stack(
                 children: [
                   FutureBuilder<Widget>(
-                    future: userAvatar(radius: 50),
+                    future: userAvatar(radius: 50, fontSize: 30),
                     builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const CircularProgressIndicator();

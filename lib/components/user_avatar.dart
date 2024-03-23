@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cragon/services/store_data.dart';
 
 
-Future<Widget> userAvatar({required double radius}) async {
+Future<Widget> userAvatar({required double radius, double? fontSize}) async {
   String imageUrl = await FirestoreDataHandler().getUserAvatarImage();
   return imageUrl.isNotEmpty 
     ? Container(
@@ -39,7 +39,9 @@ Future<Widget> userAvatar({required double radius}) async {
         backgroundColor: Colors.grey[300],
         child: Text(
           FirebaseAuth.instance.currentUser!.email.toString()[0].toUpperCase(),
-          style: const TextStyle(fontSize: 25)
+          style: (fontSize == null) 
+            ? const TextStyle(fontSize: 25)
+            : TextStyle(fontSize: fontSize)
         ),
       );
 }
