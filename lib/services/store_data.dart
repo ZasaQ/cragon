@@ -20,7 +20,17 @@ class FirestoreDataHandler {
     return downloadUrl;
   }
 
-  void updateAvatarImage({
+  void deleteFileFromFirebaseStorage(String fileDirectory, String name) async {
+    try {
+      Reference ref = firebaseStorage.ref().child(fileDirectory).child(name);
+      await ref.delete();
+      developer.log("Log: Avatar image has been removed from FirebaseStorage");
+    } catch(e) {
+      developer.log("Log: deleteImageFromFirebaseStorage -> $e");
+    }
+  }
+
+  void updateUserAvatarImage({
     required Uint8List image
   }) async {
       try {
@@ -34,12 +44,36 @@ class FirestoreDataHandler {
         );
         
       } catch(e) {
-        developer.log("Log: StoreData -> $e");
+        developer.log("Log: updateAvatarImage() -> $e");
       }
   }
 
+  void removeUserAvatarImage() async {
+    try {
+      String uid = FirebaseAuth.instance.currentUser!.uid;
+      String imageUrl = await getUserAvatarImage();
+
+      if (imageUrl.isEmpty) {
+        developer.log("Log: Avatar image is already empty");
+        showAlertMessage("Avatar image is already empty");
+        return;
+      }
+      String fileName = "${FirebaseAuth.instance.currentUser!.email}_avatar.jpg";
+
+      deleteFileFromFirebaseStorage(avatarImageDirectory, fileName);
+
+      await usersCollection.doc(uid).update(
+        {
+          'avatarImage': ''
+        },
+      );
+    } catch(e) {
+      developer.log("Log: removeAvatarImage() -> $e");
+    }
+  }
+
   
-  Future<String> getUserAvatar() async {
+  Future<String> getUserAvatarImage() async {
     try {
       String uid = FirebaseAuth.instance.currentUser!.uid;
 

@@ -1,4 +1,6 @@
-import 'package:cragon/components/lr_button.dart';
+import 'package:cragon/components/settings_group.dart';
+import 'package:cragon/components/settings_item.dart';
+import 'package:cragon/main.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:developer' as developer;
@@ -58,7 +60,7 @@ class _UserPageState extends State<UserPage> {
                       if (image.isEmpty) {
                         return;
                       }
-                      FirestoreDataHandler().updateAvatarImage(image: image);
+                      FirestoreDataHandler().updateUserAvatarImage(image: image);
                       setState(() {});
                     }, icon: const Icon(Icons.add_a_photo), color: Colors.black),
                   ) 
@@ -78,11 +80,23 @@ class _UserPageState extends State<UserPage> {
 
                     const SizedBox(height: 60),
 
-                    LRButton(inText: "Change password", onPressed: () {}),
-
-                    const SizedBox(height: 60),
-
-                    LRButton(inText: "Change password", onPressed: () {})
+                    SettingsGroup(
+                      items: [
+                        SettingsItem(
+                          onTap: () {
+                            MyApp.navigatorKey.currentState!.push(
+                              MaterialPageRoute(builder: (context) => Placeholder()));
+                          },
+                          titleText: 'Change password',
+                          leadingIcon: const Icon(Icons.password_sharp, color: Colors.black),
+                        ),
+                        SettingsItem(
+                          onTap: () {FirestoreDataHandler().removeUserAvatarImage();},
+                          titleText: 'Remove avatar image',
+                          leadingIcon: const Icon(Icons.remove_circle_outline_sharp, color: Colors.black)
+                        )
+                      ]
+                    ),
                   ]
                 )
               )
