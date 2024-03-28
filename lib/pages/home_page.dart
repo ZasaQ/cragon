@@ -1,12 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:camera/camera.dart';
+import 'dart:developer' as developer;
+
 import 'package:cragon/components/user_avatar.dart';
 import 'package:cragon/main.dart';
 import 'package:cragon/pages/camera_page.dart';
 import 'package:cragon/pages/user_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:cragon/services/authentication_services.dart';
-import 'dart:developer' as developer;
 
 
 class HomePage extends StatefulWidget {
