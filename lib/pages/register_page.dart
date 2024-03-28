@@ -1,11 +1,11 @@
-import 'package:cragon/components/password_textfield.dart';
 import 'package:flutter/material.dart';
 
-import 'package:cragon/components/login_textfield.dart';
+import 'package:cragon/components/form_text_item.dart';
 import 'package:cragon/components/lr_button.dart';
 import 'package:cragon/services/authentication_services.dart';
 import 'package:cragon/main.dart';
 import 'package:cragon/pages/login_page.dart';
+
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -52,26 +52,32 @@ class _RegisterPageState extends State<RegisterPage> {
       
                   const SizedBox(height: 30),
                   
-                  LoginTextField(
+                  FormTextItem(
                     controller: emailController,
                     inLabelText: "Email",
-                    inHintText: "name@example.com"
+                    inHintText: "name@example.com",
+                    prefixIcon: const Icon(Icons.email, color: Colors.black),
+                    isPasswordForm: false
                   ),
                   
                   const SizedBox(height: 20),
       
-                  PasswordTextField(
+                  FormTextItem(
                     controller: passwordController,
                     inLabelText: "Password",
                     inHintText: "password",
+                    prefixIcon: const Icon(Icons.lock, color: Colors.black),
+                    isPasswordForm: true
                   ),
                   
                   const SizedBox(height: 20),
       
-                  PasswordTextField(
+                  FormTextItem(
                     controller: confirmPasswordController,
                     inLabelText: "Confirm Password",
                     inHintText: "confirm password",
+                    prefixIcon: const Icon(Icons.lock, color: Colors.black),
+                    isPasswordForm: true
                   ),
                   
                   const SizedBox(height: 30),

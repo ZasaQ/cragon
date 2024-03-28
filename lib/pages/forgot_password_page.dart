@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:cragon/components/login_textfield.dart';
-import 'package:cragon/components/lr_button.dart';
 import 'package:cragon/main.dart';
+import 'package:cragon/components/form_text_item.dart';
+import 'package:cragon/components/lr_button.dart';
 import 'package:cragon/services/utilities.dart';
 
 
@@ -38,10 +38,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   const SizedBox(height: 20),
               
                   // Email text field
-                  LoginTextField(
+                  FormTextItem(
                     controller: emailController,
                     inLabelText: 'Email',
                     inHintText: 'Email',
+                    prefixIcon: const Icon(Icons.email, color: Colors.black),
+                    isPasswordForm: false,
                   ),
                   
                   const SizedBox(height: 30),

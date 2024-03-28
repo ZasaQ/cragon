@@ -1,6 +1,3 @@
-import 'package:cragon/components/settings_group.dart';
-import 'package:cragon/components/settings_item.dart';
-import 'package:cragon/main.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:developer' as developer;
@@ -10,6 +7,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:cragon/services/store_data.dart';
 import 'package:cragon/services/utilities.dart';
 import 'package:cragon/components/user_avatar.dart';
+import 'package:cragon/components/settings_group.dart';
+import 'package:cragon/components/settings_item.dart';
+import 'package:cragon/main.dart';
+import 'package:cragon/pages/change_password.dart';
 
 
 class UserPage extends StatefulWidget {
@@ -84,7 +85,7 @@ class _UserPageState extends State<UserPage> {
                         SettingsItem(
                           onTap: () {
                             MyApp.navigatorKey.currentState!.push(
-                              MaterialPageRoute(builder: (context) => Placeholder()));
+                              MaterialPageRoute(builder: (context) => ChangePasswordPage()));
                           },
                           titleText: 'Change password',
                           leadingIcon: const Icon(Icons.password_sharp, color: Colors.black),
