@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'dart:developer' as developer;
 
 import 'package:cragon/components/form_text_item.dart';
 import 'package:cragon/components/lr_button.dart';
-import 'package:cragon/services/utilities.dart';
+import 'package:cragon/services/authentication_services.dart';
 
 
 class ChangePasswordPage extends StatefulWidget {
@@ -19,55 +17,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   TextEditingController currentPasswordController = TextEditingController();
   TextEditingController newPasswordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
-
-  void changePassword(TextEditingController currentPasswordController, TextEditingController newPasswordController, TextEditingController confirmPasswordController) async {
-    bool isError = false;
-    try {
-      String currentPassword = currentPasswordController.text.toString();
-      String newPassword = newPasswordController.text.toString();
-      String confirmPassword = confirmPasswordController.text.toString();
-
-      final currentUser = FirebaseAuth.instance.currentUser;
-      final AuthCredential credential = EmailAuthProvider.credential(email: currentUser!.email.toString(), password: currentPassword);
-
-      if (currentPassword.isEmpty || newPassword.isEmpty ||  confirmPassword.isEmpty) {
-        showAlertMessage('Form fields can not be empty!');
-        isError = true;
-        return;
-      }
-
-      if (newPassword != confirmPassword) {
-        showAlertMessage('New password and confirmation must be the same!');
-        isError = true;
-        return;
-      }
-
-      try {
-        await currentUser.reauthenticateWithCredential(credential).then((value) {
-          currentUser.updatePassword(newPassword);
-        });
-      } on FirebaseAuthException catch (e) {
-        developer.log("Log: changePassword -> ${e.code}");
-        showAlertMessage(e.code);
-        isError = true;
-      }
-
-      currentPasswordController.clear();
-      newPasswordController.clear();
-      confirmPasswordController.clear();
-
-      if (!isError) {
-        developer.log("Log: changePassword -> Password has been changed!");
-        showAlertMessage("Password has been changed!");
-        return;
-      }
-
-    } on FirebaseAuthException catch (e) {
-      showAlertMessage(e.code);
-      return;
-    }
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +81,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 const SizedBox(height: 30),
                       
                 LRButton(inText: "Change password", onPressed: () {
-                  changePassword(
+                  AuthenticationServices().changePassword(
                     currentPasswordController,
                     newPasswordController,
                     confirmPasswordController

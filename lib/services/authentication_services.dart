@@ -154,6 +154,54 @@ class AuthenticationServices {
     return userCreated;
   }
 
+  void changePassword(TextEditingController currentPasswordController, TextEditingController newPasswordController, TextEditingController confirmPasswordController) async {
+    bool isError = false;
+    try {
+      String currentPassword = currentPasswordController.text.toString();
+      String newPassword = newPasswordController.text.toString();
+      String confirmPassword = confirmPasswordController.text.toString();
+
+      final currentUser = FirebaseAuth.instance.currentUser;
+      final AuthCredential credential = EmailAuthProvider.credential(email: currentUser!.email.toString(), password: currentPassword);
+
+      if (currentPassword.isEmpty || newPassword.isEmpty ||  confirmPassword.isEmpty) {
+        showAlertMessage('Form fields can not be empty!');
+        isError = true;
+        return;
+      }
+
+      if (newPassword != confirmPassword) {
+        showAlertMessage('New password and confirmation must be the same!');
+        isError = true;
+        return;
+      }
+
+      try {
+        await currentUser.reauthenticateWithCredential(credential).then((value) {
+          currentUser.updatePassword(newPassword);
+        });
+      } on FirebaseAuthException catch (e) {
+        developer.log("Log: changePassword -> ${e.code}");
+        showAlertMessage(e.code);
+        isError = true;
+      }
+
+      currentPasswordController.clear();
+      newPasswordController.clear();
+      confirmPasswordController.clear();
+
+      if (!isError) {
+        developer.log("Log: changePassword -> Password has been changed!");
+        showAlertMessage("Password has been changed!");
+        return;
+      }
+
+    } on FirebaseAuthException catch (e) {
+      showAlertMessage(e.code);
+      return;
+    }
+  }
+
   void signOutCurrentUser() async {
     User? currentUser = FirebaseAuth.instance.currentUser;
 
