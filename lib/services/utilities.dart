@@ -25,7 +25,7 @@ Future<String?> getUserIdByUid(String currentUserId) async {
 }
 
 void showAlertMessage(final String message) {
-  showDialog(context: MyApp.navigatorKey.currentContext!, builder: (context) => Center(
+  showDialog<String>(context: MyApp.navigatorKey.currentContext!, builder: (context) => Center(
     child: AlertDialog(
       backgroundColor: const Color.fromRGBO(128, 128, 0, 1),
       title: Text(

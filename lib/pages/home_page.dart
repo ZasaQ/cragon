@@ -18,7 +18,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomeState extends State<HomePage> {
-  AuthenticationServices authenticationServices = AuthenticationServices();
   late CameraDescription firstCamera;
 
   Future<CameraDescription?> initBackCamera() async {
@@ -109,7 +108,7 @@ class _HomeState extends State<HomePage> {
               title: const Text("Log out", style: TextStyle(fontSize: 18)),
               titleTextStyle: const TextStyle(color: Color.fromRGBO(128, 128, 0, 1)),
               onTap: () {
-                authenticationServices.signOutCurrentUser();
+                AuthenticationServices().signOutCurrentUser();
               },
             )
           ],
@@ -126,7 +125,7 @@ class _HomeState extends State<HomePage> {
                     alignment: Alignment.center,
                     child: GestureDetector(
                       onTap: () {
-                        authenticationServices.signOutCurrentUser();
+                        AuthenticationServices().signOutCurrentUser();
                       },
                       child: const Text("SIGN OUT"),
                     ),
@@ -136,7 +135,7 @@ class _HomeState extends State<HomePage> {
                     alignment: Alignment.center,
                     child: GestureDetector(
                       onTap: () {
-                        authenticationServices.deleteCurrentUser();
+                        AuthenticationServices().deleteCurrentUser();
                       },
                       child: const Text("DELETE USER"),
                     ),

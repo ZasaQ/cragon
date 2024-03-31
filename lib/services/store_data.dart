@@ -27,7 +27,7 @@ class FirestoreDataHandler {
       await ref.delete();
       developer.log("Log: Avatar image has been removed from FirebaseStorage");
     } catch(e) {
-      developer.log("Log: deleteImageFromFirebaseStorage -> $e");
+      developer.log("Log: deleteImageFromFirebaseStorage() -> $e");
     }
   }
 
@@ -83,7 +83,7 @@ class FirestoreDataHandler {
 
       return await querySnapshot.docs.first['avatarImage'];
     } catch (e) {
-      developer.log("$e");
+      developer.log("Log: getUserAvatarImage() -> $e");
       
       return "";
     }

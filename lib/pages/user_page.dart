@@ -11,6 +11,7 @@ import 'package:cragon/components/settings_group.dart';
 import 'package:cragon/components/settings_item.dart';
 import 'package:cragon/main.dart';
 import 'package:cragon/pages/change_password.dart';
+import 'package:cragon/pages/delete_user_page.dart';
 
 
 class UserPage extends StatefulWidget {
@@ -92,6 +93,7 @@ class _UserPageState extends State<UserPage> {
                           titleText: 'Change password',
                           leadingIcon: const Icon(Icons.password_sharp, color: Colors.black),
                         ),
+
                         SettingsItem(
                           onTap: () async {
                             FirestoreDataHandler().removeUserAvatarImage().then(
@@ -100,6 +102,16 @@ class _UserPageState extends State<UserPage> {
                           },
                           titleText: 'Remove avatar image',
                           leadingIcon: const Icon(Icons.remove_circle_outline_sharp, color: Colors.black)
+                        ),
+
+                        SettingsItem(
+                          onTap: () {
+                            MyApp.navigatorKey.currentState!.push(
+                              MaterialPageRoute(builder: (context) => const DeleteUserPage()));
+                          },
+                          titleText: 'Delete account',
+                          titleStyle: TextStyle(color: Colors.red.shade500),
+                          leadingIcon: Icon(Icons.remove, color: Colors.red.shade500),
                         )
                       ]
                     ),

@@ -1,3 +1,4 @@
+import 'package:cragon/main.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -76,7 +77,7 @@ class AuthenticationServices {
 
       return showAlertMessage(e.code);
     } catch (e) {
-      developer.log("Log: signUpWithEmail -> exception: $e");
+      developer.log("Log: signUpWithEmail() -> exception: $e");
     }
   }
 
@@ -128,7 +129,7 @@ class AuthenticationServices {
 
       return showAlertMessage(e.code);
     } catch (e) {
-      developer.log("Log: signInWithEmail -> exception: $e");
+      developer.log("Log: signInWithEmail() -> exception: $e");
     }
   }
 
@@ -175,7 +176,7 @@ class AuthenticationServices {
       developer.log("Log: token is now empty");
       FirebaseAuth.instance.signOut();
       developer.log("Log: current user has been signed out");
-    } catch (e){
+    } catch (e) {
       developer.log("Log: signOutCurrentUser() -> exception: $e");
     }
   }
@@ -197,7 +198,30 @@ class AuthenticationServices {
     return exists;
   }
 
-  deleteCurrentUser() async {
+  Future<bool> reauthenticateCurrentUser({required String password}) async {
+    if (password.isEmpty) {
+        return false;
+    }
+
+    try {
+      User currentUser = FirebaseAuth.instance.currentUser!;
+
+      String userEmail = currentUser.email.toString();
+      AuthCredential userCredential = EmailAuthProvider.credential(
+        email: userEmail,
+        password: password
+      );
+
+      await FirebaseAuth.instance.currentUser?.reauthenticateWithCredential(userCredential);
+
+      return true;
+    } on FirebaseAuthException catch (e) {
+      developer.log("Log: reauthenticateCurrentUser() -> ${e.code}");
+      return false;
+    }
+  }
+
+  void deleteCurrentUser() async {
     User? currentUser = FirebaseAuth.instance.currentUser;
 
     if (currentUser == null) {
@@ -205,20 +229,20 @@ class AuthenticationServices {
       return;
     }
 
-    try {
+    try {    
       await FirebaseFirestore.instance
         .collection('users')
         .doc(currentUser.uid)
         .delete();
 
-      String userName = currentUser.email.toString();
-      
       await currentUser.delete();
       FirebaseAuth.instance.signOut();
 
-      developer.log("Log: user $userName has been deleted correctly");
-    } catch (e){
-      developer.log("Log: exception -> $e");
+      MyApp.navigatorKey.currentState!.pushNamedAndRemoveUntil("/login", (route) => false);
+
+      developer.log("Log: deleteCurrentUser() -> user has been deleted correctly");
+    } on FirebaseAuthException catch (e) {
+      developer.log("Log: deleteCurrentUser() -> $e");
     }
   }
 }
