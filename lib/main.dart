@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_statusbarcolor_ns/flutter_statusbarcolor_ns.dart';
+import 'dart:async';
 import 'dart:developer' as developer;
+
 import 'package:cragon/pages/login_page.dart';
 import 'package:cragon/pages/register_page.dart';
 import 'package:cragon/firebase_options.dart';
 import 'package:cragon/pages/home_page.dart';
 
+
+StreamController<void> refreshController = StreamController<void>.broadcast();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +30,14 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    refreshController.stream.listen((_) {
+      setState(() => {});
+    });
+  }
+
   List<Route<dynamic>> onGeneratedInitialRoutes(String initialRouteName) {
     List<Route<dynamic>> pageStack = [];
 
@@ -37,11 +49,11 @@ class _MyAppState extends State<MyApp> {
   Route<dynamic>? onGenerateRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
       case "/home":
-      return MaterialPageRoute(builder: (_) => const HomePage());
+        return MaterialPageRoute(builder: (_) => const HomePage());
       case "/login":
-      return MaterialPageRoute(builder: (_) => const LoginPage());
+        return MaterialPageRoute(builder: (_) => const LoginPage());
       case "/register":
-      return MaterialPageRoute(builder: (_) => const RegisterPage());
+        return MaterialPageRoute(builder: (_) => const RegisterPage());
     }
 
     return null;

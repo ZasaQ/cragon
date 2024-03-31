@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:typed_data';
 import 'dart:developer' as developer;
+
 import 'package:cragon/services/utilities.dart';
 
 
@@ -30,7 +31,7 @@ class FirestoreDataHandler {
     }
   }
 
-  void updateUserAvatarImage({
+  Future<void> updateUserAvatarImage({
     required Uint8List image
   }) async {
       try {
@@ -48,7 +49,7 @@ class FirestoreDataHandler {
       }
   }
 
-  void removeUserAvatarImage() async {
+  Future<void> removeUserAvatarImage() async {
     try {
       String uid = FirebaseAuth.instance.currentUser!.uid;
       String imageUrl = await getUserAvatarImage();

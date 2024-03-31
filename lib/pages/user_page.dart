@@ -61,8 +61,10 @@ class _UserPageState extends State<UserPage> {
                       if (image.isEmpty) {
                         return;
                       }
-                      FirestoreDataHandler().updateUserAvatarImage(image: image);
-                      
+
+                      FirestoreDataHandler().updateUserAvatarImage(image: image).then(
+                        (value) => setState(() => {})
+                      );
                     }, icon: const Icon(Icons.add_a_photo), color: Colors.black),
                   ) 
                 ],
@@ -85,13 +87,17 @@ class _UserPageState extends State<UserPage> {
                         SettingsItem(
                           onTap: () {
                             MyApp.navigatorKey.currentState!.push(
-                              MaterialPageRoute(builder: (context) => ChangePasswordPage()));
+                              MaterialPageRoute(builder: (context) => const ChangePasswordPage()));
                           },
                           titleText: 'Change password',
                           leadingIcon: const Icon(Icons.password_sharp, color: Colors.black),
                         ),
                         SettingsItem(
-                          onTap: () {FirestoreDataHandler().removeUserAvatarImage();},
+                          onTap: () async {
+                            FirestoreDataHandler().removeUserAvatarImage().then(
+                              (value) => setState(() => {})
+                            );
+                          },
                           titleText: 'Remove avatar image',
                           leadingIcon: const Icon(Icons.remove_circle_outline_sharp, color: Colors.black)
                         )
