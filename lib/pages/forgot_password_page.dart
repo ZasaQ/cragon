@@ -53,7 +53,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 FormTextItem(
                   controller: emailController,
                   inLabelText: 'Email',
-                  inHintText: 'Email',
+                  inHintText: 'name@exmaple.com',
                   prefixIcon: const Icon(Icons.email, color: Colors.black),
                   isPasswordForm: false,
                 ),
