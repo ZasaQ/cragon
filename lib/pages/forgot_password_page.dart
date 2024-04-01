@@ -23,8 +23,61 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       backgroundColor: const Color.fromRGBO(128, 128, 0, 1),
       appBar: AppBar(backgroundColor: const Color.fromRGBO(128, 128, 0, 1)),
       body: Column(
-        children: <Widget> [          
-          Align(
+        children: <Widget> [    
+          const Align(
+            alignment: Alignment.center,
+            child: Column(
+              children: <Widget>[
+                Image(
+                  image: AssetImage('lib/images/forgot_password_icon.png'),
+                  height: 100.0,
+                  width: 100.0,
+                ),
+
+                SizedBox(height: 20.0),
+
+                Center(
+                child: Text('Here you can restore your passowrd via email!', 
+                  style: TextStyle(color: Colors.black, fontSize: 16.0)
+                  ),
+                ),
+              ]
+            )
+          ),
+
+          const SizedBox(height: 50.0),
+
+          Expanded(
+            child: Column(
+              children: <Widget>[
+                FormTextItem(
+                  controller: emailController,
+                  inLabelText: 'Email',
+                  inHintText: 'Email',
+                  prefixIcon: const Icon(Icons.email, color: Colors.black),
+                  isPasswordForm: false,
+                ),
+
+                const SizedBox(height: 20),
+
+                LRButton(inText: 'Send Request', onPressed: () async {
+                  try {
+                    await FirebaseAuth.instance.sendPasswordResetEmail(
+                      email: emailController.text).then((value) => 
+                        MyApp.navigatorKey.currentState!.pop(context)
+                    );
+                  } on FirebaseAuthException catch (excep) {
+                    if (emailController.text.isEmpty) {
+                      return showAlertMessage("Email can not be empty");
+                    }
+                    return showAlertMessage(excep.code);
+                  }
+                })
+              ],
+            ),
+            
+          )
+          /*Align(
             alignment: Alignment.center,
             child: Expanded(
               child: Column(
@@ -64,7 +117,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 ],
               )
             ),
-          ),
+          ),*/
         ]
       )
     );
