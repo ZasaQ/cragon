@@ -29,27 +29,29 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          const Align(
-            alignment: Alignment.topCenter,
-            child: Image(
-              image: AssetImage('lib/images/change_password_icon.png'),
-              height: 100,
-              width: 100
-            )
+          const Column(
+            children: <Widget>[
+              Align(
+                alignment: Alignment.topCenter,
+                child: Image(
+                  image: AssetImage('lib/images/change_password_icon.png'),
+                  height: 100,
+                  width: 100
+                ),
+              ),
+
+              Center(
+                child: Text('Here you can change your password!',
+                  style: TextStyle(color: Colors.black, fontSize: 16.0)),
+              ),
+            ],
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 50),
       
           Expanded(
             child: Column(
               children: [
-                const Center(
-                  child: Text('Here you can change your password!',
-                    style: TextStyle(fontSize: 16)),
-                ),
-
-                const SizedBox(height: 50),
-
                 FormTextItem(
                   controller: currentPasswordController,
                   inLabelText: "Current password",
@@ -58,7 +60,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   isPasswordForm: true,
                 ),
                       
-                const SizedBox(height: 30),
+                const SizedBox(height: 20),
                       
                 FormTextItem(
                   controller: newPasswordController,
@@ -68,7 +70,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   isPasswordForm: true
                 ),
                       
-                const SizedBox(height: 30),
+                const SizedBox(height: 20),
                       
                 FormTextItem(
                   controller: confirmPasswordController,
@@ -78,7 +80,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   isPasswordForm: true
                 ),
                       
-                const SizedBox(height: 30),
+                const SizedBox(height: 20),
                       
                 LRButton(inText: "Change password", onPressed: () {
                   AuthenticationServices().changePassword(
