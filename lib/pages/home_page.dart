@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:camera/camera.dart';
@@ -121,24 +122,31 @@ class _HomeState extends State<HomePage> {
             Expanded(
               child: Column(
                 children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: GestureDetector(
-                      onTap: () {
-                        AuthenticationServices().signOutCurrentUser();
-                      },
-                      child: const Text("SIGN OUT"),
-                    ),
-                  ),
-
-                  Align(
-                    alignment: Alignment.center,
-                    child: GestureDetector(
-                      onTap: () {
-                        AuthenticationServices().deleteCurrentUser();
-                      },
-                      child: const Text("DELETE USER"),
-                    ),
+                  StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                    .collection("dragons")
+                    .snapshots(),
+                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.hasError) {
+                        return Text("Error while loading dragon item: ${snapshot.error.toString()}");
+                      }
+                  
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      }
+                  
+                      return SizedBox(
+                        height: 150,
+                        child: ListView(
+                          children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                            Map<String,dynamic> data = document.data()! as Map<String, dynamic>;
+                            return ExpansionTile(
+                              title:Text(data["name"], style: const TextStyle(fontWeight: FontWeight.bold)),
+                            );
+                          }).toList()
+                        ),
+                      );
+                    }
                   )
                 ],
               ),

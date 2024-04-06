@@ -1,4 +1,5 @@
 import 'package:cragon/main.dart';
+import 'package:cragon/services/store_data.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -282,6 +283,8 @@ class AuthenticationServices {
         .collection('users')
         .doc(currentUser.uid)
         .delete();
+
+      await FirestoreDataHandler().removeUserAvatarImage();
 
       await currentUser.delete();
       FirebaseAuth.instance.signOut();
