@@ -4,7 +4,7 @@ import 'dart:developer' as developer;
 import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:cragon/services/store_data.dart';
+import 'package:cragon/services/firestore_data_handler.dart';
 import 'package:cragon/services/utilities.dart';
 import 'package:cragon/components/user_avatar.dart';
 import 'package:cragon/components/settings_group.dart';

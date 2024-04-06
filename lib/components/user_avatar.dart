@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cragon/services/store_data.dart';
+import 'package:cragon/services/firestore_data_handler.dart';
 
 
 Future<Widget> userAvatar({required double radius, double? fontSize}) async {

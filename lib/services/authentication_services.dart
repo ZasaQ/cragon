@@ -1,5 +1,5 @@
 import 'package:cragon/main.dart';
-import 'package:cragon/services/store_data.dart';
+import 'package:cragon/services/firestore_data_handler.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
