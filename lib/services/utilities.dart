@@ -7,6 +7,7 @@ import 'package:cragon/main.dart';
 
 
 CollectionReference usersCollection = FirebaseFirestore.instance.collection("users");
+CollectionReference dragonsCollection = FirebaseFirestore.instance.collection("dragons");
 
 Future<String?> getUserIdByUid(String currentUserId) async {
   try {

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cragon/pages/dragon_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:camera/camera.dart';
@@ -142,6 +143,27 @@ class _HomeState extends State<HomePage> {
                             Map<String,dynamic> data = document.data()! as Map<String, dynamic>;
                             return ExpansionTile(
                               title:Text(data["name"], style: const TextStyle(fontWeight: FontWeight.bold)),
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    TextButton(
+                                      onPressed: () {
+                                        MyApp.navigatorKey.currentState!.push(
+                                          MaterialPageRoute(builder: (context) => DragonPage(dragonName: data["name"].toString())));
+                                      },
+                                      child: const Text("Show Gallery", style: TextStyle(color: Colors.black))
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        MyApp.navigatorKey.currentState!.push(
+                                          MaterialPageRoute(builder: (context) => const Placeholder()));
+                                      },
+                                      child: const Text("Navigation", style: TextStyle(color: Colors.black))
+                                    )
+                                  ],
+                                )
+                              ],
                             );
                           }).toList()
                         ),

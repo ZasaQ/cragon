@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -11,6 +12,26 @@ class FirestoreDataHandler {
   final FirebaseStorage firebaseStorage = FirebaseStorage.instance;
   final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   final String avatarImageDirectory = "avatarImages";
+  final String dragonsDirectory = "dragonsGallery";
+
+  Future<List<Image>> getDragonGallery(String dragonName) async {
+    Reference ref = firebaseStorage.ref().child(dragonsDirectory).child(dragonName);
+    ListResult refList = await ref.listAll();
+    List<Image> imageWidgets = [];
+
+    if (refList.items.isEmpty) {
+      developer.log("Log: getDragonGallery() -> refList.items.isEmpty");
+      return [];
+    }
+
+    await Future.forEach(refList.items, (Reference reference) async {
+      String downloadURL = await reference.getDownloadURL();
+      Image image = Image.network(downloadURL);
+      imageWidgets.add(image);
+    });
+
+    return imageWidgets;
+  }
 
   Future<String> uploadImageToFirebaseStorage(String fileDirectory, Uint8List image) async {
     Reference ref = firebaseStorage.ref().child(fileDirectory).child("${FirebaseAuth.instance.currentUser!.email}_avatar.jpg");
