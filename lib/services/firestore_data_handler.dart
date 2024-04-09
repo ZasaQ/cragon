@@ -109,4 +109,25 @@ class FirestoreDataHandler {
       return "";
     }
   }
+
+  void catchDragon({required String dragonName}) async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser == null) {
+      developer.log("Log: catchDragon() -> currentUser is null");
+      return;
+    }
+
+    try {
+      await usersCollection.doc(currentUser.uid).update(
+        {
+          'caughtDragons': FieldValue.arrayUnion([dragonName]),
+        },
+      );
+
+    } catch (e) {
+      developer.log("Log: catchDragon() -> $e");
+      return;
+    }
+  }
 }

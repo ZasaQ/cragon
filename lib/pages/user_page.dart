@@ -66,7 +66,7 @@ class _UserPageState extends State<UserPage> {
                       FirestoreDataHandler().updateUserAvatarImage(image: image).then(
                         (value) => setState(() => {})
                       );
-                    }, icon: const Icon(Icons.add_a_photo), color: Colors.black),
+                    }, icon: const Icon(Icons.add_a_photo), color: Colors.grey[300]),
                   ) 
                 ],
               ),

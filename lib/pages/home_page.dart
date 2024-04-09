@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cragon/pages/dragon_page.dart';
+import 'package:cragon/services/firestore_data_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:camera/camera.dart';
@@ -156,8 +157,7 @@ class _HomeState extends State<HomePage> {
                                     ),
                                     TextButton(
                                       onPressed: () {
-                                        MyApp.navigatorKey.currentState!.push(
-                                          MaterialPageRoute(builder: (context) => const Placeholder()));
+                                        FirestoreDataHandler().catchDragon(dragonName: data["name"]);
                                       },
                                       child: const Text("Navigation", style: TextStyle(color: Colors.black))
                                     )
