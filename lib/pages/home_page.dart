@@ -142,7 +142,7 @@ class _HomeState extends State<HomePage> {
                           children: snapshot.data!.docs.map((DocumentSnapshot document) {
                             Map<String,dynamic> data = document.data()! as Map<String, dynamic>;
                             return ExpansionTile(
-                              title:Text(data["name"], style: const TextStyle(fontWeight: FontWeight.bold)),
+                              title:Text(data["displayName"], style: const TextStyle(fontWeight: FontWeight.bold)),
                               children: [
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -150,7 +150,9 @@ class _HomeState extends State<HomePage> {
                                     TextButton(
                                       onPressed: () {
                                         MyApp.navigatorKey.currentState!.push(
-                                          MaterialPageRoute(builder: (context) => DragonPage(dragonName: data["name"].toString())));
+                                          MaterialPageRoute(builder: (context) =>
+                                            DragonPage(dragonDirectoryName: data["directoryName"].toString(),
+                                                       dragonDisplayName: data["displayName"].toString())));
                                       },
                                       child: const Text("Show Gallery", style: TextStyle(color: Colors.black))
                                     ),

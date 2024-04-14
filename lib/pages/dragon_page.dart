@@ -5,10 +5,12 @@ import 'package:cragon/services/firestore_data_handler.dart';
 class DragonPage extends StatefulWidget {
   const DragonPage({
     super.key,
-    required this.dragonName
+    required this.dragonDirectoryName,
+    required this.dragonDisplayName
   });
 
-  final String dragonName;
+  final String dragonDirectoryName;
+  final String dragonDisplayName;
 
   @override
   State<DragonPage> createState() => _DragonPageState();
@@ -28,10 +30,10 @@ class _DragonPageState extends State<DragonPage> {
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Color.fromRGBO(128, 128, 0, 1)),
         backgroundColor: const Color.fromRGBO(38, 45, 53, 1),
-        title: Text(widget.dragonName, style: const TextStyle(color: Color.fromRGBO(128, 128, 0, 1))),
+        title: Text(widget.dragonDisplayName, style: const TextStyle(color: Color.fromRGBO(128, 128, 0, 1))),
       ),
       body: FutureBuilder<List<Image>>(
-        future: FirestoreDataHandler().getDragonGallery(widget.dragonName),
+        future: FirestoreDataHandler().getDragonGallery(widget.dragonDirectoryName),
         builder: (context, imageSnapshot) {   
           if (imageSnapshot.connectionState == ConnectionState.waiting) {
             return const CircularProgressIndicator();

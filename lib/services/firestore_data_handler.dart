@@ -12,10 +12,10 @@ class FirestoreDataHandler {
   final FirebaseStorage firebaseStorage = FirebaseStorage.instance;
   final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   final String avatarImageDirectory = "avatarImages";
-  final String dragonsDirectory = "dragonsGallery";
+  final String dragonsDirectory = "dragonsGalleries";
 
-  Future<List<Image>> getDragonGallery(String dragonName) async {
-    Reference ref = firebaseStorage.ref().child(dragonsDirectory).child(dragonName);
+  Future<List<Image>> getDragonGallery(String dragonDirectoryName) async {
+    Reference ref = firebaseStorage.ref().child(dragonsDirectory).child(dragonDirectoryName);
     ListResult refList = await ref.listAll();
     List<Image> imageWidgets = [];
 
