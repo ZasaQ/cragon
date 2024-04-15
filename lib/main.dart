@@ -68,6 +68,7 @@ class _MyAppState extends State<MyApp> {
       onGenerateRoute: onGenerateRoute,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        scaffoldBackgroundColor: const Color.fromRGBO(128, 128, 0, 1.0),
         colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromRGBO(128, 128, 0, 1)),
         useMaterial3: true,
       ),

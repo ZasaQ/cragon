@@ -110,7 +110,7 @@ class FirestoreDataHandler {
     }
   }
 
-  void catchDragon({required String dragonName}) async {
+  void manageDragon({required String dragonDirectoryName, required bool toCatch}) async {
     User? currentUser = FirebaseAuth.instance.currentUser;
 
     if (currentUser == null) {
@@ -119,12 +119,19 @@ class FirestoreDataHandler {
     }
 
     try {
-      await usersCollection.doc(currentUser.uid).update(
-        {
-          'caughtDragons': FieldValue.arrayUnion([dragonName]),
-        },
-      );
-
+      if (toCatch) {
+        await usersCollection.doc(currentUser.uid).update(
+          {
+            'caughtDragons': FieldValue.arrayUnion([dragonDirectoryName]),
+          },
+        );
+      } else {
+        await usersCollection.doc(currentUser.uid).update(
+          {
+            'caughtDragons': FieldValue.arrayRemove([dragonDirectoryName]),
+          },
+        );
+      }
     } catch (e) {
       developer.log("Log: catchDragon() -> $e");
       return;

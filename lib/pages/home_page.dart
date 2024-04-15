@@ -1,6 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cragon/pages/dragon_page.dart';
-import 'package:cragon/services/firestore_data_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:camera/camera.dart';
@@ -11,6 +9,8 @@ import 'package:cragon/main.dart';
 import 'package:cragon/pages/camera_page.dart';
 import 'package:cragon/pages/user_page.dart';
 import 'package:cragon/services/authentication_services.dart';
+import 'package:cragon/pages/dragon_page.dart';
+import 'package:cragon/services/firestore_data_handler.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -124,50 +124,84 @@ class _HomeState extends State<HomePage> {
             Expanded(
               child: Column(
                 children: [
-                  StreamBuilder<QuerySnapshot>(
+                  StreamBuilder<DocumentSnapshot>(
                     stream: FirebaseFirestore.instance
-                    .collection("dragons")
-                    .snapshots(),
-                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      .collection("users")
+                      .doc(FirebaseAuth.instance.currentUser?.uid)
+                      .snapshots(),
+                    builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
                       if (snapshot.hasError) {
-                        return Text("Error while loading dragon item: ${snapshot.error.toString()}");
+                        return Text("Error while loading user's caught dragons: ${snapshot.error.toString()}");
                       }
                   
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const CircularProgressIndicator();
                       }
-                  
-                      return Expanded(
-                        child: ListView(
-                          children: snapshot.data!.docs.map((DocumentSnapshot document) {
-                            Map<String,dynamic> data = document.data()! as Map<String, dynamic>;
-                            return ExpansionTile(
-                              title:Text(data["displayName"], style: const TextStyle(fontWeight: FontWeight.bold)),
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    TextButton(
-                                      onPressed: () {
-                                        MyApp.navigatorKey.currentState!.push(
-                                          MaterialPageRoute(builder: (context) =>
-                                            DragonPage(dragonDirectoryName: data["directoryName"].toString(),
-                                                       dragonDisplayName: data["displayName"].toString())));
-                                      },
-                                      child: const Text("Show Gallery", style: TextStyle(color: Colors.black))
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        FirestoreDataHandler().catchDragon(dragonName: data["name"]);
-                                      },
-                                      child: const Text("Navigation", style: TextStyle(color: Colors.black))
+
+                      List<dynamic> usersCaughtDragons = snapshot.data?.get("caughtDragons");
+                      List<String> usersCaughtDragonsValues = [];
+
+                      for (var element in usersCaughtDragons) {
+                        usersCaughtDragonsValues.add(element.toString());
+                      }
+                      
+                      return StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                          .collection("dragons")
+                          .snapshots(),
+                        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> dragonsSnapshot) {
+                          if (dragonsSnapshot.hasError) {
+                            return Text("Error while loading dragon item: ${dragonsSnapshot.error.toString()}");
+                          }
+                      
+                          if (dragonsSnapshot.connectionState == ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          }
+
+                          return Expanded(
+                            child: ListView(
+                              children: dragonsSnapshot.data!.docs.map((DocumentSnapshot document) {
+                                Map<String,dynamic> dragonData = document.data()! as Map<String, dynamic>;
+                                bool isDragonCaught = usersCaughtDragonsValues.contains(dragonData["directoryName"]);
+
+                                return ExpansionTile(
+                                  leading: isDragonCaught ? const Icon(Icons.check) : null,
+                                  title:Text(dragonData["displayName"], style: const TextStyle(fontWeight: FontWeight.bold)),
+                                  children: <Widget>[
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        TextButton(
+                                          onPressed: () {
+                                            MyApp.navigatorKey.currentState!.push(
+                                              MaterialPageRoute(builder: (context) =>
+                                                DragonPage(dragonDirectoryName: dragonData["directoryName"].toString(),
+                                                            dragonDisplayName: dragonData["displayName"].toString())
+                                              )
+                                            );
+                                          },
+                                          child: const Text("Show Gallery", style: TextStyle(color: Colors.black))
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            FirestoreDataHandler().manageDragon(dragonDirectoryName: dragonData["directoryName"], toCatch: true);
+                                          },
+                                          child: const Text("Catch Dragon", style: TextStyle(color: Colors.black))
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            FirestoreDataHandler().manageDragon(dragonDirectoryName: dragonData["directoryName"], toCatch: false);
+                                          },
+                                          child: const Text("Release Dragon", style: TextStyle(color: Colors.black))
+                                        ),
+                                      ],
                                     )
                                   ],
-                                )
-                              ],
-                            );
-                          }).toList()
-                        ),
+                                );
+                              }).toList()
+                            ),
+                          );
+                        }
                       );
                     }
                   )
