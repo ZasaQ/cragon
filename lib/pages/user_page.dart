@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:developer' as developer;
 import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:cragon/services/firestore_data_handler.dart';
 import 'package:cragon/services/utilities.dart';
@@ -38,36 +39,54 @@ class _UserPageState extends State<UserPage> {
             children: <Widget>[
               Stack(
                 children: [
-                  FutureBuilder<Widget>(
-                    future: userAvatar(radius: 50, fontSize: 30),
-                    builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
-                      } else if (snapshot.hasError) {
-                        developer.log("Log: Snapshot error -> ${snapshot.error}");
-                        return Text("Log: Snapshot error -> ${snapshot.error}");
-                      } else {
-                        return Align(
-                          alignment: Alignment.topCenter,
-                          child: snapshot.data!,
-                        );
-                      }
-                    },
-                  ),
-                  Positioned(
-                    bottom: -5,
-                    left: 230,
-                    child: IconButton(onPressed: () async {
-                      Uint8List image = await pickImage(ImageSource.gallery);
-                      if (image.isEmpty) {
-                        return;
-                      }
+                  Stack(
+                    children: [
+                      StreamBuilder<DocumentSnapshot>(
+                        stream: FirebaseFirestore.instance
+                          .collection("users")
+                          .doc(FirebaseAuth.instance.currentUser?.uid)
+                          .snapshots(),
+                        builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> userSnapshot) {
+                          if (userSnapshot.hasError) {
+                            return Text("Error while loading user's account: ${userSnapshot.error.toString()}");
+                          }
+                      
+                          if (userSnapshot.connectionState == ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          }
+                      
+                          Map<String, dynamic> userData = userSnapshot.data!.data() as Map<String, dynamic>;
+                          String avatarImageUrl = userData["avatarImage"].toString();
+                      
+                          return userAvatarViaSnapshot(
+                            imageUrl: avatarImageUrl,
+                            radius: 70,
+                            fontSize: 50
+                          );
+                        }
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: -10,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            Uint8List image = await pickImage(ImageSource.gallery);
+                            if (image.isEmpty) {
+                              return;
+                            }
 
-                      FirestoreDataHandler().updateUserAvatarImage(image: image).then(
-                        (value) => setState(() => {})
-                      );
-                    }, icon: const Icon(Icons.add_a_photo), color: Colors.grey[300]),
-                  ) 
+                            FirestoreDataHandler().updateUserAvatarImage(image: image);
+                          },
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all(const CircleBorder()),
+                            padding: MaterialStateProperty.all(const EdgeInsets.all(2)),
+                            backgroundColor: MaterialStateProperty.all(const Color.fromRGBO(38, 45, 53, 1)) 
+                          ), 
+                          child: const Icon(Icons.add_a_photo, color: Colors.white,),
+                        ),
+                      )
+                    ],
+                  ),
                 ],
               ),
               

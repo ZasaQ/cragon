@@ -77,7 +77,7 @@ class _HomeState extends State<HomePage> {
                     MaterialPageRoute(builder: (context) => const UserPage()));
                 },
                 child: FutureBuilder<Widget>(
-                  future: userAvatar(radius: 40),
+                  future: userAvatarViaFuture(radius: 40),
                   builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const CircularProgressIndicator();
@@ -131,7 +131,7 @@ class _HomeState extends State<HomePage> {
                       .snapshots(),
                     builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
                       if (snapshot.hasError) {
-                        return Text("Error while loading user's caught dragons: ${snapshot.error.toString()}");
+                        return Text("Error while loading user's account: ${snapshot.error.toString()}");
                       }
                   
                       if (snapshot.connectionState == ConnectionState.waiting) {
