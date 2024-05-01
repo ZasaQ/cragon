@@ -41,6 +41,9 @@ dependencies:
   cloud_firestore: ^4.15.7
   firebase_storage: ^11.6.10
   google_sign_in: ^6.2.1
+  google_maps_flutter: ^2.6.1
+  flutter_polyline_points: ^2.0.0
+  location: ^6.0.1
   flutter_statusbarcolor_ns: ^0.5.0
   cached_network_image: ^3.3.1
   image_picker: ^1.0.7

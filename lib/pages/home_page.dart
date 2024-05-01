@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cragon/pages/map_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:camera/camera.dart';
@@ -48,7 +49,7 @@ class _HomeState extends State<HomePage> {
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Color.fromRGBO(128, 128, 0, 1)),
         backgroundColor: const Color.fromRGBO(38, 45, 53, 1),
-        title: const Text("Home Page", style: TextStyle(color: Color.fromRGBO(128, 128, 0, 1)),),
+        title: const Text("Cragon", style: TextStyle(color: Color.fromRGBO(128, 128, 0, 1)),),
         actions: <Widget> [
           IconButton(
             icon: const Icon(Icons.camera),
@@ -102,7 +103,17 @@ class _HomeState extends State<HomePage> {
               titleTextStyle: const TextStyle(color: Color.fromRGBO(128, 128, 0, 1)),
               onTap: () {
                 MyApp.navigatorKey.currentState!.push(
-                  MaterialPageRoute(builder: (context) => Placeholder()));
+                  MaterialPageRoute(builder: (context) => const Placeholder()));
+              },
+            ),
+
+            ListTile(
+              leading: const Icon(Icons.map, color: Color.fromRGBO(128, 128, 0, 1),),
+              title: const Text("Map", style: TextStyle(fontSize: 18)),
+              titleTextStyle: const TextStyle(color: Color.fromRGBO(128, 128, 0, 1)),
+              onTap: () {
+                MyApp.navigatorKey.currentState!.push(
+                  MaterialPageRoute(builder: (context) => const Placeholder()));
               },
             ),
 
@@ -168,8 +179,7 @@ class _HomeState extends State<HomePage> {
                                   leading: isDragonCaught ? const Icon(Icons.check) : null,
                                   title:Text(dragonData["displayName"], style: const TextStyle(fontWeight: FontWeight.bold)),
                                   children: <Widget>[
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                    Wrap(
                                       children: [
                                         TextButton(
                                           onPressed: () {
@@ -181,6 +191,16 @@ class _HomeState extends State<HomePage> {
                                             );
                                           },
                                           child: const Text("Show Gallery", style: TextStyle(color: Colors.black))
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            MyApp.navigatorKey.currentState!.push(
+                                              MaterialPageRoute(builder: (context) => 
+                                                MapPage(dragonLocation: dragonData['dragonLocation'])
+                                              )
+                                            );
+                                          },
+                                          child: const Text("Navigate", style: TextStyle(color: Colors.black))
                                         ),
                                         TextButton(
                                           onPressed: () {

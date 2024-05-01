@@ -25,6 +25,7 @@ export const createDragonDocumentOnDirectoryAddition = functions
         "directoryName": directoryName,
         "displayName": "",
         "createdAt": admin.firestore.FieldValue.serverTimestamp(),
+        "dragonLocation": new admin.firestore.GeoPoint(0, 0),
       });
       console.log("Firestore document created for dragon:", directoryName);
     } catch (error) {
