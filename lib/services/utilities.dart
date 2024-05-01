@@ -8,29 +8,15 @@ import 'package:cragon/main.dart';
 
 CollectionReference usersCollection = FirebaseFirestore.instance.collection("users");
 CollectionReference dragonsCollection = FirebaseFirestore.instance.collection("dragons");
-
-Future<String?> getUserIdByUid(String currentUserId) async {
-  try {
-    QuerySnapshot<Map<String, dynamic>> querySnapshot =
-        await FirebaseFirestore.instance.collection('users').where('uid', isEqualTo: currentUserId).get();
-
-    if (querySnapshot.docs.isNotEmpty) {
-      return querySnapshot.docs.first.id;
-    } else {
-      return null;
-    }
-  } catch (e) {
-    developer.log('Log: error getting user ID by UID: $e');
-    return null;
-  }
-}
+int utilDragonsAmount = 0;
+int utilCaughtDragonsAmount = 0;
 
 void showAlertMessage(final String message) {
   showDialog<String>(context: MyApp.navigatorKey.currentContext!, builder: (context) => Center(
     child: AlertDialog(
       backgroundColor: const Color.fromRGBO(128, 128, 0, 1),
       title: Text(
-        message, 
+        message,
         style: const TextStyle(color: Colors.black),
         textAlign: TextAlign.center
       )

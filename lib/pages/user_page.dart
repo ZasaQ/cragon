@@ -88,19 +88,34 @@ class _UserPageState extends State<UserPage> {
                   ),
                 ],
               ),
+
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Text(
+                  "${FirebaseAuth.instance.currentUser!.email}",
+                  style: const TextStyle(fontSize: 20)
+                ),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: Text(
+                  "Caught dragons: $utilCaughtDragonsAmount / $utilDragonsAmount",
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
+                ),
+              ),
+
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 20),
+                child: Divider(
+                  thickness: 2,
+                  color: Colors.black
+                ),
+              ),
               
-              const SizedBox(height: 30),
-        
               Expanded(
                 child: Column(
                   children: <Widget>[
-                    Text(
-                      "${FirebaseAuth.instance.currentUser!.email}",
-                      style: const TextStyle(fontSize: 20)
-                    ),
-
-                    const SizedBox(height: 60),
-
                     SettingsGroup(
                       items: [
                         SettingsItem(

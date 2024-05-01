@@ -1,6 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cragon/pages/map_page.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:camera/camera.dart';
 import 'dart:developer' as developer;
@@ -12,6 +11,8 @@ import 'package:cragon/pages/user_page.dart';
 import 'package:cragon/services/authentication_services.dart';
 import 'package:cragon/pages/dragon_page.dart';
 import 'package:cragon/services/firestore_data_handler.dart';
+import 'package:cragon/pages/map_page.dart';
+import 'package:cragon/services/utilities.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -152,6 +153,8 @@ class _HomeState extends State<HomePage> {
                       List<dynamic> usersCaughtDragons = snapshot.data?.get("caughtDragons");
                       List<String> usersCaughtDragonsValues = [];
 
+                      utilCaughtDragonsAmount = usersCaughtDragons.length;
+
                       for (var element in usersCaughtDragons) {
                         usersCaughtDragonsValues.add(element.toString());
                       }
@@ -169,11 +172,14 @@ class _HomeState extends State<HomePage> {
                             return const CircularProgressIndicator();
                           }
 
+                          utilDragonsAmount = dragonsSnapshot.data!.docs.length;
+
                           return Expanded(
                             child: ListView(
                               children: dragonsSnapshot.data!.docs.map((DocumentSnapshot document) {
                                 Map<String,dynamic> dragonData = document.data()! as Map<String, dynamic>;
-                                bool isDragonCaught = usersCaughtDragonsValues.contains(dragonData["directoryName"]);
+                                bool isDragonCaught = usersCaughtDragonsValues.contains(
+                                  dragonData["directoryName"]);
 
                                 return ExpansionTile(
                                   leading: isDragonCaught ? const Icon(Icons.check) : null,
