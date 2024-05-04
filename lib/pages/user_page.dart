@@ -31,128 +31,165 @@ class _UserPageState extends State<UserPage> {
         backgroundColor: const Color.fromRGBO(128, 128, 0, 1),
       ),
       resizeToAvoidBottomInset: false,
-      body: Center(
-        child: Container(
-          decoration: const BoxDecoration(color: Color.fromRGBO(128, 128, 0, 1)),
-          child: Column(
-            children: <Widget>[
-              Stack(
-                children: [
-                  Stack(
-                    children: [
-                      StreamBuilder<DocumentSnapshot>(
-                        stream: FirebaseFirestore.instance
-                          .collection("users")
-                          .doc(FirebaseAuth.instance.currentUser?.uid)
-                          .snapshots(),
-                        builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> userSnapshot) {
-                          if (userSnapshot.hasError) {
-                            return Text("Error while loading user's account: ${userSnapshot.error.toString()}");
-                          }
-                      
-                          if (userSnapshot.connectionState == ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
-                          }
-                      
-                          Map<String, dynamic> userData = userSnapshot.data!.data() as Map<String, dynamic>;
-                          String avatarImageUrl = userData["avatarImage"].toString();
-                      
-                          return userAvatarViaSnapshot(
-                            imageUrl: avatarImageUrl,
-                            radius: 70,
-                            fontSize: 50
-                          );
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Stack(
+              children: [
+                Stack(
+                  children: [
+                    StreamBuilder<DocumentSnapshot>(
+                      stream: FirebaseFirestore.instance
+                        .collection("users")
+                        .doc(FirebaseAuth.instance.currentUser?.uid)
+                        .snapshots(),
+                      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> userSnapshot) {
+                        if (userSnapshot.hasError) {
+                          return Text("Error while loading user's account: ${userSnapshot.error.toString()}");
                         }
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: -10,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            Uint8List image = await pickImage(ImageSource.gallery);
-                            if (image.isEmpty) {
-                              return;
-                            }
-
-                            FirestoreDataHandler().updateUserAvatarImage(image: image);
-                          },
-                          style: ButtonStyle(
-                            shape: MaterialStateProperty.all(const CircleBorder()),
-                            padding: MaterialStateProperty.all(const EdgeInsets.all(2)),
-                            backgroundColor: MaterialStateProperty.all(const Color.fromRGBO(38, 45, 53, 1)) 
-                          ), 
-                          child: const Icon(Icons.add_a_photo, color: Colors.white,),
-                        ),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Text(
-                  "${FirebaseAuth.instance.currentUser!.email}",
-                  style: const TextStyle(fontSize: 20)
-                ),
-              ),
-
-              Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: Text(
-                  "Caught dragons: $utilCaughtDragonsAmount / $utilDragonsAmount",
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
-                ),
-              ),
-
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 20),
-                child: Divider(
-                  thickness: 2,
-                  color: Colors.black
-                ),
-              ),
-              
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    SettingsGroup(
-                      items: [
-                        SettingsItem(
-                          onTap: () {
-                            MyApp.navigatorKey.currentState!.push(
-                              MaterialPageRoute(builder: (context) => const ChangePasswordPage()));
-                          },
-                          titleText: 'Change password',
-                          leadingIcon: const Icon(Icons.password_sharp, color: Colors.black),
-                        ),
-
-                        SettingsItem(
-                          onTap: () async {
-                            FirestoreDataHandler().removeUserAvatarImage().then(
-                              (value) => setState(() => {})
-                            );
-                          },
-                          titleText: 'Remove avatar image',
-                          leadingIcon: const Icon(Icons.remove_circle_outline_sharp, color: Colors.black)
-                        ),
-
-                        SettingsItem(
-                          onTap: () {
-                            MyApp.navigatorKey.currentState!.push(
-                              MaterialPageRoute(builder: (context) => const DeleteUserPage()));
-                          },
-                          titleText: 'Delete account',
-                          titleStyle: TextStyle(color: Colors.red.shade500),
-                          leadingIcon: Icon(Icons.remove, color: Colors.red.shade500),
-                        )
-                      ]
+                    
+                        if (userSnapshot.connectionState == ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        }
+                    
+                        Map<String, dynamic> userData = userSnapshot.data!.data() as Map<String, dynamic>;
+                        String avatarImageUrl = userData["avatarImage"].toString();
+                    
+                        return userAvatarViaSnapshot(
+                          imageUrl: avatarImageUrl,
+                          radius: 70,
+                          fontSize: 50
+                        );
+                      }
                     ),
+                    Positioned(
+                      bottom: 0,
+                      right: -10,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          Uint8List image = await pickImage(ImageSource.gallery);
+                          if (image.isEmpty) {
+                            return;
+                          }
+                
+                          FirestoreDataHandler().updateUserAvatarImage(image: image);
+                        },
+                        style: ButtonStyle(
+                          shape: MaterialStateProperty.all(const CircleBorder()),
+                          padding: MaterialStateProperty.all(const EdgeInsets.all(2)),
+                          backgroundColor: MaterialStateProperty.all(const Color.fromRGBO(38, 45, 53, 1)) 
+                        ), 
+                        child: const Icon(Icons.add_a_photo, color: Colors.white,),
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+                
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Text(
+                "${FirebaseAuth.instance.currentUser!.email}",
+                style: const TextStyle(fontSize: 20)
+              ),
+            ),
+                
+            Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: Text(
+                "Caught dragons: $utilCaughtDragonsAmount / $utilDragonsAmount",
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
+              ),
+            ),
+                
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 20),
+              child: Divider(
+                thickness: 2,
+                color: Colors.black
+              ),
+            ),
+            
+            Column(
+              children: <Widget>[
+                SettingsGroup(
+                  settingsGroupTitle: "Admin utilities",
+                  items: [
+                    SettingsItem(
+                      onTap: () {
+                        MyApp.navigatorKey.currentState!.push(
+                          MaterialPageRoute(builder: (context) => const ChangePasswordPage()));
+                      },
+                      titleText: 'Change password',
+                      leadingIcon: const Icon(Icons.password_sharp, color: Colors.black),
+                    ),
+              
+                    SettingsItem(
+                      onTap: () async {
+                        FirestoreDataHandler().removeUserAvatarImage();
+                      },
+                      titleText: 'Remove avatar image',
+                      leadingIcon: const Icon(Icons.remove_circle_outline_sharp, color: Colors.black)
+                    ),
+              
+                    SettingsItem(
+                      onTap: () {
+                        MyApp.navigatorKey.currentState!.push(
+                          MaterialPageRoute(builder: (context) => const DeleteUserPage()));
+                      },
+                      titleText: 'Delete account',
+                      titleStyle: TextStyle(color: Colors.red.shade500),
+                      leadingIcon: Icon(Icons.remove, color: Colors.red.shade500),
+                    )
                   ]
-                )
-              )
-            ],
-          ),
+                ),
+              
+                StreamBuilder<DocumentSnapshot>(
+                  stream: FirebaseFirestore.instance
+                    .collection("users")
+                    .doc(FirebaseAuth.instance.currentUser?.uid)
+                    .snapshots(),
+                  builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> userSnapshot) {
+                    if (userSnapshot.hasError) {
+                      return Text("Error while loading user's account: ${userSnapshot.error.toString()}");
+                    }
+                
+                    if (userSnapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    }
+                
+                    Map<String, dynamic> userData = userSnapshot.data!.data() as Map<String, dynamic>;
+                    bool isAdmin = userData['isAdmin'];
+              
+                    if (isAdmin) {
+                      return SettingsGroup(
+                        settingsGroupTitle: "Admin utilities",
+                        items: [
+                          SettingsItem(
+                            onTap: () {
+                              
+                            },
+                            titleText: 'Delete user',
+                            leadingIcon: const Icon(Icons.delete_forever, color: Colors.black)
+                          ),
+                          SettingsItem(
+                            onTap: () {
+                              
+                            },
+                            titleText: 'Manage admin settings',
+                            leadingIcon: const Icon(Icons.admin_panel_settings, color: Colors.black)
+                          ),
+                        ],
+                      );
+                    } else {
+                      return Container();
+                    }
+                  }
+                ),
+              ]
+            ),
+          ],
         ),
       ),
     );

@@ -19,7 +19,7 @@ class SettingsGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: margin ?? const EdgeInsets.only(bottom: 10, left: 20, right: 20),
+      margin: margin ?? const EdgeInsets.only(bottom: 40, left: 20, right: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -29,7 +29,7 @@ class SettingsGroup extends StatelessWidget {
                 child: Text(
                   settingsGroupTitle!,
                   style: (settingsGroupTitleStyle == null)
-                      ? const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)
+                      ? const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
                       : settingsGroupTitleStyle,
                 ),
               )
