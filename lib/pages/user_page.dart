@@ -12,6 +12,8 @@ import 'package:cragon/components/settings_item.dart';
 import 'package:cragon/main.dart';
 import 'package:cragon/pages/change_password.dart';
 import 'package:cragon/pages/delete_user_page.dart';
+import 'package:cragon/pages/bulk_delete_users_page.dart';
+import 'package:cragon/pages/manage_users_privileges_page.dart';
 
 
 class UserPage extends StatefulWidget {
@@ -114,7 +116,7 @@ class _UserPageState extends State<UserPage> {
             Column(
               children: <Widget>[
                 SettingsGroup(
-                  settingsGroupTitle: "Admin utilities",
+                  settingsGroupTitle: "User settings",
                   items: [
                     SettingsItem(
                       onTap: () {
@@ -168,16 +170,18 @@ class _UserPageState extends State<UserPage> {
                         items: [
                           SettingsItem(
                             onTap: () {
-                              
+                              MyApp.navigatorKey.currentState!.push(
+                                MaterialPageRoute(builder: (context) => const BulkDeleteUsersPage()));
                             },
-                            titleText: 'Delete user',
+                            titleText: 'Delete users',
                             leadingIcon: const Icon(Icons.delete_forever, color: Colors.black)
                           ),
                           SettingsItem(
                             onTap: () {
-                              
+                              MyApp.navigatorKey.currentState!.push(
+                                MaterialPageRoute(builder: (context) => const ManageUsersPrivilegesPage()));
                             },
-                            titleText: 'Manage admin settings',
+                            titleText: 'Manage users privileges',
                             leadingIcon: const Icon(Icons.admin_panel_settings, color: Colors.black)
                           ),
                         ],

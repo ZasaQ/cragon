@@ -58,3 +58,16 @@ export const deleteDragonDocumentOnDirectoryRemoval = functions
       console.error("Error deleting Firestore document:", error);
     }
   });
+
+export const deleteFirebaseAuthUser = functions.https.onCall(async (data) => {
+  const uid = data.uid;
+  try {
+    await admin.auth().revokeRefreshTokens(uid);
+    await admin.auth().deleteUser(uid);
+    console.log("Successfully deleted user with UID: ${uid}");
+    return null;
+  } catch (error) {
+    console.error("Error deleting user with UID: ${uid}", error);
+    return null;
+  }
+});

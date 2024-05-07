@@ -24,6 +24,36 @@ void showAlertMessage(final String message) {
   ));
 }
 
+void showConfirmationMessage(final String message, Function() onPressed) {
+  showDialog<String>(context: MyApp.navigatorKey.currentContext!, builder: (context) => Center(
+    child: AlertDialog(
+      backgroundColor: const Color.fromRGBO(128, 128, 0, 1),
+      title: Text(
+        message,
+        style: const TextStyle(color: Colors.black),
+        textAlign: TextAlign.center
+      ),
+      actions: <Widget>[
+        Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              TextButton(
+                onPressed: onPressed,
+                child: const Text('Confirm'),
+              ),
+              TextButton(
+                onPressed: () {Navigator.of(context).pop();},
+                child: const Text('Cancel'),
+              ),
+            ],
+          ),
+        )
+      ]
+    )
+  ));
+}
+
 Future<Uint8List> pickImage(ImageSource source) async {
   final ImagePicker imagePicker = ImagePicker();
   XFile? pickedImage = await imagePicker.pickImage(source: source);

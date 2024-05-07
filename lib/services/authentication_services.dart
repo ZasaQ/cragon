@@ -1,14 +1,15 @@
-import 'package:cragon/main.dart';
-import 'package:cragon/services/firestore_data_handler.dart';
 import 'package:flutter/material.dart';
-
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'dart:developer' as developer;
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
+import 'package:cragon/main.dart';
 import 'package:cragon/services/utilities.dart';
+import 'package:cragon/services/firestore_data_handler.dart';
+
 
 class AuthenticationServices {
   Future authenticateGoogleUser({required BuildContext context}) async {
@@ -276,7 +277,7 @@ class AuthenticationServices {
     User? currentUser = FirebaseAuth.instance.currentUser;
 
     if (currentUser == null) {
-      developer.log("Log: deleteUser() -> currentUser is null");
+      developer.log("Log: deleteCurrentUser() -> currentUser is null");
       return;
     }
 
@@ -296,6 +297,24 @@ class AuthenticationServices {
       developer.log("Log: deleteCurrentUser() -> user has been deleted correctly");
     } on FirebaseAuthException catch (e) {
       developer.log("Log: deleteCurrentUser() -> $e");
+    }
+  }
+
+  Future<void> deleteUser({required String uid}) async {
+    try {
+      final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('deleteFirebaseAuthUser');
+      await callable.call({'uid' : uid});
+
+      await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .delete();
+
+      await FirestoreDataHandler().removeUserAvatarImage(inUid: uid);
+
+      developer.log("Log: deleteUser() -> user has been deleted correctly");
+    } on FirebaseAuthException catch (e) {
+      developer.log("Log: deleteUser() -> $e");
     }
   }
 }

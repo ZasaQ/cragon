@@ -70,10 +70,16 @@ class FirestoreDataHandler {
       }
   }
 
-  Future<void> removeUserAvatarImage() async {
+  Future<void> removeUserAvatarImage({String inUid = ""}) async {
     try {
-      String uid = FirebaseAuth.instance.currentUser!.uid;
-      String imageUrl = await getUserAvatarImage();
+      String uid;
+      if (inUid.isEmpty) {
+        uid = FirebaseAuth.instance.currentUser!.uid;
+      } else {
+        uid = inUid;
+      }
+
+      String imageUrl = await getUserAvatarImage(inUid: uid);
 
       if (imageUrl.isEmpty) {
         developer.log("Log: Avatar image is already empty");
@@ -95,9 +101,15 @@ class FirestoreDataHandler {
   }
 
   
-  Future<String> getUserAvatarImage() async {
+  Future<String> getUserAvatarImage({String inUid = ""}) async {
     try {
-      String uid = FirebaseAuth.instance.currentUser!.uid;
+      String uid;
+
+      if (inUid.isEmpty) {
+        uid = FirebaseAuth.instance.currentUser!.uid;
+      } else {
+        uid = inUid;
+      }
 
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
           await FirebaseFirestore.instance.collection('users').where('uid', isEqualTo: uid).get();
