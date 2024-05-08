@@ -53,7 +53,15 @@ class _UserPageState extends State<UserPage> {
                         if (userSnapshot.connectionState == ConnectionState.waiting) {
                           return const CircularProgressIndicator();
                         }
-                    
+
+                        if (!userSnapshot.hasData) {
+                          return const CircularProgressIndicator();
+                        }
+
+                        if (!userSnapshot.data!.exists) {
+                          return const CircularProgressIndicator();
+                        }
+                         
                         Map<String, dynamic> userData = userSnapshot.data!.data() as Map<String, dynamic>;
                         String avatarImageUrl = userData["avatarImage"].toString();
                     
@@ -64,6 +72,7 @@ class _UserPageState extends State<UserPage> {
                         );
                       }
                     ),
+
                     Positioned(
                       bottom: 0,
                       right: -10,
@@ -73,7 +82,7 @@ class _UserPageState extends State<UserPage> {
                           if (image.isEmpty) {
                             return;
                           }
-                
+
                           FirestoreDataHandler().updateUserAvatarImage(image: image);
                         },
                         style: ButtonStyle(
@@ -160,6 +169,10 @@ class _UserPageState extends State<UserPage> {
                     if (userSnapshot.connectionState == ConnectionState.waiting) {
                       return const CircularProgressIndicator();
                     }
+
+                    if (userSnapshot.data?.data() == null) {
+                        return const CircularProgressIndicator();
+                    }             
                 
                     Map<String, dynamic> userData = userSnapshot.data!.data() as Map<String, dynamic>;
                     bool isAdmin = userData['isAdmin'];

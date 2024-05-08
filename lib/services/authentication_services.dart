@@ -65,7 +65,7 @@ class AuthenticationServices {
             'isAdmin': false,
             'token': token,
             'avatarImage': "",
-            'caughtDragons': [""]
+            'caughtDragons': [],
           },
         );
         developer.log("Log: user ${currentUser?.email} has been added to collection");
@@ -148,7 +148,7 @@ class AuthenticationServices {
             'isAdmin': false,
             'token': token,
             'avatarImage': "",
-            'caughtDragons': [""]
+            'caughtDragons': [],
           },
         ).then((value) => userCreated = true);
         developer.log("Log: user ${userCredential.user?.email} has been added to collection");
@@ -275,24 +275,31 @@ class AuthenticationServices {
 
   void deleteCurrentUser() async {
     User? currentUser = FirebaseAuth.instance.currentUser;
+    String avatarImage = "";
 
     if (currentUser == null) {
       developer.log("Log: deleteCurrentUser() -> currentUser is null");
       return;
     }
 
-    try {    
+    try {
+      await usersCollection.doc(currentUser.uid).get().then((DocumentSnapshot userSnapshot) {
+        avatarImage = userSnapshot.get("avatarImage") as String;
+      });
+
       await FirebaseFirestore.instance
         .collection('users')
         .doc(currentUser.uid)
         .delete();
 
-      await FirestoreDataHandler().removeUserAvatarImage();
+      if (avatarImage.isNotEmpty) {
+        await FirestoreDataHandler().removeUserAvatarImage();
+      }
 
       await currentUser.delete();
       FirebaseAuth.instance.signOut();
 
-      MyApp.navigatorKey.currentState!.pushNamedAndRemoveUntil("/login", (route) => false);
+      await MyApp.navigatorKey.currentState!.pushNamedAndRemoveUntil("/login", (route) => false);
 
       developer.log("Log: deleteCurrentUser() -> user has been deleted correctly");
     } on FirebaseAuthException catch (e) {

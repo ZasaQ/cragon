@@ -141,19 +141,27 @@ class _HomeState extends State<HomePage> {
                       .collection("users")
                       .doc(FirebaseAuth.instance.currentUser?.uid)
                       .snapshots(),
-                    builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                      if (snapshot.hasError) {
-                        return Text("Error while loading user's account: ${snapshot.error.toString()}");
+                    builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> userSnapshot) {
+                      if (userSnapshot.hasError) {
+                        return Text("Error while loading user's account: ${userSnapshot.error.toString()}");
                       }
                   
-                      if (snapshot.connectionState == ConnectionState.waiting) {
+                      if (userSnapshot.connectionState == ConnectionState.waiting) {
                         return const CircularProgressIndicator();
                       }
 
-                      List<dynamic> usersCaughtDragons = snapshot.data?.get("caughtDragons");
+                      if (!userSnapshot.data!.exists) {
+                        return const CircularProgressIndicator();
+                      }
+
+                      List<dynamic> usersCaughtDragons = userSnapshot.data!.get("caughtDragons");
                       List<String> usersCaughtDragonsValues = [];
 
-                      utilCaughtDragonsAmount = usersCaughtDragons.length;
+                      if (usersCaughtDragons.isEmpty || usersCaughtDragons.first == "") {
+                        utilCaughtDragonsAmount = 0;
+                      } else {
+                        utilCaughtDragonsAmount = usersCaughtDragons.length;
+                      }
 
                       for (var element in usersCaughtDragons) {
                         usersCaughtDragonsValues.add(element.toString());
@@ -183,7 +191,7 @@ class _HomeState extends State<HomePage> {
 
                                 return ExpansionTile(
                                   leading: isDragonCaught ? const Icon(Icons.check) : null,
-                                  title:Text(dragonData["displayName"], style: const TextStyle(fontWeight: FontWeight.bold)),
+                                  title: Text(dragonData["displayName"], style: const TextStyle(fontWeight: FontWeight.bold)),
                                   children: <Widget>[
                                     Wrap(
                                       children: [
