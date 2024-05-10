@@ -189,48 +189,62 @@ class _HomeState extends State<HomePage> {
                                 bool isDragonCaught = usersCaughtDragonsValues.contains(
                                   dragonData["directoryName"]);
 
-                                return ExpansionTile(
-                                  leading: isDragonCaught ? const Icon(Icons.check) : null,
-                                  title: Text(dragonData["displayName"], style: const TextStyle(fontWeight: FontWeight.bold)),
-                                  children: <Widget>[
-                                    Wrap(
-                                      children: [
-                                        TextButton(
-                                          onPressed: () {
-                                            MyApp.navigatorKey.currentState!.push(
-                                              MaterialPageRoute(builder: (context) =>
-                                                DragonPage(dragonDirectoryName: dragonData["directoryName"].toString(),
-                                                            dragonDisplayName: dragonData["displayName"].toString())
-                                              )
-                                            );
-                                          },
-                                          child: const Text("Show Gallery", style: TextStyle(color: Colors.black))
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            MyApp.navigatorKey.currentState!.push(
-                                              MaterialPageRoute(builder: (context) => 
-                                                MapPage(dragonLocation: dragonData['dragonLocation'])
-                                              )
-                                            );
-                                          },
-                                          child: const Text("Navigate", style: TextStyle(color: Colors.black))
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            FirestoreDataHandler().manageDragon(dragonDirectoryName: dragonData["directoryName"], toCatch: true);
-                                          },
-                                          child: const Text("Catch Dragon", style: TextStyle(color: Colors.black))
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            FirestoreDataHandler().manageDragon(dragonDirectoryName: dragonData["directoryName"], toCatch: false);
-                                          },
-                                          child: const Text("Release Dragon", style: TextStyle(color: Colors.black))
-                                        ),
-                                      ],
-                                    )
-                                  ],
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    color: isDragonCaught
+                                    ? const Color.fromRGBO(0, 0, 0, 0.2)
+                                    : const Color.fromRGBO(0, 0, 0, 0.1)
+                                  ),
+                                  child: ExpansionTile(
+                                    leading: isDragonCaught ? const Icon(Icons.check) : null,
+                                    
+                                    title: Text(
+                                      dragonData["displayName"],
+                                      style: isDragonCaught 
+                                        ? const TextStyle(fontWeight: FontWeight.bold,
+                                            decoration: TextDecoration.lineThrough)
+                                        : const TextStyle(fontWeight: FontWeight.bold)
+                                    ),
+                                    children: <Widget>[
+                                      Wrap(
+                                        children: [
+                                          TextButton(
+                                            onPressed: () {
+                                              MyApp.navigatorKey.currentState!.push(
+                                                MaterialPageRoute(builder: (context) =>
+                                                  DragonPage(dragonDirectoryName: dragonData["directoryName"].toString(),
+                                                              dragonDisplayName: dragonData["displayName"].toString())
+                                                )
+                                              );
+                                            },
+                                            child: const Text("Show Gallery", style: TextStyle(color: Colors.black))
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              MyApp.navigatorKey.currentState!.push(
+                                                MaterialPageRoute(builder: (context) => 
+                                                  MapPage(dragonLocation: dragonData['dragonLocation'])
+                                                )
+                                              );
+                                            },
+                                            child: const Text("Navigate", style: TextStyle(color: Colors.black))
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              FirestoreDataHandler().manageDragon(dragonDirectoryName: dragonData["directoryName"], toCatch: true);
+                                            },
+                                            child: const Text("Catch Dragon", style: TextStyle(color: Colors.black))
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              FirestoreDataHandler().manageDragon(dragonDirectoryName: dragonData["directoryName"], toCatch: false);
+                                            },
+                                            child: const Text("Release Dragon", style: TextStyle(color: Colors.black))
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
                                 );
                               }).toList()
                             ),
