@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:camera/camera.dart';
 import 'dart:developer' as developer;
 
-import 'package:cragon/components/user_avatar.dart';
 import 'package:cragon/main.dart';
-import 'package:cragon/pages/camera_page.dart';
-import 'package:cragon/pages/user_page.dart';
-import 'package:cragon/services/authentication_services.dart';
 import 'package:cragon/pages/dragon_page.dart';
 import 'package:cragon/services/firestore_data_handler.dart';
 import 'package:cragon/pages/map_page.dart';
 import 'package:cragon/services/utilities.dart';
+import 'package:cragon/components/bottom_navigation_bar.dart';
+import 'package:cragon/components/floating_camera_button.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -23,25 +20,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomeState extends State<HomePage> {
-  late CameraDescription firstCamera;
-
-  Future<CameraDescription?> initBackCamera() async {
-  final cameras = await availableCameras();
-
-  for (var inCamera in cameras) {
-    if (inCamera.lensDirection == CameraLensDirection.back) {
-      return inCamera;
-    }
-  }
-  
-  return null;
-}
-
   @override
   initState() {
     super.initState();
 
-    initBackCamera().then((value) => firstCamera = value!);
+    if (utilFirstCamera == null) {
+      initBackCamera().then((value) => utilFirstCamera = value!).then(
+        (value) => developer.log("Log: initBackCamera() -> $value")
+      );
+    }
+
+    developer.log("Log: User has entered HomePage()");
   }
 
   @override
@@ -50,83 +39,13 @@ class _HomeState extends State<HomePage> {
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Color.fromRGBO(128, 128, 0, 1)),
         backgroundColor: const Color.fromRGBO(38, 45, 53, 1),
-        title: const Text("Cragon", style: TextStyle(color: Color.fromRGBO(128, 128, 0, 1)),),
-        actions: <Widget> [
-          IconButton(
-            icon: const Icon(Icons.camera),
-            tooltip: 'Open Camera',
-            onPressed: () {
-              MyApp.navigatorKey.currentState!.push(
-                MaterialPageRoute(builder: (context) => CameraPage(camera: firstCamera)));
-            },
+        centerTitle: true,
+        title: const Text(
+          "Cragon",
+          style: TextStyle(
+            color: Color.fromRGBO(128, 128, 0, 1),
+            fontWeight: FontWeight.bold
           ),
-        ],
-      ),
-      drawer: Drawer(
-        backgroundColor: const Color.fromRGBO(38, 45, 53, 1),
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            UserAccountsDrawerHeader(
-              accountEmail: Text(
-                FirebaseAuth.instance.currentUser!.email.toString(),
-                style: const TextStyle(color:  Color.fromRGBO(38, 45, 53, 1), fontSize: 20)
-              ),
-              accountName: null,
-              currentAccountPicture: GestureDetector(
-                onTap: () {
-                  MyApp.navigatorKey.currentState!.push(
-                    MaterialPageRoute(builder: (context) => const UserPage()));
-                },
-                child: FutureBuilder<Widget>(
-                  future: userAvatarViaFuture(radius: 40),
-                  builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
-                    } else if (snapshot.hasError) {
-                      developer.log("Log: Snapshot error -> ${snapshot.error}");
-                      return Text("Log: Snapshot error -> ${snapshot.error}");
-                    } else {
-                      return Align(
-                        alignment: Alignment.topCenter,
-                        child: snapshot.data!,
-                      );
-                    }
-                  },
-                ),
-              ),
-              currentAccountPictureSize: const Size.fromRadius(40),
-            ),
-
-            ListTile(
-              leading: const Icon(Icons.settings, color: Color.fromRGBO(128, 128, 0, 1),),
-              title: const Text("Settings", style: TextStyle(fontSize: 18)),
-              titleTextStyle: const TextStyle(color: Color.fromRGBO(128, 128, 0, 1)),
-              onTap: () {
-                MyApp.navigatorKey.currentState!.push(
-                  MaterialPageRoute(builder: (context) => const Placeholder()));
-              },
-            ),
-
-            ListTile(
-              leading: const Icon(Icons.map, color: Color.fromRGBO(128, 128, 0, 1),),
-              title: const Text("Map", style: TextStyle(fontSize: 18)),
-              titleTextStyle: const TextStyle(color: Color.fromRGBO(128, 128, 0, 1)),
-              onTap: () {
-                MyApp.navigatorKey.currentState!.push(
-                  MaterialPageRoute(builder: (context) => const Placeholder()));
-              },
-            ),
-
-            ListTile(
-              leading: const Icon(Icons.logout, color: Color.fromRGBO(128, 128, 0, 1),),
-              title: const Text("Log out", style: TextStyle(fontSize: 18)),
-              titleTextStyle: const TextStyle(color: Color.fromRGBO(128, 128, 0, 1)),
-              onTap: () {
-                AuthenticationServices().signOutCurrentUser();
-              },
-            )
-          ],
         ),
       ),
       body: Container(
@@ -259,6 +178,9 @@ class _HomeState extends State<HomePage> {
           ],
         ),
       ),
+      bottomNavigationBar: bottomNavigationBar(),
+      floatingActionButton: floatingCameraButton(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

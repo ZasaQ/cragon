@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:developer' as developer;
 import 'dart:typed_data';
@@ -10,6 +11,7 @@ CollectionReference usersCollection = FirebaseFirestore.instance.collection("use
 CollectionReference dragonsCollection = FirebaseFirestore.instance.collection("dragons");
 int utilDragonsAmount = 0;
 int utilCaughtDragonsAmount = 0;
+CameraDescription? utilFirstCamera;
 
 void showAlertMessage(final String message) {
   showDialog<String>(context: MyApp.navigatorKey.currentContext!, builder: (context) => Center(
@@ -59,9 +61,21 @@ Future<Uint8List> pickImage(ImageSource source) async {
   XFile? pickedImage = await imagePicker.pickImage(source: source);
 
   if (pickedImage == null) {
-    developer.log("Log: No image picked");
+    developer.log("Log: pickImage() -> No image picked");
     return Uint8List(0);
   }
 
   return await pickedImage.readAsBytes();
+}
+
+Future<CameraDescription?> initBackCamera() async {
+  final cameras = await availableCameras();
+
+  for (var inCamera in cameras) {
+    if (inCamera.lensDirection == CameraLensDirection.back) {
+      return inCamera;
+    }
+  }
+  
+  return null;
 }
