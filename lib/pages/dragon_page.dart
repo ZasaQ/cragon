@@ -90,6 +90,10 @@ class _DragonPageState extends State<DragonPage> {
 
           Container(
             margin: const EdgeInsets.only(bottom: 50),
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Color.fromRGBO(0, 0, 0, 0.1), // Set the background color here
+            ),
             child: IconButton(
               iconSize: 50,
               icon: const Icon(Icons.location_pin),

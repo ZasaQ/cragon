@@ -56,8 +56,12 @@ class _MapPageState extends State<MapPage> {
         title: const Text(
           "Navigation",
           textAlign: TextAlign.center,
-          style: TextStyle(color: Color.fromRGBO(128, 128, 0, 1),)
+          style: TextStyle(
+            color: Color.fromRGBO(128, 128, 0, 1),
+            fontWeight: FontWeight.bold
+          )
         ),
+        centerTitle: true,
         iconTheme: const IconThemeData(color: Color.fromRGBO(128, 128, 0, 1)),
         backgroundColor: const Color.fromRGBO(38, 45, 53, 1),
         actions: <Widget>[
