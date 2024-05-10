@@ -1,10 +1,10 @@
-import 'package:cragon/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
 
 import 'package:cragon/main.dart';
 import 'package:cragon/pages/user_page.dart';
 import 'package:cragon/services/authentication_services.dart';
+import 'package:cragon/pages/home_page.dart';
 
 
 Widget bottomNavigationBar() {

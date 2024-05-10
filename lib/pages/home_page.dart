@@ -39,7 +39,6 @@ class _HomeState extends State<HomePage> {
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Color.fromRGBO(128, 128, 0, 1)),
         backgroundColor: const Color.fromRGBO(38, 45, 53, 1),
-        centerTitle: true,
         title: const Text(
           "Cragon",
           style: TextStyle(
@@ -47,6 +46,7 @@ class _HomeState extends State<HomePage> {
             fontWeight: FontWeight.bold
           ),
         ),
+        centerTitle: true,
       ),
       body: Container(
         decoration: const BoxDecoration(color: Color.fromRGBO(128, 128, 0, 1)),
@@ -76,6 +76,8 @@ class _HomeState extends State<HomePage> {
                       List<dynamic> usersCaughtDragons = userSnapshot.data!.get("caughtDragons");
                       List<String> usersCaughtDragonsValues = [];
 
+                      bool userIsAdmin = userSnapshot.data!.get("isAdmin");
+
                       if (usersCaughtDragons.isEmpty || usersCaughtDragons.first == "") {
                         utilCaughtDragonsAmount = 0;
                       } else {
@@ -101,7 +103,7 @@ class _HomeState extends State<HomePage> {
 
                           utilDragonsAmount = dragonsSnapshot.data!.docs.length;
 
-                          return Expanded(
+                          return Flexible(
                             child: ListView(
                               children: dragonsSnapshot.data!.docs.map((DocumentSnapshot document) {
                                 Map<String,dynamic> dragonData = document.data()! as Map<String, dynamic>;
@@ -115,7 +117,9 @@ class _HomeState extends State<HomePage> {
                                     : const Color.fromRGBO(0, 0, 0, 0.1)
                                   ),
                                   child: ExpansionTile(
-                                    leading: isDragonCaught ? const Icon(Icons.check) : null,
+                                    leading: isDragonCaught
+                                      ? const Icon(Icons.check)
+                                      : null,
                                     
                                     title: Text(
                                       dragonData["displayName"],
@@ -126,18 +130,22 @@ class _HomeState extends State<HomePage> {
                                     ),
                                     children: <Widget>[
                                       Wrap(
+                                        alignment: WrapAlignment.center,
                                         children: [
                                           TextButton(
                                             onPressed: () {
-                                              MyApp.navigatorKey.currentState!.push(
+                                              MyApp.navigatorKey.currentState!.pushReplacement(
                                                 MaterialPageRoute(builder: (context) =>
-                                                  DragonPage(dragonDirectoryName: dragonData["directoryName"].toString(),
-                                                              dragonDisplayName: dragonData["displayName"].toString())
+                                                  DragonPage(dragonData: dragonData)
                                                 )
                                               );
                                             },
-                                            child: const Text("Show Gallery", style: TextStyle(color: Colors.black))
+                                            child: const Text(
+                                              "Show Gallery",
+                                              style: TextStyle(color: Colors.black)
+                                            )
                                           ),
+
                                           TextButton(
                                             onPressed: () {
                                               MyApp.navigatorKey.currentState!.push(
@@ -146,20 +154,41 @@ class _HomeState extends State<HomePage> {
                                                 )
                                               );
                                             },
-                                            child: const Text("Navigate", style: TextStyle(color: Colors.black))
+                                            child: const Text(
+                                              "Navigate",
+                                              style: TextStyle(color: Colors.black)
+                                            )
                                           ),
-                                          TextButton(
-                                            onPressed: () {
-                                              FirestoreDataHandler().manageDragon(dragonDirectoryName: dragonData["directoryName"], toCatch: true);
-                                            },
-                                            child: const Text("Catch Dragon", style: TextStyle(color: Colors.black))
-                                          ),
-                                          TextButton(
-                                            onPressed: () {
-                                              FirestoreDataHandler().manageDragon(dragonDirectoryName: dragonData["directoryName"], toCatch: false);
-                                            },
-                                            child: const Text("Release Dragon", style: TextStyle(color: Colors.black))
-                                          ),
+
+                                          userIsAdmin
+                                          ? TextButton(
+                                              onPressed: () {
+                                                FirestoreDataHandler().manageDragon(
+                                                  dragonDirectoryName: dragonData["directoryName"].toString(),
+                                                  toCatch: true
+                                                );
+                                              },
+                                              child: const Text(
+                                                "Catch Dragon",
+                                                style: TextStyle(color: Colors.black)
+                                              )
+                                            )
+                                          : Container(),
+
+                                          userIsAdmin
+                                          ? TextButton(
+                                              onPressed: () {
+                                                FirestoreDataHandler().manageDragon(
+                                                  dragonDirectoryName: dragonData["directoryName"].toString(),
+                                                  toCatch: false
+                                                );
+                                              },
+                                              child: const Text(
+                                                "Release Dragon",
+                                                style: TextStyle(color: Colors.black)
+                                              )
+                                            )
+                                          : Container()
                                         ],
                                       )
                                     ],

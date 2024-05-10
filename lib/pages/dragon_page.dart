@@ -1,16 +1,20 @@
+import 'package:cragon/main.dart';
+import 'package:cragon/pages/map_page.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer' as developer;
+
+import 'package:cragon/components/bottom_navigation_bar.dart';
+import 'package:cragon/components/floating_camera_button.dart';
 import 'package:cragon/services/firestore_data_handler.dart';
 
 
 class DragonPage extends StatefulWidget {
   const DragonPage({
     super.key,
-    required this.dragonDirectoryName,
-    required this.dragonDisplayName
+    required this.dragonData,
   });
 
-  final String dragonDirectoryName;
-  final String dragonDisplayName;
+  final Map<String,dynamic> dragonData;
 
   @override
   State<DragonPage> createState() => _DragonPageState();
@@ -19,8 +23,9 @@ class DragonPage extends StatefulWidget {
 class _DragonPageState extends State<DragonPage> {
   @override
   void initState() {
-
     super.initState();
+
+    developer.log("Log: User has entered DragonPage()");
   }
 
   @override
@@ -30,50 +35,78 @@ class _DragonPageState extends State<DragonPage> {
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Color.fromRGBO(128, 128, 0, 1)),
         backgroundColor: const Color.fromRGBO(38, 45, 53, 1),
-        title: Text(widget.dragonDisplayName, style: const TextStyle(color: Color.fromRGBO(128, 128, 0, 1))),
+        title: Text(
+          widget.dragonData["displayName"],
+          style: const TextStyle(color: Color.fromRGBO(128, 128, 0, 1), fontWeight: FontWeight.bold)
+        ),
+        centerTitle: true,
       ),
-      body: FutureBuilder<List<Image>>(
-        future: FirestoreDataHandler().getDragonGallery(widget.dragonDirectoryName),
-        builder: (context, imageSnapshot) {   
-          if (imageSnapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
-          }
-
-          if (imageSnapshot.hasError) {
-            return Text('Error: ${imageSnapshot.error.toString()}');
-          }
-
-          List<Image>? imageWidgets = imageSnapshot.data;
-
-          return GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 5,
-              mainAxisSpacing: 5,
+      body: Column(
+        children: [
+          Flexible(
+            child: FutureBuilder<List<Image>>(
+              future: FirestoreDataHandler().getDragonGallery(widget.dragonData["directoryName"]),
+              builder: (context, imageSnapshot) {
+                if (imageSnapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                }
+            
+                if (imageSnapshot.hasError) {
+                  return Text('Error: ${imageSnapshot.error.toString()}');
+                }
+            
+                List<Image>? imageWidgets = imageSnapshot.data;
+            
+                return GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 5,
+                  ),
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Dialog(
+                              child: Image(image: imageWidgets[index].image),
+                            );
+                          },
+                        );
+                      },
+                      child: Ink.image(
+                        image: imageWidgets[index].image,
+                        height: 300,
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  },
+                  itemCount: imageWidgets!.length,
+                );
+              }
             ),
-            itemBuilder: (context, index) {
-              return InkWell(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Dialog(
-                        child: Image(image: imageWidgets[index].image),
-                      );
-                    },
-                  );
-                },
-                child: Ink.image(
-                  image: imageWidgets[index].image,
-                  height: 300,
-                  fit: BoxFit.cover,
-                ),
-              );
-            },
-            itemCount: imageWidgets!.length,
-          );
-        }
-      )
+          ),
+
+          Container(
+            margin: const EdgeInsets.only(bottom: 50),
+            child: IconButton(
+              iconSize: 50,
+              icon: const Icon(Icons.location_pin),
+              onPressed: () {
+                MyApp.navigatorKey.currentState!.push(
+                  MaterialPageRoute(builder: (context) => 
+                    MapPage(dragonLocation: widget.dragonData['dragonLocation'])
+                  )
+                );
+              },
+            )
+          )
+        ],
+      ),
+      bottomNavigationBar: bottomNavigationBar(),
+      floatingActionButton: floatingCameraButton(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
