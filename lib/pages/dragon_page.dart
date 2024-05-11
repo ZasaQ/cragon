@@ -45,7 +45,7 @@ class _DragonPageState extends State<DragonPage> {
         children: [
           Flexible(
             child: FutureBuilder<List<Image>>(
-              future: FirestoreDataHandler().getDragonGallery(widget.dragonData["directoryName"]),
+              future: FirestoreDataHandler().getDragonGalleryImages(widget.dragonData["directoryName"]),
               builder: (context, imageSnapshot) {
                 if (imageSnapshot.connectionState == ConnectionState.waiting) {
                   return const CircularProgressIndicator();

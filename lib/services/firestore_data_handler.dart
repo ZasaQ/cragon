@@ -14,7 +14,7 @@ class FirestoreDataHandler {
   final String avatarImageDirectory = "avatarImages";
   final String dragonsDirectory = "dragonsGalleries";
 
-  Future<List<Image>> getDragonGallery(String dragonDirectoryName) async {
+  Future<List<Image>> getDragonGalleryImages(String dragonDirectoryName) async {
     Reference ref = firebaseStorage.ref().child(dragonsDirectory).child(dragonDirectoryName);
     ListResult refList = await ref.listAll();
     List<Image> imageWidgets = [];
@@ -31,6 +31,24 @@ class FirestoreDataHandler {
     });
 
     return imageWidgets;
+  }
+
+  Future<List<String>> getDragonGalleryUrl(String dragonDirectoryName) async {
+    Reference ref = firebaseStorage.ref().child(dragonsDirectory).child(dragonDirectoryName);
+    ListResult refList = await ref.listAll();
+    List<String> imagesUrl = [];
+
+    if (refList.items.isEmpty) {
+      developer.log("Log: getDragonGallery() -> refList.items.isEmpty");
+      return [];
+    }
+
+    await Future.forEach(refList.items, (Reference reference) async {
+      String downloadURL = await reference.getDownloadURL();
+      imagesUrl.add(downloadURL);
+    });
+
+    return imagesUrl;
   }
 
   Future<String> uploadImageToFirebaseStorage(String fileDirectory, Uint8List image) async {
