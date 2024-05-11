@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'dart:async';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:developer' as developer;
@@ -14,6 +16,10 @@ int utilCaughtDragonsAmount = 0;
 CameraDescription? utilFirstCamera;
 
 void showAlertMessage(final String message) {
+  Timer timer = Timer(const Duration(seconds: 2), () {
+    Navigator.of(MyApp.navigatorKey.currentContext!).pop();
+  });
+
   showDialog<String>(context: MyApp.navigatorKey.currentContext!, builder: (context) => Center(
     child: AlertDialog(
       backgroundColor: const Color.fromRGBO(128, 128, 0, 1),
@@ -23,7 +29,7 @@ void showAlertMessage(final String message) {
         textAlign: TextAlign.center
       )
     )
-  ));
+  )).then((value) => timer.cancel());
 }
 
 void showConfirmationMessage(final String message, Function() onPressed) {
