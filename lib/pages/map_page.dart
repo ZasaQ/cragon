@@ -1,5 +1,6 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:cragon/services/api_utils.dart";
+import "package:cragon/services/utilities.dart";
 import "package:flutter/material.dart";
 import "package:google_maps_flutter/google_maps_flutter.dart";
 import "package:flutter_polyline_points/flutter_polyline_points.dart";
@@ -21,16 +22,18 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-  final LatLng defaultLocation                       = const LatLng(50.061814, 19.939275);
+  final LatLng defaultLocation = const LatLng(50.061814, 19.939275);
   LatLng? currentLocation;
-  final double defaultZoom                           = 16.0;
+  final double defaultZoom = 16.0;
   double? currentZoom;
-  Location locationController                        = Location();
+  Location locationController = Location();
   final Completer<GoogleMapController> mapController = Completer<GoogleMapController>();
   late StreamSubscription<LocationData> locationListener;
   BitmapDescriptor? dragonIcon;
   Map<PolylineId, Polyline> polylines = {};
   bool followUser = true;
+  bool isUserInteracting = false;
+  bool isProgrammaticMove = false;
 
   @override
   void initState() {
@@ -85,9 +88,29 @@ class _MapPageState extends State<MapPage> {
             ),
             onMapCreated: (GoogleMapController controller) =>
               mapController.complete(controller),
+            onCameraMoveStarted: () {
+              if (!isProgrammaticMove) {
+                setState(() {
+                  isUserInteracting = true;
+                });
+                developer.log("Log: Camera movement started by user.");
+                followUser = false;
+              }
+            },
             onCameraMove: (position) {
               if (position.zoom != currentZoom) {
                 currentZoom = position.zoom;
+              }
+            },
+            onCameraIdle: () {
+              if (isUserInteracting) {
+                setState(() {
+                  isUserInteracting = false;
+                });
+                developer.log("Log: Camera movement stopped by user.");
+              }
+              if (isProgrammaticMove) {
+                isProgrammaticMove = false;
               }
             },
             markers: {
@@ -99,7 +122,13 @@ class _MapPageState extends State<MapPage> {
               Marker(
                 markerId: const MarkerId("dragonLocation"),
                 icon: dragonIcon ?? BitmapDescriptor.defaultMarker,
-                position: LatLng(widget.dragonLocation.latitude, widget.dragonLocation.longitude)
+                position: LatLng(widget.dragonLocation.latitude, widget.dragonLocation.longitude),
+                infoWindow: InfoWindow(
+                  title: 'Navigate to',
+                  onTap: () {
+                    showAlertMessage("hehe");
+                  }
+                )
               ),
             },
             polylines: Set<Polyline>.of(polylines.values)
@@ -109,6 +138,9 @@ class _MapPageState extends State<MapPage> {
 
   Future<void> cameraToPosition(LatLng toPosition) async {
     final GoogleMapController controller = await mapController.future;
+    setState(() {
+      isProgrammaticMove = true;
+    });
     await controller.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(target: toPosition, zoom: currentZoom ?? defaultZoom)
