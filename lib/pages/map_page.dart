@@ -12,10 +12,10 @@ import "dart:async";
 class MapPage extends StatefulWidget {
   const MapPage({
     super.key,
-    required this.dragonLocation
+    this.dragonLocation
   });
 
-  final GeoPoint dragonLocation;
+  final GeoPoint? dragonLocation;
 
   @override
   State<MapPage> createState() => _MapPageState();
@@ -34,12 +34,44 @@ class _MapPageState extends State<MapPage> {
   bool followUser = true;
   bool isUserInteracting = false;
   bool isProgrammaticMove = false;
+  bool targetDragon = false;
+  Set<Marker> markers = {};
 
   @override
   void initState() {
     super.initState();
-      
     getCurrentLocationUpdated();
+    fetchMarkers();
+  }
+
+  Future<void> fetchMarkers() async {
+    final QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('dragons').get();
+    final List<QueryDocumentSnapshot> documents = snapshot.docs;
+
+    Set<Marker> inMarkers = documents.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      final GeoPoint location = data['dragonLocation'];
+      final String markerId = data['directoryName'];
+
+      return Marker(
+        markerId: MarkerId(markerId),
+        icon: dragonIcon ?? BitmapDescriptor.defaultMarker,
+        position: LatLng(location.latitude, location.longitude),
+        infoWindow: InfoWindow(
+          title: data['displayName'],
+          onTap: () {
+            targetDragon = true;
+          }
+        ),
+      );
+    }).toSet();
+
+    markers = inMarkers;
+    markers.add(Marker(
+                markerId: const MarkerId("currentLocation"),
+                icon: BitmapDescriptor.defaultMarker,
+                position: currentLocation!
+              ));
   }
 
   @override
@@ -122,16 +154,16 @@ class _MapPageState extends State<MapPage> {
               Marker(
                 markerId: const MarkerId("dragonLocation"),
                 icon: dragonIcon ?? BitmapDescriptor.defaultMarker,
-                position: LatLng(widget.dragonLocation.latitude, widget.dragonLocation.longitude),
+                position: LatLng(widget.dragonLocation!.latitude, widget.dragonLocation!.longitude),
                 infoWindow: InfoWindow(
                   title: 'Navigate to',
                   onTap: () {
-                    showAlertMessage("hehe");
+                    targetDragon = true;
                   }
                 )
               ),
             },
-            polylines: Set<Polyline>.of(polylines.values)
+            polylines: targetDragon ? Set<Polyline>.of(polylines.values) : const <Polyline>{}
           ),
     );
   }
@@ -199,7 +231,7 @@ class _MapPageState extends State<MapPage> {
     PolylineResult polylineResult = await polylinePoints.getRouteBetweenCoordinates(
       googleApiKey,
       PointLatLng(currentLocation!.latitude, currentLocation!.longitude),
-      PointLatLng(widget.dragonLocation.latitude, widget.dragonLocation.longitude),
+      PointLatLng(widget.dragonLocation!.latitude, widget.dragonLocation!.longitude),
       travelMode: TravelMode.walking
     );
     

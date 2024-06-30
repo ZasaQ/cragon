@@ -138,15 +138,13 @@ Future<AssetImage> getFirstImageInGallery(String directoryName) async {
                                         )
                                         : null,
                                       color: isDragonCaught
-                                      ? const Color.fromRGBO(0, 0, 0, 0.2)
-                                      : const Color.fromRGBO(0, 0, 0, 0.1)
+                                        ? const Color.fromRGBO(0, 0, 0, 0.2)
+                                        : const Color.fromRGBO(0, 0, 0, 0.1)
                                     ),
                                     child: ExpansionTile(
-                                      
                                       leading: isDragonCaught
                                         ? const Icon(Icons.check)
                                         : null,
-                                      
                                       title: Text(
                                         dragonData["displayName"],
                                         style: isDragonCaught 
@@ -171,7 +169,6 @@ Future<AssetImage> getFirstImageInGallery(String directoryName) async {
                                                 style: TextStyle(color: Colors.black)
                                               )
                                             ),
-      
                                             TextButton(
                                               onPressed: () {
                                                 MyApp.navigatorKey.currentState!.push(
@@ -185,7 +182,6 @@ Future<AssetImage> getFirstImageInGallery(String directoryName) async {
                                                 style: TextStyle(color: Colors.black)
                                               )
                                             ),
-      
                                             userIsAdmin
                                             ? TextButton(
                                                 onPressed: () {
@@ -200,7 +196,6 @@ Future<AssetImage> getFirstImageInGallery(String directoryName) async {
                                                 )
                                               )
                                             : Container(),
-      
                                             userIsAdmin
                                             ? TextButton(
                                                 onPressed: () {
