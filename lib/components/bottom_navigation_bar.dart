@@ -1,3 +1,4 @@
+import 'package:cragon/pages/map_page.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
 
@@ -46,7 +47,10 @@ Widget bottomNavigationBar() {
             Icons.map,
             color: Color.fromRGBO(128, 128, 0, 1),
           ),
-          onPressed: () {},
+          onPressed: () {
+            MyApp.navigatorKey.currentState!.push(
+                MaterialPageRoute(builder: (context) => MapPage()));
+          },
         ),
         IconButton(
           iconSize: 30,

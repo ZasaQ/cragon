@@ -1,6 +1,5 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:cragon/services/api_utils.dart";
-import "package:cragon/services/utilities.dart";
 import "package:flutter/material.dart";
 import "package:google_maps_flutter/google_maps_flutter.dart";
 import "package:flutter_polyline_points/flutter_polyline_points.dart";
@@ -10,12 +9,12 @@ import "dart:async";
 
 
 class MapPage extends StatefulWidget {
-  const MapPage({
+  MapPage({
     super.key,
     this.dragonLocation
   });
 
-  final GeoPoint? dragonLocation;
+  GeoPoint? dragonLocation;
 
   @override
   State<MapPage> createState() => _MapPageState();
@@ -41,12 +40,17 @@ class _MapPageState extends State<MapPage> {
   void initState() {
     super.initState();
     getCurrentLocationUpdated();
-    fetchMarkers();
   }
 
-  Future<void> fetchMarkers() async {
+  Future<void> fetchDragonMarkers() async {
     final QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('dragons').get();
     final List<QueryDocumentSnapshot> documents = snapshot.docs;
+
+    if (dragonIcon == null) {
+      await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(),
+        'lib/images/dragon_location_icon.png').then((onValue) {dragonIcon = onValue;});
+    }
 
     Set<Marker> inMarkers = documents.map((doc) {
       final data = doc.data() as Map<String, dynamic>;
@@ -59,19 +63,65 @@ class _MapPageState extends State<MapPage> {
         position: LatLng(location.latitude, location.longitude),
         infoWindow: InfoWindow(
           title: data['displayName'],
+          snippet: 'Navigate to',
           onTap: () {
-            targetDragon = true;
+            setState(() {
+              targetDragon = true;
+              widget.dragonLocation = location;
+              onDragonMarkerSelected(markerId);
+            });
           }
-        ),
+        )
       );
     }).toSet();
 
     markers = inMarkers;
     markers.add(Marker(
-                markerId: const MarkerId("currentLocation"),
-                icon: BitmapDescriptor.defaultMarker,
-                position: currentLocation!
-              ));
+            markerId: const MarkerId("currentLocation"),
+            icon: BitmapDescriptor.defaultMarker,
+            position: currentLocation!
+          ));
+  }
+
+  Future<void> onDragonMarkerSelected(String targetDragonId) async {
+    clearMarkers(targetDragonId);
+
+    final QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('dragons').get();
+    final List<QueryDocumentSnapshot> documents = snapshot.docs;
+
+    for (QueryDocumentSnapshot document in documents) {
+      Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
+
+      if (data == null) continue;
+
+      if (data['directoryName'] != targetDragonId) continue;
+
+      final GeoPoint location = data['dragonLocation'];
+
+      Marker targetDragonMarker = Marker(
+        markerId: MarkerId(targetDragonId),
+        icon: dragonIcon ?? BitmapDescriptor.defaultMarker,
+        position: LatLng(location.latitude, location.longitude),
+        infoWindow: InfoWindow(
+          title: data['displayName'],
+          snippet: 'Stop navigation',
+          onTap: () {
+            setState(() {
+              targetDragon = false;
+              fetchDragonMarkers();
+            });
+          }
+        )
+      );
+
+      markers.add(targetDragonMarker);
+      break;
+    }
+  }
+
+  void clearMarkers(String exceptionId) {
+    markers.removeWhere((element) =>
+      element.markerId.value != exceptionId && element.markerId.value != "currentLocation");
   }
 
   @override
@@ -82,10 +132,6 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    BitmapDescriptor.fromAssetImage(
-    const ImageConfiguration(),
-      'lib/images/dragon_location_icon.png').then((onValue) {dragonIcon = onValue;});
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -145,24 +191,7 @@ class _MapPageState extends State<MapPage> {
                 isProgrammaticMove = false;
               }
             },
-            markers: {
-              Marker(
-                markerId: const MarkerId("currentLocation"),
-                icon: BitmapDescriptor.defaultMarker,
-                position: currentLocation!
-              ),
-              Marker(
-                markerId: const MarkerId("dragonLocation"),
-                icon: dragonIcon ?? BitmapDescriptor.defaultMarker,
-                position: LatLng(widget.dragonLocation!.latitude, widget.dragonLocation!.longitude),
-                infoWindow: InfoWindow(
-                  title: 'Navigate to',
-                  onTap: () {
-                    targetDragon = true;
-                  }
-                )
-              ),
-            },
+            markers: markers,
             polylines: targetDragon ? Set<Polyline>.of(polylines.values) : const <Polyline>{}
           ),
     );
@@ -202,6 +231,11 @@ class _MapPageState extends State<MapPage> {
       }
     }
 
+    bool initUpdate = false;
+    if (currentLocation == null) {
+      initUpdate = true;
+    }
+
     locationListener = locationController.onLocationChanged.listen((LocationData newCurrentLocation) {
       if (newCurrentLocation.latitude == null || newCurrentLocation.longitude == null) {
         return;
@@ -211,11 +245,19 @@ class _MapPageState extends State<MapPage> {
         currentLocation = LatLng(newCurrentLocation.latitude!, newCurrentLocation.longitude!);
         developer.log("Log: currentLocation: $currentLocation");
 
+        if (initUpdate && currentLocation != null) {
+          fetchDragonMarkers();
+        }
+        initUpdate = false;
+
         if (followUser) {
           cameraToPosition(currentLocation!);
         }
 
-        generatePolylinePoints().then((coordinates) => generatePolylineRoute(coordinates));
+        if (targetDragon)
+        {
+          generatePolylinePoints().then((coordinates) => generatePolylineRoute(coordinates));
+        }
       });
     });
   }
