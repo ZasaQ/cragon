@@ -121,8 +121,6 @@ Future<AssetImage> getFirstImageInGallery(String directoryName) async {
                                   if (imageSnapshot.hasError) {
                                     developer.log(
                                       "Error while loading first image item: ${imageSnapshot.error.toString()}");
-                                    return Text(
-                                      "Error while loading first image item: ${imageSnapshot.error.toString()}");
                                   }
                               
                                   if (imageSnapshot.connectionState == ConnectionState.waiting) {
@@ -131,12 +129,14 @@ Future<AssetImage> getFirstImageInGallery(String directoryName) async {
       
                                   return Container(
                                     decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        alignment: Alignment.centerLeft,
-                                        image: NetworkImage(imageSnapshot.data!.assetName),
-                                        fit: BoxFit.cover,
-                                        opacity: 0.2
-                                      ),
+                                      image: !imageSnapshot.hasError 
+                                        ? DecorationImage(
+                                          alignment: Alignment.centerLeft,
+                                          image: NetworkImage(imageSnapshot.data!.assetName),
+                                          fit: BoxFit.cover,
+                                          opacity: 0.2
+                                        )
+                                        : null,
                                       color: isDragonCaught
                                       ? const Color.fromRGBO(0, 0, 0, 0.2)
                                       : const Color.fromRGBO(0, 0, 0, 0.1)
