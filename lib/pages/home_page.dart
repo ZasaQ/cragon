@@ -33,11 +33,11 @@ class _HomeState extends State<HomePage> {
     developer.log("Log: User has entered HomePage()");
   }
 
-Future<AssetImage> getFirstImageInGallery(String directoryName) async {
-  List<String> galleryUrlList = await FirestoreDataHandler().getDragonGalleryUrl(directoryName);
-
-  return AssetImage(galleryUrlList.first);
-}
+  Future<AssetImage> getFirstImageInGallery(String directoryName) async {
+    List<String> galleryUrlList = await FirestoreDataHandler().getDragonGalleryUrl(directoryName);
+    
+    return AssetImage(galleryUrlList.first);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,11 +131,11 @@ Future<AssetImage> getFirstImageInGallery(String directoryName) async {
                                     decoration: BoxDecoration(
                                       image: !imageSnapshot.hasError 
                                         ? DecorationImage(
-                                          alignment: Alignment.centerLeft,
-                                          image: NetworkImage(imageSnapshot.data!.assetName),
-                                          fit: BoxFit.cover,
-                                          opacity: 0.2
-                                        )
+                                            alignment: Alignment.centerLeft,
+                                            image: NetworkImage(imageSnapshot.data!.assetName),
+                                            fit: BoxFit.cover,
+                                            opacity: 0.2
+                                          )
                                         : null,
                                       color: isDragonCaught
                                         ? const Color.fromRGBO(0, 0, 0, 0.2)
@@ -173,7 +173,7 @@ Future<AssetImage> getFirstImageInGallery(String directoryName) async {
                                               onPressed: () {
                                                 MyApp.navigatorKey.currentState!.push(
                                                   MaterialPageRoute(builder: (context) => 
-                                                    MapPage(dragonLocation: dragonData['dragonLocation'])
+                                                    MapPage(targetDragonData: dragonData)
                                                   )
                                                 );
                                               },

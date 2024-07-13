@@ -48,7 +48,7 @@ class _DragonPageState extends State<DragonPage> {
               future: FirestoreDataHandler().getDragonGalleryImages(widget.dragonData["directoryName"]),
               builder: (context, imageSnapshot) {
                 if (imageSnapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
+                  return const Center(child: CircularProgressIndicator());
                 }
             
                 if (imageSnapshot.hasError) {
@@ -100,7 +100,7 @@ class _DragonPageState extends State<DragonPage> {
               onPressed: () {
                 MyApp.navigatorKey.currentState!.push(
                   MaterialPageRoute(builder: (context) => 
-                    MapPage(dragonLocation: widget.dragonData['dragonLocation'])
+                    MapPage(targetDragonData: widget.dragonData['dragonLocation'])
                   )
                 );
               },
