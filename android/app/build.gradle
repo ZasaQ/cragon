@@ -49,9 +49,14 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-        minSdkVersion 21
+        minSdkVersion 26
         targetSdkVersion 34
         multiDexEnabled true
+    }
+
+    aaptOptions {
+        noCompress 'tflite'
+        noCompress 'lite'
     }
 
     dependencies {
@@ -74,4 +79,9 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    // implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly-SNAPSHOT'
+    // The GPU delegate library is optional. Depend on it as needed.
+    // implementation 'org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly-SNAPSHOT'
+    // implementation 'org.tensorflow:tensorflow-lite-support:0.0.0-nightly-SNAPSHOT'
+}
