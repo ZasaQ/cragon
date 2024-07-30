@@ -2,7 +2,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
-import 'package:tflite_v2/tflite_v2.dart';
 import 'dart:developer' as developer;
 
 class ObjectDetectionPage extends StatefulWidget {
@@ -63,19 +62,36 @@ class _ObjectDetectionPageState extends State<ObjectDetectionPage> {
     }
 
     try {
-      // Process camera image for model input
-      var input = imageToByteListFloat32(img, 320, 320);
+      // Prepare input data
+      Uint8List input = imageToByteListFloat32(img, 320, 320);
 
-      // Define output tensor shape
-      var output = List.filled(10 * 4, 0.0).reshape([1, 10, 4]);
+      // Define output buffers
+      var boxes = List.filled(10 * 4, 0.0).reshape([1, 10, 4]);
+      var classes = List.filled(10, 0.0).reshape([1, 10]);
+      var scores = List.filled(10, 0.0).reshape([1, 10]);
 
+      Map<int, List<dynamic>> output = {0: boxes, 1: classes, 2: scores};
+
+      // _interpreter!.run(input, boxes);
       // Run inference
-      _interpreter!.run(input, output);
+      _interpreter!.runForMultipleInputs([input], output);
 
-      developer.log("Outputs: $output");
+      // Process outputs
+      List<Map<String, dynamic>> results = [];
+      for (int i = 0; i < scores[0].length; i++) {
+        if (scores[0][i] > 0.5) {  // Filter out detections with low confidence
+          results.add({
+            'box': boxes[0][i],
+            'class': classes[0][i],
+            'score': scores[0][i],
+          });
+        }
+      }
+
+      developer.log("Detected objects: $results");
       _isDetecting = false;
     } catch (e) {
-      developer.log("$e", name: "Object Detection Page -> runModelOnFrame -> exception");
+      developer.log("$e", name: "Object Detection Page -> runModelOnFrame");
       _isDetecting = false;
     }
   }
