@@ -11,7 +11,7 @@ Widget floatingCameraButton() {
     icon: const Icon(Icons.camera),
     onPressed: () {
       MyApp.navigatorKey.currentState!.push(
-            MaterialPageRoute(builder: (context) => ObjectDetectionPage()));
+            MaterialPageRoute(builder: (context) => const ObjectDetectionPage()));
     },
   );
 }

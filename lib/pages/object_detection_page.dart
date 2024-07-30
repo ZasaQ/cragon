@@ -1,18 +1,15 @@
 import 'dart:typed_data';
-
-import 'package:cragon/services/object_detection_model.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:tflite_v2/tflite_v2.dart';
 import 'dart:developer' as developer;
 
-
 class ObjectDetectionPage extends StatefulWidget {
   const ObjectDetectionPage({Key? key}) : super(key: key);
 
   @override
-  _ObjectDetectionPageState createState() => _ObjectDetectionPageState();
+  State<ObjectDetectionPage> createState() => _ObjectDetectionPageState();
 }
 
 class _ObjectDetectionPageState extends State<ObjectDetectionPage> {
@@ -23,10 +20,10 @@ class _ObjectDetectionPageState extends State<ObjectDetectionPage> {
   @override
   void initState() {
     super.initState();
-    _initializeCamera();
+    initializeCamera();
   }
 
-  Future<void> _initializeCamera() async {
+  Future<void> initializeCamera() async {
     final cameras = await availableCameras();
     if (cameras.isNotEmpty) {
       final firstCamera = cameras.first;
@@ -44,45 +41,63 @@ class _ObjectDetectionPageState extends State<ObjectDetectionPage> {
         _cameraController?.startImageStream((CameraImage img) {
           if (!_isDetecting) {
             _isDetecting = true;
-            _loadModel().then((_) => _runModelOnFrame(img));
+            loadModel().then((_) => runModelOnFrame(img));
           }
         });
       }
     }
   }
 
-  Future<void> _loadModel() async {
+  Future<void> loadModel() async {
     try {
-      _interpreter = await Interpreter.fromAsset('assets/detect.tflite');
+      _interpreter = await Interpreter.fromAsset('assets/third_detect.tflite');
     } catch (e) {
-      developer.log(name: "Object Detection Page -> _loadModel", "Model loading error: $e");
+      developer.log("Model loading error: $e", name: "Object Detection Page -> loadModel");
     }
   }
 
-  void _runModelOnFrame(CameraImage img) async {
+  void runModelOnFrame(CameraImage img) async {
     if (_interpreter == null) {
-      developer.log(name: "Object Detection Page -> _runModelOnFrame", "_interpreter is null");
+      developer.log("_interpreter is null", name: "Object Detection Page -> runModelOnFrame");
       return;
     }
 
     try {
-      // Example input and output
-      var input0 = [1.23];  // Replace with actual input data
-      var input1 = [2.43];  // Replace with actual input data
-      var inputs = [input0, input1, input0, input1];  // Adjust as needed
+      // Process camera image for model input
+      var input = imageToByteListFloat32(img, 320, 320);
 
-      var output0 = List<double>.filled(1, 0);
-      var output1 = List<double>.filled(1, 0);
-      var outputs = {0: output0, 1: output1};
+      // Define output tensor shape
+      var output = List.filled(10 * 4, 0.0).reshape([1, 10, 4]);
 
-      _interpreter?.runForMultipleInputs(inputs, outputs);
+      // Run inference
+      _interpreter!.run(input, output);
 
-      developer.log("Outputs: $outputs");
+      developer.log("Outputs: $output");
       _isDetecting = false;
     } catch (e) {
-      developer.log(name: "Object Detection Page -> _runModelOnFrame", "$e");
+      developer.log("$e", name: "Object Detection Page -> runModelOnFrame -> exception");
+      _isDetecting = false;
     }
+  }
 
+  // Utility function to convert CameraImage to the model's input format
+  Uint8List imageToByteListFloat32(CameraImage image, int inputSize, int mean) {
+    final int width = image.width;
+    final int height = image.height;
+    var convertedBytes = Float32List(inputSize * inputSize * 3);
+    var buffer = Float32List.view(convertedBytes.buffer);
+    int pixelIndex = 0;
+
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        var pixel = image.planes[0].bytes[pixelIndex];
+        buffer[(y * inputSize + x) * 3 + 0] = (pixel >> 16 & 0xFF) / 255.0;
+        buffer[(y * inputSize + x) * 3 + 1] = (pixel >> 8 & 0xFF) / 255.0;
+        buffer[(y * inputSize + x) * 3 + 2] = (pixel & 0xFF) / 255.0;
+        pixelIndex++;
+      }
+    }
+    return convertedBytes.buffer.asUint8List();
   }
 
   @override
@@ -102,12 +117,9 @@ class _ObjectDetectionPageState extends State<ObjectDetectionPage> {
       body: Stack(
         children: [
           CameraPreview(_cameraController!),
+          // Add widgets here to display detection results
         ],
       ),
     );
   }
 }
-
-
-
-
