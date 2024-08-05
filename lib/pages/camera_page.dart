@@ -1,4 +1,3 @@
-import 'package:cragon/pages/object_detection_page.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 
@@ -44,7 +43,7 @@ class _CameraPageState extends State<CameraPage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ObjectDetectionPage()),
+                  MaterialPageRoute(builder: (context) => Placeholder()),
                 );
               },
             ),

@@ -1,8 +1,7 @@
+import 'package:cragon/pages/object_detection_page_quant.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cragon/main.dart';
-import 'package:cragon/pages/camera_page.dart';
-import 'package:cragon/pages/object_detection_page.dart';
 
 
 Widget floatingCameraButton() {
@@ -11,7 +10,7 @@ Widget floatingCameraButton() {
     icon: const Icon(Icons.camera),
     onPressed: () {
       MyApp.navigatorKey.currentState!.push(
-            MaterialPageRoute(builder: (context) => const ObjectDetectionPage()));
+            MaterialPageRoute(builder: (context) => const ObjectDetectionQuantPage()));
     },
   );
 }
