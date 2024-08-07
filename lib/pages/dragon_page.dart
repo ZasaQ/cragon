@@ -100,7 +100,7 @@ class _DragonPageState extends State<DragonPage> {
               onPressed: () {
                 MyApp.navigatorKey.currentState!.push(
                   MaterialPageRoute(builder: (context) => 
-                    MapPage(targetDragonData: widget.dragonData['dragonLocation'])
+                    MapPage(targetDragonData: widget.dragonData)
                   )
                 );
               },
