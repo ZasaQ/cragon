@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:developer' as developer;
 import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
@@ -14,6 +15,7 @@ CollectionReference dragonsCollection = FirebaseFirestore.instance.collection("d
 int utilDragonsAmount = 0;
 int utilCaughtDragonsAmount = 0;
 CameraDescription? utilFirstCamera;
+Map<String, LatLng> utilsDragonsPositions = {};
 
 void showAlertMessage(final String message) {
   Timer timer = Timer(const Duration(seconds: 2), () {

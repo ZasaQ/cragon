@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
@@ -7,14 +6,14 @@ import 'dart:developer' as developer;
 import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 
-class ObjectDetectionQuantPage extends StatefulWidget {
-  const ObjectDetectionQuantPage({Key? key}) : super(key: key);
+class ImageObjectDetectionPage extends StatefulWidget {
+  const ImageObjectDetectionPage({Key? key}) : super(key: key);
 
   @override
-  State<ObjectDetectionQuantPage> createState() => _ObjectDetectionQuantPageState();
+  State<ImageObjectDetectionPage> createState() => _ImageObjectDetectionPageState();
 }
 
-class _ObjectDetectionQuantPageState extends State<ObjectDetectionQuantPage> {
+class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
   Interpreter? interpreter;
   File? _imageFile;
   double highestScore = 0.0;
@@ -43,17 +42,18 @@ class _ObjectDetectionQuantPageState extends State<ObjectDetectionQuantPage> {
       developer.log(name: "ObjectDetectionPage -> loadModel", "Model loaded successfully");
 
       inputType = interpreter!.getInputTensor(0).type;
-      developer.log("inputType: $inputType");
+      developer.log(name: "ObjectDetectionPage -> loadModel", "inputType: $inputType");
       inputShape = interpreter!.getInputTensor(0).shape;
-      developer.log("inputShape: $inputShape");
+      developer.log(name: "ObjectDetectionPage -> loadModel", "inputShape: $inputShape");
 
       outputType = interpreter!.getOutputTensor(0).type;
-      developer.log("outputType: $outputType");
+      developer.log(name: "ObjectDetectionPage -> loadModel", "outputType: $outputType");
       outputShape = interpreter!.getOutputTensor(0).shape;
-      developer.log("outputShape: $outputShape");
+      developer.log(name: "ObjectDetectionPage -> loadModel", "outputShape: $outputShape");
 
-      developer.log("Input Details:\n${interpreter!.getInputTensors()}");
-      developer.log("Output Details:\n${interpreter!.getOutputTensors()}");
+      if (inputType.toString() != "uint8") {
+        developer.log(name: "ObjectDetectionPage -> loadModel -> warning", "tflite model should be quantized! (uint8 type is required)");
+      }
     } catch (e) {
       developer.log(name: "ObjectDetectionPage -> loadModel -> exception", "$e");
     }
@@ -89,11 +89,10 @@ class _ObjectDetectionQuantPageState extends State<ObjectDetectionQuantPage> {
     }
 
     try {
-      final height = inputShape[1];
-      final width = inputShape[2];
+      final imageSize = inputShape[1];
 
       // Prepare input data
-      final inputData = await imageToByteListUint8(imageFile, height, 127.5, 127.5);
+      final inputData = await imageToByteListUint8(imageFile, imageSize, 127.5, 127.5);
       if (inputData.isEmpty) {
         throw Exception("inputData is empty");
       }
@@ -118,8 +117,8 @@ class _ObjectDetectionQuantPageState extends State<ObjectDetectionQuantPage> {
         highestScore = outputs[0]![0]![0];
       });
 
-      developer.log("0: ${outputs[0]}");
-      developer.log("3: ${outputs[1]}");
+      developer.log(name: "ObjectDetectionPage -> runModelOnImage", "0: ${outputs[0]}");
+      developer.log(name: "ObjectDetectionPage -> runModelOnImage", "3: ${outputs[1]}");
 
     } catch (e, stack) {
       developer.log(name: "ObjectDetectionPage -> runModelOnImage -> exception", "$e\n$stack");
@@ -151,7 +150,6 @@ class _ObjectDetectionQuantPageState extends State<ObjectDetectionQuantPage> {
   void dispose() {
     interpreter?.close();
     super.dispose();
-    developer.log("Closed!");
   }
 
   @override
@@ -169,6 +167,12 @@ class _ObjectDetectionQuantPageState extends State<ObjectDetectionQuantPage> {
               onPressed: pickImage,
               child: const Text("Pick Image from Gallery"),
             ),
+            _imageFile != null
+                ? ElevatedButton(
+                    onPressed: () {},
+                    child: const Text("Catch Dragon!"),
+                  )
+                : Container(),
             Text('Accuracy score: $highestScore'), // Display detected class
           ],
         ),

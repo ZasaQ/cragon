@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:developer' as developer;
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:cragon/main.dart';
 import 'package:cragon/pages/dragon_page.dart';
@@ -114,7 +115,10 @@ class _HomeState extends State<HomePage> {
                               Map<String,dynamic> dragonData = document.data()! as Map<String, dynamic>;
                               bool isDragonCaught = usersCaughtDragonsValues.contains(
                                 dragonData["directoryName"]);
-      
+
+                              GeoPoint dragonGeoPoint = dragonData["dragonLocation"];
+                              utilsDragonsPositions[dragonData["displayName"]] = LatLng(dragonGeoPoint.latitude, dragonGeoPoint.longitude);
+                              
                               return FutureBuilder<AssetImage>(
                                 future: getFirstImageInGallery(dragonData["directoryName"]),
                                 builder: (context, imageSnapshot) {
