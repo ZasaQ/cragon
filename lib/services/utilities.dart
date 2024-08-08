@@ -10,15 +10,16 @@ import 'package:image_picker/image_picker.dart';
 import 'package:cragon/main.dart';
 
 
-CollectionReference usersCollection = FirebaseFirestore.instance.collection("users");
-CollectionReference dragonsCollection = FirebaseFirestore.instance.collection("dragons");
+CollectionReference utilsUsersCollection = FirebaseFirestore.instance.collection("users");
+CollectionReference utilsDragonsCollection = FirebaseFirestore.instance.collection("dragons");
 int utilDragonsAmount = 0;
 int utilCaughtDragonsAmount = 0;
 CameraDescription? utilFirstCamera;
 Map<String, LatLng> utilsDragonsPositions = {};
+double utilImageScoreThreshold = 0.6;
 
-void showAlertMessage(final String message) {
-  Timer timer = Timer(const Duration(seconds: 2), () {
+void showAlertMessage(final String message, int durationTime) {
+  Timer timer = Timer(Duration(seconds: durationTime), () {
     Navigator.of(MyApp.navigatorKey.currentContext!).pop();
   });
 
@@ -31,7 +32,11 @@ void showAlertMessage(final String message) {
         textAlign: TextAlign.center
       )
     )
-  )).then((value) => timer.cancel());
+  )).then((value) => {
+    if (durationTime > 0) {
+      timer.cancel()
+    }
+  });
 }
 
 void showConfirmationMessage(final String message, Function() onPressed) {

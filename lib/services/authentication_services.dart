@@ -21,7 +21,7 @@ class AuthenticationServices {
               if (exists) {
                 FirebaseMessaging.instance.getToken().then(
                   (token) async {
-                    await usersCollection.doc(userCredential.user!.uid).update(
+                    await utilsUsersCollection.doc(userCredential.user!.uid).update(
                       {
                         'token': token,
                       },
@@ -40,16 +40,16 @@ class AuthenticationServices {
 
   void signUpWithEmail(String email, String password, String confirmPassword) async {
     if (email.isEmpty) {
-      return showAlertMessage('Email can not be empty');
+      return showAlertMessage('Email can not be empty', 2);
     }
 
     if (password.isEmpty || confirmPassword.isEmpty) {
-      return showAlertMessage('Password can not be empty');
+      return showAlertMessage('Password can not be empty', 2);
     }
 
     try {
       if (password != confirmPassword) {
-        return showAlertMessage("Password must be the same");
+        return showAlertMessage("Password must be the same", 2);
       }
 
       await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
@@ -58,7 +58,7 @@ class AuthenticationServices {
 
       await FirebaseMessaging.instance.getToken().then(
       (token) async {
-        await usersCollection.doc(FirebaseAuth.instance.currentUser!.uid).set(
+        await utilsUsersCollection.doc(FirebaseAuth.instance.currentUser!.uid).set(
           {
             'uid': currentUser?.uid,
             'email': currentUser?.email,
@@ -73,12 +73,12 @@ class AuthenticationServices {
     );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
-        return showAlertMessage('The account already exists for that email.');
+        return showAlertMessage('The account already exists for that email.', 2);
       } else if (e.code == 'weak-password') {
-        return showAlertMessage('The password provided is too weak.');
+        return showAlertMessage('The password provided is too weak.', 2);
       }
 
-      return showAlertMessage(e.code);
+      return showAlertMessage(e.code, 2);
     } catch (e) {
       developer.log("Log: signUpWithEmail() -> exception: $e");
     }
@@ -99,11 +99,11 @@ class AuthenticationServices {
 
   void signInWithEmail(String email, String password) async {
     if (email.isEmpty) {
-      return showAlertMessage('Email can not be empty');
+      return showAlertMessage('Email can not be empty', 2);
     }
 
     if (password.isEmpty) {
-      return showAlertMessage('Password can not be empty');
+      return showAlertMessage('Password can not be empty', 2);
     }
 
     try {
@@ -111,7 +111,7 @@ class AuthenticationServices {
 
       FirebaseMessaging.instance.getToken().then(
         (token) async {
-          await usersCollection.doc(FirebaseAuth.instance.currentUser!.uid).update(
+          await utilsUsersCollection.doc(FirebaseAuth.instance.currentUser!.uid).update(
             {
               'token': token,
             },
@@ -121,16 +121,16 @@ class AuthenticationServices {
 
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-credential') {
-        return showAlertMessage('Wrong email or password');
+        return showAlertMessage('Wrong email or password', 2);
       } else if (e.code == 'user-not-found') {
-        return showAlertMessage('No user found for that email.');
+        return showAlertMessage('No user found for that email.', 2);
       } else if (e.code == 'wrong-password') {
-        return showAlertMessage('Wrong password provided for that user.');
+        return showAlertMessage('Wrong password provided for that user.', 2);
       } else if (e.code == 'email-already-in-use') {
-        return showAlertMessage('The account already exists for that email.');
+        return showAlertMessage('The account already exists for that email.', 2);
       }
 
-      return showAlertMessage(e.code);
+      return showAlertMessage(e.code, 2);
     } catch (e) {
       developer.log("Log: signInWithEmail() -> exception: $e");
     }
@@ -141,7 +141,7 @@ class AuthenticationServices {
     
     await FirebaseMessaging.instance.getToken().then(
       (token) async {
-        await usersCollection.doc(userCredential.user?.uid).set(
+        await utilsUsersCollection.doc(userCredential.user?.uid).set(
           {
             'uid': userCredential.user?.uid,
             'email': userCredential.user?.email,
@@ -169,13 +169,13 @@ class AuthenticationServices {
       final AuthCredential credential = EmailAuthProvider.credential(email: currentUser!.email.toString(), password: currentPassword);
 
       if (currentPassword.isEmpty || newPassword.isEmpty ||  confirmPassword.isEmpty) {
-        showAlertMessage('Form fields can not be empty!');
+        showAlertMessage('Form fields can not be empty!', 2);
         isError = true;
         return;
       }
 
       if (newPassword != confirmPassword) {
-        showAlertMessage('New password and confirmation must be the same!');
+        showAlertMessage('New password and confirmation must be the same!', 2);
         isError = true;
         return;
       }
@@ -186,7 +186,7 @@ class AuthenticationServices {
         });
       } on FirebaseAuthException catch (e) {
         developer.log("Log: changePassword -> ${e.code}");
-        showAlertMessage(e.code);
+        showAlertMessage(e.code, 2);
         isError = true;
       }
 
@@ -196,12 +196,12 @@ class AuthenticationServices {
 
       if (!isError) {
         developer.log("Log: changePassword -> Password has been changed!");
-        showAlertMessage("Password has been changed!");
+        showAlertMessage("Password has been changed!", 2);
         return;
       }
 
     } on FirebaseAuthException catch (e) {
-      showAlertMessage(e.code);
+      showAlertMessage(e.code, 2);
       return;
     }
   }
@@ -235,7 +235,7 @@ class AuthenticationServices {
 
   Future<bool> userExists({required String uid}) async {
     bool exists = false;
-    await usersCollection.where('uid', isEqualTo: uid).get().then(
+    await utilsUsersCollection.where('uid', isEqualTo: uid).get().then(
       (user) {
         exists = user.docs.isEmpty ? false : true;
       },
@@ -283,7 +283,7 @@ class AuthenticationServices {
     }
 
     try {
-      await usersCollection.doc(currentUser.uid).get().then((DocumentSnapshot userSnapshot) {
+      await utilsUsersCollection.doc(currentUser.uid).get().then((DocumentSnapshot userSnapshot) {
         avatarImage = userSnapshot.get("avatarImage") as String;
       });
 

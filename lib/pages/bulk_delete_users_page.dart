@@ -31,7 +31,7 @@ class _BulkDeleteUsersPageState extends State<BulkDeleteUsersPage> {
       ),
       resizeToAvoidBottomInset: false,
       body: StreamBuilder<QuerySnapshot>(
-        stream: usersCollection.orderBy('email').snapshots(),
+        stream: utilsUsersCollection.orderBy('email').snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> userSnapshot) {
           if (userSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -98,7 +98,7 @@ class _BulkDeleteUsersPageState extends State<BulkDeleteUsersPage> {
 
               LRButton(inText: "Confirm", onPressed: () {
                 if (checkedItems.isEmpty) {
-                  showAlertMessage("No user has been selected");
+                  showAlertMessage("No user has been selected", 2);
                   return;
                 }
 

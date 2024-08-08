@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'dart:developer' as developer;
 
 import 'package:cragon/services/utilities.dart';
+import 'package:cragon/services/localization_services.dart';
 
 
 class FirestoreDataHandler {
@@ -77,7 +78,7 @@ class FirestoreDataHandler {
         String imageUrl = await uploadImageToFirebaseStorage(avatarImageDirectory, image);
         String uid = FirebaseAuth.instance.currentUser!.uid;
 
-        await usersCollection.doc(uid).update(
+        await utilsUsersCollection.doc(uid).update(
           {
             'avatarImage': imageUrl,
           },
@@ -101,14 +102,14 @@ class FirestoreDataHandler {
 
       if (imageUrl.isEmpty) {
         developer.log("Log: Avatar image is already empty");
-        showAlertMessage("Avatar image is already empty");
+        showAlertMessage("Avatar image is already empty", 2);
         return;
       }
       String fileName = "${FirebaseAuth.instance.currentUser!.email}_avatar.jpg";
 
       deleteFileFromFirebaseStorage(avatarImageDirectory, fileName);
 
-      await usersCollection.doc(uid).update(
+      await utilsUsersCollection.doc(uid).update(
         {
           'avatarImage': ''
         },
@@ -140,7 +141,7 @@ class FirestoreDataHandler {
     }
   }
 
-  void manageDragon({required String dragonDirectoryName, required bool toCatch}) async {
+  void adminManageDragon({required String dragonDirectoryName, required bool toCatch}) async {
     User? currentUser = FirebaseAuth.instance.currentUser;
 
     if (currentUser == null) {
@@ -150,13 +151,13 @@ class FirestoreDataHandler {
 
     try {
       if (toCatch) {
-        await usersCollection.doc(currentUser.uid).update(
+        await utilsUsersCollection.doc(currentUser.uid).update(
           {
             'caughtDragons': FieldValue.arrayUnion([dragonDirectoryName]),
           },
         );
       } else {
-        await usersCollection.doc(currentUser.uid).update(
+        await utilsUsersCollection.doc(currentUser.uid).update(
           {
             'caughtDragons': FieldValue.arrayRemove([dragonDirectoryName]),
           },
@@ -166,5 +167,51 @@ class FirestoreDataHandler {
       developer.log("Log: catchDragon() -> $e");
       return;
     }
+  }
+
+  void tryCatchDragon({required double imageScore}) async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser == null) {
+      developer.log("Log: catchDragon() -> currentUser is null");
+      return;
+    }
+
+    if (imageScore < utilImageScoreThreshold) {
+      showAlertMessage("Couldn't find dragon on the image", 4);
+      return;
+    }
+
+    try {
+      QuerySnapshot dragonsSnapshot = await utilsDragonsCollection.get();
+
+      for (QueryDocumentSnapshot dragonDocument in dragonsSnapshot.docs) {
+        Map<String, dynamic> data = dragonDocument.data() as Map<String, dynamic>;
+        GeoPoint dragonGeoPoint = data["dragonLocation"];
+        
+        bool isNear = await LocalizationServices().isCurrentLocationCloseTo(
+          dragonGeoPoint.latitude, dragonGeoPoint.longitude, 50);
+
+        developer.log("${dragonGeoPoint.latitude}, ${dragonGeoPoint.longitude}");
+
+        if (!isNear) continue;
+
+        await utilsUsersCollection.doc(currentUser.uid).update(
+          {
+            'caughtDragons': FieldValue.arrayUnion([data["directoryName"]]),
+          },
+        );
+        
+        showAlertMessage("You have caught a ${data["displayName"]}!", 4);
+        developer.log("Catched ${data["directoryName"]}");
+        return;  
+      }
+    } catch (e) {
+      developer.log("$e");
+      return;
+    }
+
+    showAlertMessage("You could't catch a dragon", 4);
+    developer.log("None of the dragons is near");
   }
 }

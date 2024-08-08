@@ -5,6 +5,7 @@ import 'package:tflite_flutter/tflite_flutter.dart';
 import 'dart:developer' as developer;
 import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
+import 'package:cragon/services/firestore_data_handler.dart';
 
 class ImageObjectDetectionPage extends StatefulWidget {
   const ImageObjectDetectionPage({Key? key}) : super(key: key);
@@ -169,7 +170,9 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
             ),
             _imageFile != null
                 ? ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      FirestoreDataHandler().tryCatchDragon(imageScore: highestScore);
+                    },
                     child: const Text("Catch Dragon!"),
                   )
                 : Container(),

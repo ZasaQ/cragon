@@ -64,7 +64,7 @@ class _DeleteUserPageState extends State<DeleteUserPage> {
                       if (isReauthenticated) {
                         AuthenticationServices().deleteCurrentUser();
                       } else {
-                        showAlertMessage("Wrong password!");
+                        showAlertMessage("Wrong password!", 2);
                       }
                     }
                   );

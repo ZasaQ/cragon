@@ -68,9 +68,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     );
                   } on FirebaseAuthException catch (excep) {
                     if (emailController.text.isEmpty) {
-                      return showAlertMessage("Email can not be empty");
+                      return showAlertMessage("Email can not be empty", 2);
                     }
-                    return showAlertMessage(excep.code);
+                    return showAlertMessage(excep.code, 2);
                   }
                 })
               ],

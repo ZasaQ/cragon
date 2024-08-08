@@ -117,7 +117,8 @@ class _HomeState extends State<HomePage> {
                                 dragonData["directoryName"]);
 
                               GeoPoint dragonGeoPoint = dragonData["dragonLocation"];
-                              utilsDragonsPositions[dragonData["displayName"]] = LatLng(dragonGeoPoint.latitude, dragonGeoPoint.longitude);
+                              utilsDragonsPositions[dragonData["directoryName"]] = 
+                                LatLng(dragonGeoPoint.latitude, dragonGeoPoint.longitude);
                               
                               return FutureBuilder<AssetImage>(
                                 future: getFirstImageInGallery(dragonData["directoryName"]),
@@ -189,7 +190,7 @@ class _HomeState extends State<HomePage> {
                                             userIsAdmin
                                             ? TextButton(
                                                 onPressed: () {
-                                                  FirestoreDataHandler().manageDragon(
+                                                  FirestoreDataHandler().adminManageDragon(
                                                     dragonDirectoryName: dragonData["directoryName"].toString(),
                                                     toCatch: true
                                                   );
@@ -203,7 +204,7 @@ class _HomeState extends State<HomePage> {
                                             userIsAdmin
                                             ? TextButton(
                                                 onPressed: () {
-                                                  FirestoreDataHandler().manageDragon(
+                                                  FirestoreDataHandler().adminManageDragon(
                                                     dragonDirectoryName: dragonData["directoryName"].toString(),
                                                     toCatch: false
                                                   );

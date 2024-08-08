@@ -34,7 +34,7 @@ class _ManageUsersPrivilegesPageState extends State<ManageUsersPrivilegesPage> {
           const SizedBox(height: 50,),
 
           StreamBuilder(
-            stream: usersCollection.orderBy('email').snapshots(),
+            stream: utilsUsersCollection.orderBy('email').snapshots(),
             builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> usersSnapshot) {
               if(usersSnapshot.hasError) {
                 return const Text("Can't load users");
@@ -57,7 +57,7 @@ class _ManageUsersPrivilegesPageState extends State<ManageUsersPrivilegesPage> {
                         subtitle: userData["isAdmin"] ? const Text("Admin") : const Text("Normal User"),
                         trailing: Wrap(children: [
                           IconButton(onPressed: () async {
-                            await usersCollection.doc(userData["uid"]).update(
+                            await utilsUsersCollection.doc(userData["uid"]).update(
                               {
                                 'isAdmin': !userData["isAdmin"]
                               }
