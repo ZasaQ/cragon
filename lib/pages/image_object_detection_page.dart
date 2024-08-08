@@ -8,6 +8,7 @@ import 'dart:developer' as developer;
 import 'package:image/image.dart' as img;
 import 'package:camera/camera.dart';
 
+
 class ImageObjectDetectionPage extends StatefulWidget {
   const ImageObjectDetectionPage({Key? key}) : super(key: key);
 
@@ -80,7 +81,7 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
     }
   }
 
-  Future<void> _runModelOnFrame(CameraImage image) async {
+  Future<void> runModelOnFrame(CameraImage image) async {
     if (interpreter == null) {
       developer.log(
         name: "ImageObjectDetectionPage -> _runModelOnFrame",
@@ -115,14 +116,16 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
       });
 
       developer.log(
-        name: "ImageObjectDetectionPage -> _runModelOnFrame",
+        name: "ImageObjectDetectionPage -> runModelOnFrame",
         "Output confidence: ${outputs[0]}");
       developer.log(
-        name: "ImageObjectDetectionPage -> _runModelOnFrame",
+        name: "ImageObjectDetectionPage -> runModelOnFrame",
         "Output boxes: ${outputs[1]}");
 
     } catch (e, stack) {
-      developer.log(name: "ImageObjectDetectionPage -> _runModelOnFrame -> exception", "Error running model on frame: $e\n$stack");
+      developer.log(
+        name: "ImageObjectDetectionPage -> runModelOnFrame -> exception",
+        "Error running model on frame: $e\n$stack");
     }
   }
 
@@ -153,12 +156,15 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
     final int uvRowStride = image.planes[1].bytesPerRow;
     final int? uvPixelStride = image.planes[1].bytesPerPixel;
 
-    developer.log("uvRowStride: $uvRowStride");
-    developer.log("uvPixelStride: $uvPixelStride");
+    developer.log(
+      name: "ImageObjectDetectionPage -> convertYUV420toImageColor",
+      "uvRowStride: $uvRowStride");
+    developer.log(
+      name: "ImageObjectDetectionPage -> convertYUV420toImageColor",
+      "uvPixelStride: $uvPixelStride");
 
     var convertedImage = img.Image(width: width, height: height);
 
-    // Fill image buffer with plane[0] from YUV420_888
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
         final int uvIndex = uvPixelStride! * (x >> 1) + uvRowStride * (y >> 1);
@@ -168,20 +174,19 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
         final up = image.planes[1].bytes[uvIndex];
         final vp = image.planes[2].bytes[uvIndex];
 
-        // Calculate pixel color
         int r = (yp + vp * 1.402 - 179).round().clamp(0, 255);
         int g = (yp - up * 0.34414 - vp * 0.71414 + 135.45984).round().clamp(0, 255);
         int b = (yp + up * 1.772 - 226.816).round().clamp(0, 255);
 
-        // color: 0x FF  FF  FF  FF
-        //           A   B   G   R
         convertedImage.setPixelRgb(x, y, r, g, b);
       }
     }
 
     return convertedImage;
   } catch (e) {
-    developer.log(">>>>>>>>>>>> ERROR: $e");
+    developer.log(
+      name: "ImageObjectDetectionPage -> convertYUV420toImageColor -> exception",
+      "$e");
   }
   return null;
 }
@@ -224,7 +229,7 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
       return;
     }
 
-    await _runModelOnFrame(latestImage!);
+    await runModelOnFrame(latestImage!);
     FirestoreDataHandler().tryCatchDragon(imageScore: highestScore);
   }
 
