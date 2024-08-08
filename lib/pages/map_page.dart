@@ -249,11 +249,6 @@ class _MapPageState extends State<MapPage> {
       }
     }
 
-    bool initUpdate = false;
-    if (currentLocation == null) {
-      initUpdate = true;
-    }
-
     locationListener = locationController.onLocationChanged.listen((LocationData newCurrentLocation) {
       if (newCurrentLocation.latitude == null || newCurrentLocation.longitude == null) {
         return;
@@ -263,13 +258,12 @@ class _MapPageState extends State<MapPage> {
         currentLocation = LatLng(newCurrentLocation.latitude!, newCurrentLocation.longitude!);
         developer.log("Log: currentLocation: $currentLocation");
 
-        if (initUpdate && currentLocation != null) {
+        if (currentLocation != null) {
           markers.add(Marker(
             markerId: const MarkerId("currentLocation"),
             icon: BitmapDescriptor.defaultMarker,
             position: currentLocation!
           ));
-          initUpdate = false;
         }
 
         if (followUser) {
