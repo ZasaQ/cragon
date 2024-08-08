@@ -1,4 +1,5 @@
 import 'package:cragon/pages/camera_object_detection_page.dart';
+import 'package:cragon/pages/gallery_object_detection_page.dart';
 import 'package:cragon/pages/image_object_detection_page.dart';
 import 'package:flutter/material.dart';
 
