@@ -14,7 +14,6 @@ CollectionReference utilsUsersCollection = FirebaseFirestore.instance.collection
 CollectionReference utilsDragonsCollection = FirebaseFirestore.instance.collection("dragons");
 int utilDragonsAmount = 0;
 int utilCaughtDragonsAmount = 0;
-CameraDescription? utilFirstCamera;
 Map<String, LatLng> utilsDragonsPositions = {};
 double utilImageScoreThreshold = 0.6;
 

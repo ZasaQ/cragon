@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,6 +22,9 @@ class _CameraObjectDetectionPageState extends State<CameraObjectDetectionPage> {
   late List<int> outputShape;
   late TensorType inputType;
   late TensorType outputType;
+  Timer? _throttleTimer;
+  CameraImage? _latestImage;
+  bool _shouldRunModel = false;
 
   @override
   void initState() {
@@ -36,11 +40,19 @@ class _CameraObjectDetectionPageState extends State<CameraObjectDetectionPage> {
       ResolutionPreset.high,
     );
     await _cameraController!.initialize();
+    
     _cameraController!.startImageStream((CameraImage image) {
-      if (interpreter != null) {
-        runModelOnFrame(image);
+      _latestImage = image;
+      _shouldRunModel = true;
+    });
+
+    _throttleTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      if (_shouldRunModel) {
+        _shouldRunModel = false;
+        _runModelOnFrame();
       }
     });
+
     setState(() {});
   }
 
@@ -53,42 +65,54 @@ class _CameraObjectDetectionPageState extends State<CameraObjectDetectionPage> {
         throw Exception("Interpreter hasn't allocated Tensors");
       }
 
-      developer.log("Model loaded successfully");
+      developer.log(name: "CameraObjectDetectionPage -> loadModel", "Model loaded successfully");
 
       inputType = interpreter!.getInputTensor(0).type;
-      developer.log("inputType: $inputType");
+      developer.log(name: "CameraObjectDetectionPage -> loadModel", "inputType: $inputType");
       inputShape = interpreter!.getInputTensor(0).shape;
-      developer.log("inputShape: $inputShape");
+      developer.log(name: "CameraObjectDetectionPage -> loadModel", "inputShape: $inputShape");
 
       outputType = interpreter!.getOutputTensor(0).type;
-      developer.log("outputType: $outputType");
+      developer.log(name: "CameraObjectDetectionPage -> loadModel", "outputType: $outputType");
       outputShape = interpreter!.getOutputTensor(0).shape;
-      developer.log("outputShape: $outputShape");
+      developer.log(name: "CameraObjectDetectionPage -> loadModel", "outputShape: $outputShape");
 
       if (inputType.toString() != "uint8") {
-        developer.log("tflite model should be quantized! (uint8 type is required)");
+        developer.log(
+          name: "CameraObjectDetectionPage -> loadModel",
+          "tflite model should be quantized! (uint8 type is required)");
       }
     } catch (e) {
-      developer.log("Error loading model: $e");
+      developer.log(
+        name: "CameraObjectDetectionPage -> loadModel -> exception",
+        "Error loading model: $e");
     }
   }
 
-  Future<void> runModelOnFrame(CameraImage image) async {
+  Future<void> _runModelOnFrame() async {
     if (interpreter == null) {
-      developer.log("Interpreter is not initialized. Aborting inference.");
+      developer.log(
+        name: "CameraObjectDetectionPage -> _runModelOnFrame",
+        "Interpreter is not initialized. Aborting inference.");
       return;
     }
 
     try {
       final imageSize = inputShape[1];
 
-      // Prepare input data
+      final image = await _getMostRecentImage();
+      if (image == null) {
+        developer.log(
+          name: "CameraObjectDetectionPage -> _runModelOnFrame",
+          "No image available for inference.");
+        return;
+      }
+
       final inputData = await imageToByteListUint8(image, imageSize, 127.5, 127.5);
       if (inputData.isEmpty) {
         throw Exception("inputData is empty");
       }
 
-      // Prepare output buffers
       var outputConfidence = List.filled(10, 0.0).reshape([1, 10]);
       var outputBoxes = List.filled(10 * 4, 0.0).reshape([1, 10, 4]);
       var numDetections = List.filled(1, 0.0).reshape([1]);
@@ -101,19 +125,26 @@ class _CameraObjectDetectionPageState extends State<CameraObjectDetectionPage> {
         3: outputClasses,
       };
 
-      // Run inference
       interpreter!.runForMultipleInputs([inputData], outputs);
 
       setState(() {
         highestScore = outputs[0]![0]![0];
       });
 
-      developer.log("Output confidence: ${outputs[0]}");
-      developer.log("Output boxes: ${outputs[1]}");
+      developer.log(
+        name: "CameraObjectDetectionPage -> _runModelOnFrame",
+        "Output confidence: ${outputs[0]}");
+      developer.log(
+        name: "CameraObjectDetectionPage -> _runModelOnFrame",
+        "Output boxes: ${outputs[1]}");
 
     } catch (e, stack) {
-      developer.log("Error running model on frame: $e\n$stack");
+      developer.log(name: "CameraObjectDetectionPage -> _runModelOnFrame -> exception", "Error running model on frame: $e\n$stack");
     }
+  }
+
+  Future<CameraImage?> _getMostRecentImage() async {
+    return _latestImage;
   }
 
   Future<Uint8List> imageToByteListUint8(CameraImage image, int inputSize, double mean, double std) async {
@@ -169,6 +200,7 @@ class _CameraObjectDetectionPageState extends State<CameraObjectDetectionPage> {
   void dispose() {
     _cameraController?.dispose();
     interpreter?.close();
+    _throttleTimer?.cancel();
     super.dispose();
   }
 

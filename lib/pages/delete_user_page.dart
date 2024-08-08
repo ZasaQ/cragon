@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:developer' as developer;
 
 import 'package:cragon/components/form_text_item.dart';
 import 'package:cragon/components/lr_button.dart';
@@ -65,6 +66,7 @@ class _DeleteUserPageState extends State<DeleteUserPage> {
                         AuthenticationServices().deleteCurrentUser();
                       } else {
                         showAlertMessage("Wrong password!", 2);
+                        developer.log(name: "DeleteUserPage -> reauthenticateCurrentUser", "Wrong password");
                       }
                     }
                   );

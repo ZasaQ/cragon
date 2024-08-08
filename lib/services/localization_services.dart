@@ -1,5 +1,6 @@
 import 'dart:math' show asin, cos, pi, sin, sqrt;
 import 'package:geolocator/geolocator.dart';
+import 'dart:developer' as developer;
 
 class LocalizationServices {
   double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
@@ -7,9 +8,12 @@ class LocalizationServices {
     double dLat = _deg2rad(lat2 - lat1);
     double dLon = _deg2rad(lon2 - lon1);
     double a = sin(dLat / 2) * sin(dLat / 2) +
-        cos(_deg2rad(lat1)) * cos(_deg2rad(lat2)) *
-        sin(dLon / 2) * sin(dLon / 2);
+               cos(_deg2rad(lat1)) * cos(_deg2rad(lat2)) *
+               sin(dLon / 2) * sin(dLon / 2);
     double c = 2 * asin(sqrt(a));
+
+    developer.log(name: "LocalizationServices -> calculateDistance", "R * c: ${R * c}");
+
     return R * c;
   }
 

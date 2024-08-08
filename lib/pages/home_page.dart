@@ -25,13 +25,7 @@ class _HomeState extends State<HomePage> {
   initState() {
     super.initState();
 
-    if (utilFirstCamera == null) {
-      initBackCamera().then((value) => utilFirstCamera = value!).then(
-        (value) => developer.log("Log: initBackCamera() -> $value")
-      );
-    }
-
-    developer.log("Log: User has entered HomePage()");
+    developer.log(name: "HomePage -> initState", "User has entered Home page");
   }
 
   Future<AssetImage> getFirstImageInGallery(String directoryName) async {
@@ -125,6 +119,7 @@ class _HomeState extends State<HomePage> {
                                 builder: (context, imageSnapshot) {
                                   if (imageSnapshot.hasError) {
                                     developer.log(
+                                      name: "HomePage -> getFirstImageInGallery",
                                       "Error while loading first image item: ${imageSnapshot.error.toString()}");
                                   }
                               

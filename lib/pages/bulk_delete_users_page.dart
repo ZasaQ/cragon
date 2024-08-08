@@ -105,7 +105,7 @@ class _BulkDeleteUsersPageState extends State<BulkDeleteUsersPage> {
                 showConfirmationMessage("Are you sure?", () {
                   checkedItems.forEach((key, value) {
                     if (value) {
-                      developer.log("Delete");
+                      developer.log(name: "BulkDeleteUsesPage -> deleteUser", "Delete user $key");
                       AuthenticationServices().deleteUser(uid: key);
                     }
                   });
