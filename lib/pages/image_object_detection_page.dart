@@ -29,6 +29,11 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
   @override
   void initState() {
     super.initState();
+
+    developer.log(
+      name: "ImageObjectDetectionPage -> initState",
+      "Current user has entered ImageObjectDetectionPage");
+
     initializeCamera();
     loadModel();
   }

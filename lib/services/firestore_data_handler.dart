@@ -21,7 +21,9 @@ class FirestoreDataHandler {
     List<Image> imageWidgets = [];
 
     if (refList.items.isEmpty) {
-      developer.log("Log: getDragonGallery() -> refList.items.isEmpty");
+      developer.log(
+        name: "FirestoreDataHandler -> getDragonGalleryImages",
+        "$dragonDirectoryName's gallery directory is empty");
       return [];
     }
 
@@ -40,7 +42,9 @@ class FirestoreDataHandler {
     List<String> imagesUrl = [];
 
     if (refList.items.isEmpty) {
-      developer.log("Log: getDragonGallery() -> refList.items.isEmpty");
+      developer.log(
+        name: "FirestoreDataHandler -> getDragonGalleryUrl",
+        "$dragonDirectoryName's gallery directory is empty");
       return [];
     }
 
@@ -65,9 +69,14 @@ class FirestoreDataHandler {
     try {
       Reference ref = firebaseStorage.ref().child(fileDirectory).child(name);
       await ref.delete();
-      developer.log("Log: Avatar image has been removed from FirebaseStorage");
+
+      developer.log(
+        name: "FirestoreDataHandler -> deleteImageFromFirebaseStorage",
+        "Log: Avatar image has been removed from FirebaseStorage");
     } catch(e) {
-      developer.log("Log: deleteImageFromFirebaseStorage() -> $e");
+      developer.log(
+        name: "FirestoreDataHandler -> deleteImageFromFirebaseStorage -> exception",
+        "$e");
     }
   }
 
@@ -83,9 +92,16 @@ class FirestoreDataHandler {
             'avatarImage': imageUrl,
           },
         );
+
+        showAlertMessage("Avatar image has been updated", 2);
+        developer.log(
+          name: "FirestoreDataHandler -> updateUserAvatarImage",
+          "Avatar image has been updated");
         
       } catch(e) {
-        developer.log("Log: updateAvatarImage() -> $e");
+        developer.log(
+          name: "FirestoreDataHandler -> updateAvatarImage -> exception",
+          "$e");
       }
   }
 
@@ -101,8 +117,10 @@ class FirestoreDataHandler {
       String imageUrl = await getUserAvatarImage(inUid: uid);
 
       if (imageUrl.isEmpty) {
-        developer.log("Log: Avatar image is already empty");
         showAlertMessage("Avatar image is already empty", 2);
+        developer.log(
+          name: "FirestoreDataHandler -> removeUserAvatarImage",
+          "Avatar image is already empty");
         return;
       }
       String fileName = "${FirebaseAuth.instance.currentUser!.email}_avatar.jpg";
@@ -114,8 +132,15 @@ class FirestoreDataHandler {
           'avatarImage': ''
         },
       );
+
+      showAlertMessage("Avatar image has been removed", 2);
+      developer.log(
+        name: "FirestoreDataHandler -> removeUserAvatarImage",
+        "Avatar image has been removed");
     } catch(e) {
-      developer.log("Log: removeAvatarImage() -> $e");
+      developer.log(
+        name: "FirestoreDataHandler -> removeUserAvatarImage -> exception",
+        "$e");
     }
   }
 
@@ -145,7 +170,9 @@ class FirestoreDataHandler {
     User? currentUser = FirebaseAuth.instance.currentUser;
 
     if (currentUser == null) {
-      developer.log("Log: catchDragon() -> currentUser is null");
+      developer.log(
+        name: "FirestoreDataHandler -> adminManageDragon",
+        "Current user is null");
       return;
     }
 
@@ -156,15 +183,23 @@ class FirestoreDataHandler {
             'caughtDragons': FieldValue.arrayUnion([dragonDirectoryName]),
           },
         );
+        developer.log(
+          name: "FirestoreDataHandler -> adminManageDragon",
+          "$dragonDirectoryName has been caught");
       } else {
-        await utilsUsersCollection.doc(currentUser.uid).update(
-          {
-            'caughtDragons': FieldValue.arrayRemove([dragonDirectoryName]),
-          },
-        );
+          await utilsUsersCollection.doc(currentUser.uid).update(
+            {
+              'caughtDragons': FieldValue.arrayRemove([dragonDirectoryName]),
+            },
+          );
+          developer.log(
+            name: "FirestoreDataHandler -> adminManageDragon",
+            "$dragonDirectoryName has been released");
       }
     } catch (e) {
-      developer.log("Log: catchDragon() -> $e");
+      developer.log(
+        name: "FirestoreDataHandler -> adminManageDragon -> exception",
+        "Log: catchDragon() -> $e");
       return;
     }
   }
@@ -173,12 +208,17 @@ class FirestoreDataHandler {
     User? currentUser = FirebaseAuth.instance.currentUser;
 
     if (currentUser == null) {
-      developer.log("Log: catchDragon() -> currentUser is null");
+      developer.log(
+        name: "FirestoreDataHandler -> tryCatchDragon",
+        "Current user is null");
       return;
     }
 
     if (imageScore < utilImageScoreThreshold) {
       showAlertMessage("Couldn't find dragon on the image", 4);
+      developer.log(
+        name: "FirestoreDataHandler -> tryCatchDragon",
+        "Couldn't find dragon on the image");
       return;
     }
 
@@ -194,7 +234,12 @@ class FirestoreDataHandler {
 
         developer.log("${dragonGeoPoint.latitude}, ${dragonGeoPoint.longitude}");
 
-        if (!isNear) continue;
+        if (!isNear) {
+          developer.log(
+            name: "FirestoreDataHandler -> tryCatchDragon",
+            "${data["displayName"]} is too far from user");
+          continue;
+        }
 
         await utilsUsersCollection.doc(currentUser.uid).update(
           {
@@ -202,8 +247,10 @@ class FirestoreDataHandler {
           },
         );
         
-        showAlertMessage("You have caught a ${data["displayName"]}!", 4);
-        developer.log("Catched ${data["directoryName"]}");
+        showAlertMessage("You have caught a ${data["displayName"]}!", 2);
+        developer.log(
+          name: "FirestoreDataHandler -> tryCatchDragon",
+          "Caught ${data["directoryName"]}");
         return;  
       }
     } catch (e) {
@@ -211,7 +258,7 @@ class FirestoreDataHandler {
       return;
     }
 
-    showAlertMessage("You are too far away from any of the dragons!", 4);
+    showAlertMessage("You are too far away from any of the dragons!", 2);
     developer.log("None of the dragons is near");
   }
 }

@@ -18,6 +18,15 @@ class _DeleteUserPageState extends State<DeleteUserPage> {
   final passwordController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+
+    developer.log(
+      name: "DeleteUserPage -> initState",
+      "Current user has entered DeleteUserPage");
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(128, 128, 0, 1),

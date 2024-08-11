@@ -2,22 +2,27 @@ import 'dart:math' show asin, cos, pi, sin, sqrt;
 import 'package:geolocator/geolocator.dart';
 import 'dart:developer' as developer;
 
+
 class LocalizationServices {
   double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
     const R = 6371000; // Radius of the Earth in meters
-    double dLat = _deg2rad(lat2 - lat1);
-    double dLon = _deg2rad(lon2 - lon1);
+    double dLat = degToRad(lat2 - lat1);
+    double dLon = degToRad(lon2 - lon1);
     double a = sin(dLat / 2) * sin(dLat / 2) +
-               cos(_deg2rad(lat1)) * cos(_deg2rad(lat2)) *
+               cos(degToRad(lat1)) * cos(degToRad(lat2)) *
                sin(dLon / 2) * sin(dLon / 2);
     double c = 2 * asin(sqrt(a));
 
-    developer.log(name: "LocalizationServices -> calculateDistance", "R * c: ${R * c}");
+    double rc = R * c;
 
-    return R * c;
+    developer.log(
+      name: "LocalizationServices -> calculateDistance",
+      "R * c: $rc");
+
+    return rc;
   }
 
-  double _deg2rad(double deg) {
+  double degToRad(double deg) {
     return deg * (pi / 180);
   }
 

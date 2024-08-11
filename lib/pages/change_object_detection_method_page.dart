@@ -1,5 +1,8 @@
-import 'package:cragon/services/utilities.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer' as developer;
+
+import 'package:cragon/services/utilities.dart';
+
 
 class ChangeObjectDetectionMethodPage extends StatefulWidget {
   const ChangeObjectDetectionMethodPage({super.key});
@@ -10,6 +13,15 @@ class ChangeObjectDetectionMethodPage extends StatefulWidget {
 
 class _ChangeObjectDetectionMethodPageState extends State<ChangeObjectDetectionMethodPage> {
   String selectedOption = utilchoosenObjectDetectionMethod;
+
+  @override
+  void initState() {
+    super.initState();
+
+    developer.log(
+      name: "ChangeObjectDetectionMethodPage -> initState",
+      "Current user has entered ChangeObjectDetectionMethodPage");
+  }
 
   @override
   Widget build(BuildContext context) {

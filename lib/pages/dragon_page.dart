@@ -25,7 +25,9 @@ class _DragonPageState extends State<DragonPage> {
   void initState() {
     super.initState();
 
-    developer.log(name: "DragonPage -> initState", "Log: User has entered Dragon page");
+    developer.log(
+      name: "DragonPage -> initState",
+      "Current user has entered DragonPage");
   }
 
   @override

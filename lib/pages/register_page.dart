@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:developer' as developer;
 
 import 'package:cragon/components/form_text_item.dart';
 import 'package:cragon/components/lr_button.dart';
@@ -19,6 +20,15 @@ class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    
+    developer.log(
+      name: "UserPage -> initState",
+      "Current user has entered UserPage");
+  }
 
   @override
   Widget build(BuildContext context) {

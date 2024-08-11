@@ -21,6 +21,10 @@ class _BulkDeleteUsersPageState extends State<BulkDeleteUsersPage> {
   @override
   void initState() {
     super.initState();
+
+    developer.log(
+      name: "BulkDeleteUsersPage -> initState",
+      "Current user has entered BulkDeleteUsersPage");
   }
 
   @override

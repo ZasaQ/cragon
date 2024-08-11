@@ -81,7 +81,9 @@ Future<Uint8List> pickImage(ImageSource source) async {
   XFile? pickedImage = await imagePicker.pickImage(source: source);
 
   if (pickedImage == null) {
-    developer.log("Log: pickImage() -> No image picked");
+    developer.log(
+      name: "utilities -> pickImage",
+      "No image picked");
     return Uint8List(0);
   }
 

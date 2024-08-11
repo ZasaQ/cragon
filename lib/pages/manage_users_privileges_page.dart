@@ -1,6 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cragon/services/utilities.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:developer' as developer;
+
+import 'package:cragon/services/utilities.dart';
 
 
 class ManageUsersPrivilegesPage extends StatefulWidget {
@@ -11,6 +13,15 @@ class ManageUsersPrivilegesPage extends StatefulWidget {
 }
 
 class _ManageUsersPrivilegesPageState extends State<ManageUsersPrivilegesPage> {
+
+  @override
+  void initState() {
+    super.initState();
+    
+    developer.log(
+      name: "ManageUsersPrivilegesPage -> initState",
+      "Current user has entered ManageUsersPrivilegesPage");
+  }
 
   @override
   Widget build(BuildContext context) {

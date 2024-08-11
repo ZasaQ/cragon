@@ -37,6 +37,11 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
+
+    developer.log(
+      name: "MapPage -> initState",
+      "Current user has entered MapPage");
+
     if (widget.targetDragonData != null) {
       targetedDragonLocation = widget.targetDragonData!["dragonLocation"];
       onDragonMarkerSelected(widget.targetDragonData!["directoryName"]);
@@ -189,7 +194,10 @@ class _MapPageState extends State<MapPage> {
                 setState(() {
                   isUserInteracting = true;
                 });
-                developer.log("Log: Camera movement started by user.");
+                developer.log(
+                  name: "MapPage -> build -> onCameraMoveStarted",
+                  "Camera movement started by current user"
+                );
                 followUser = false;
               }
             },
@@ -203,7 +211,10 @@ class _MapPageState extends State<MapPage> {
                 setState(() {
                   isUserInteracting = false;
                 });
-                developer.log("Log: Camera movement stopped by user.");
+                developer.log(
+                  name: "MapPage -> build -> onCameraIdle",
+                  "Camera movement stopped by current user"
+                );
               }
               if (isProgrammaticMove) {
                 isProgrammaticMove = false;
@@ -256,7 +267,11 @@ class _MapPageState extends State<MapPage> {
 
       setState(() {
         currentLocation = LatLng(newCurrentLocation.latitude!, newCurrentLocation.longitude!);
-        developer.log("Log: currentLocation: $currentLocation");
+        developer.log(
+          name: "MapPage -> getCurrentLocationUpdated",
+          "currentLocation: $currentLocation"
+
+        );
 
         if (currentLocation != null) {
           markers.add(Marker(
@@ -294,7 +309,10 @@ class _MapPageState extends State<MapPage> {
     );
     
     if (polylineResult.points.isEmpty) {
-      developer.log("Log: generatePolylineRoute() -> ${polylineResult.errorMessage}");
+      developer.log(
+        name: "MapPage -> generatePolylinePoints",
+        "${polylineResult.errorMessage}"
+      );
     } else {
       for (PointLatLng element in polylineResult.points) {
         polylineCoordinates.add(LatLng(element.latitude, element.longitude));

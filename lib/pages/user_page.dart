@@ -33,7 +33,9 @@ class _UserPageState extends State<UserPage> {
   void initState() {
     super.initState();
 
-    developer.log("Log: User has entered UserPage()");
+    developer.log(
+      name: "UserPage -> initState",
+      "Current user has entered UserPage");
   }
 
   @override

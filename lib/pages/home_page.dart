@@ -25,7 +25,9 @@ class _HomeState extends State<HomePage> {
   initState() {
     super.initState();
 
-    developer.log(name: "HomePage -> initState", "User has entered Home page");
+    developer.log(
+      name: "HomePage -> initState",
+      "Current user has entered HomePage");
   }
 
   Future<AssetImage> getFirstImageInGallery(String directoryName) async {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:developer' as developer;
 
 import 'package:cragon/main.dart';
 import 'package:cragon/components/form_text_item.dart';
@@ -16,6 +17,15 @@ class ForgotPasswordPage extends StatefulWidget {
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final emailController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    
+    developer.log(
+      name: "ForgotPasswordPage -> initState",
+      "Current user has entered ForgotPasswordPage");
+  }
 
   @override
   Widget build(BuildContext context) {

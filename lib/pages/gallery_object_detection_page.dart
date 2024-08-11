@@ -28,6 +28,11 @@ class _GalleryObjectDetectionPageState extends State<GalleryObjectDetectionPage>
   @override
   void initState() {
     super.initState();
+
+    developer.log(
+      name: "GalleryObjectDetectionPage -> initState",
+      "Current user has entered GalleryObjectDetectionPage");
+
     loadModel();
   }
 
@@ -40,23 +45,23 @@ class _GalleryObjectDetectionPageState extends State<GalleryObjectDetectionPage>
         throw Exception("Interpreter hasn't allocated Tensors");
       }
 
-      developer.log(name: "ObjectDetectionPage -> loadModel", "Model loaded successfully");
+      developer.log(name: "GalleryObjectDetectionPage -> loadModel", "Model loaded successfully");
 
       inputType = interpreter!.getInputTensor(0).type;
-      developer.log(name: "ObjectDetectionPage -> loadModel", "inputType: $inputType");
+      developer.log(name: "GalleryObjectDetectionPage -> loadModel", "inputType: $inputType");
       inputShape = interpreter!.getInputTensor(0).shape;
-      developer.log(name: "ObjectDetectionPage -> loadModel", "inputShape: $inputShape");
+      developer.log(name: "GalleryObjectDetectionPage -> loadModel", "inputShape: $inputShape");
 
       outputType = interpreter!.getOutputTensor(0).type;
-      developer.log(name: "ObjectDetectionPage -> loadModel", "outputType: $outputType");
+      developer.log(name: "GalleryObjectDetectionPage -> loadModel", "outputType: $outputType");
       outputShape = interpreter!.getOutputTensor(0).shape;
-      developer.log(name: "ObjectDetectionPage -> loadModel", "outputShape: $outputShape");
+      developer.log(name: "GalleryObjectDetectionPage -> loadModel", "outputShape: $outputShape");
 
       if (inputType.toString() != "uint8") {
-        developer.log(name: "ObjectDetectionPage -> loadModel -> warning", "tflite model should be quantized! (uint8 type is required)");
+        developer.log(name: "GalleryObjectDetectionPage -> loadModel -> warning", "tflite model should be quantized! (uint8 type is required)");
       }
     } catch (e) {
-      developer.log(name: "ObjectDetectionPage -> loadModel -> exception", "$e");
+      developer.log(name: "GalleryObjectDetectionPage -> loadModel -> exception", "$e");
     }
   }
 
@@ -72,20 +77,11 @@ class _GalleryObjectDetectionPageState extends State<GalleryObjectDetectionPage>
     }
   }
 
-  Future<List<String>> loadClassNames() async {
-    try {
-      final classFile = await rootBundle.loadString('assets/labelmap.txt');
-      final lines = classFile.split('\n');
-      return lines;
-    } catch (e) {
-      developer.log("Failed to load labelmap.txt: $e");
-      return [];
-    }
-  }
-
   Future<void> runModelOnImage(File imageFile) async {
     if (interpreter == null) {
-      developer.log("Interpreter is not initialized. Aborting inference.");
+      developer.log(
+        name: "GalleryObjectDetectionPage -> runModelOnImage",
+        "Interpreter is not initialized. Aborting inference");
       return;
     }
 
@@ -118,11 +114,14 @@ class _GalleryObjectDetectionPageState extends State<GalleryObjectDetectionPage>
         highestScore = outputs[0]![0]![0];
       });
 
-      developer.log(name: "ObjectDetectionPage -> runModelOnImage", "0: ${outputs[0]}");
-      developer.log(name: "ObjectDetectionPage -> runModelOnImage", "3: ${outputs[1]}");
+      developer.log(name: "GalleryObjectDetectionPage -> runModelOnImage",
+      "0: ${outputs[0]}");
+      developer.log(name: "GalleryObjectDetectionPage -> runModelOnImage",
+      "3: ${outputs[1]}");
 
     } catch (e, stack) {
-      developer.log(name: "ObjectDetectionPage -> runModelOnImage -> exception", "$e\n$stack");
+      developer.log(name: "GalleryObjectDetectionPage -> runModelOnImage -> exception",
+      "$e\n$stack");
     }
   }
 
@@ -131,7 +130,6 @@ class _GalleryObjectDetectionPageState extends State<GalleryObjectDetectionPage>
     img.Image? image = img.decodeImage(imageBytes);
     img.Image resizedImage = img.copyResize(image!, width: inputSize, height: inputSize);
 
-    // Initialize byte buffer for uint8 data
     var convertedBytes = Uint8List(1 * inputSize * inputSize * 3);
     var buffer = Uint8List.view(convertedBytes.buffer);
 

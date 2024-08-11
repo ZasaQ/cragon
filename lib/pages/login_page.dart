@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:developer' as developer;
 
 import 'package:cragon/main.dart';
 import 'package:cragon/pages/register_page.dart';
@@ -19,6 +20,15 @@ class _LoginPageState extends State<LoginPage> {
   final AuthenticationServices authenticationServices = AuthenticationServices();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  
+  @override
+  void initState() {
+    super.initState();
+    
+    developer.log(
+      name: "LoginPage -> initState",
+      "Current user has entered LoginPage");
+  }
 
   @override
   Widget build(BuildContext context) {

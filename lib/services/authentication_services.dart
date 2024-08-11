@@ -40,15 +40,24 @@ class AuthenticationServices {
 
   void signUpWithEmail(String email, String password, String confirmPassword) async {
     if (email.isEmpty) {
+      developer.log(
+        name: "AuthenticationServices -> signUpWithEmail",
+        "Email can not be empty");
       return showAlertMessage('Email can not be empty', 2);
     }
 
     if (password.isEmpty || confirmPassword.isEmpty) {
+      developer.log(
+        name: "AuthenticationServices -> signUpWithEmail",
+        "Password can not be empty");
       return showAlertMessage('Password can not be empty', 2);
     }
 
     try {
       if (password != confirmPassword) {
+        developer.log(
+          name: "AuthenticationServices -> signUpWithEmail",
+          "Password must be the same");
         return showAlertMessage("Password must be the same", 2);
       }
 
@@ -68,19 +77,29 @@ class AuthenticationServices {
             'caughtDragons': [],
           },
         );
-        developer.log("Log: user ${currentUser?.email} has been added to collection");
+        developer.log(
+          name: "AuthenticationServices -> signUpWithEmail -> exception",
+          "User ${currentUser?.email} has been added to collection");
       },
     );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
-        return showAlertMessage('The account already exists for that email.', 2);
+        developer.log(
+          name: "AuthenticationServices -> signUpWithEmail -> FirebaseAuthException",
+          "$e");
+        return showAlertMessage('The account already exists for that email', 2);
       } else if (e.code == 'weak-password') {
-        return showAlertMessage('The password provided is too weak.', 2);
+        developer.log(
+          name: "AuthenticationServices -> signUpWithEmail -> FirebaseAuthException",
+          "$e");
+        return showAlertMessage('Provided password is too weak', 2);
       }
 
       return showAlertMessage(e.code, 2);
     } catch (e) {
-      developer.log("Log: signUpWithEmail() -> exception: $e");
+      developer.log(
+        name: "AuthenticationServices -> signUpWithEmail -> exception",
+        "$e");
     }
   }
 
@@ -99,10 +118,16 @@ class AuthenticationServices {
 
   void signInWithEmail(String email, String password) async {
     if (email.isEmpty) {
+      developer.log(
+        name: "AuthenticationServices -> signInWithEmail ->",
+        "Email can not be empty");
       return showAlertMessage('Email can not be empty', 2);
     }
 
     if (password.isEmpty) {
+      developer.log(
+        name: "AuthenticationServices -> signInWithEmail ->",
+        "Password can not be empty");
       return showAlertMessage('Password can not be empty', 2);
     }
 
@@ -121,18 +146,32 @@ class AuthenticationServices {
 
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-credential') {
+        developer.log(
+          name: "AuthenticationServices -> signInWithEmail -> FirebaseAuthException",
+          "$e");
         return showAlertMessage('Wrong email or password', 2);
       } else if (e.code == 'user-not-found') {
+        developer.log(
+          name: "AuthenticationServices -> signInWithEmail -> FirebaseAuthException",
+          "$e");
         return showAlertMessage('No user found for that email.', 2);
       } else if (e.code == 'wrong-password') {
+        developer.log(
+          name: "AuthenticationServices -> signInWithEmail -> FirebaseAuthException",
+          "$e");
         return showAlertMessage('Wrong password provided for that user.', 2);
       } else if (e.code == 'email-already-in-use') {
+        developer.log(
+          name: "AuthenticationServices -> signInWithEmail -> FirebaseAuthException",
+          "$e");
         return showAlertMessage('The account already exists for that email.', 2);
       }
 
       return showAlertMessage(e.code, 2);
     } catch (e) {
-      developer.log("Log: signInWithEmail() -> exception: $e");
+      developer.log(
+        name: "AuthenticationServices -> signInWithEmail -> exception",
+        "$e");
     }
   }
 
@@ -151,7 +190,9 @@ class AuthenticationServices {
             'caughtDragons': [],
           },
         ).then((value) => userCreated = true);
-        developer.log("Log: user ${userCredential.user?.email} has been added to collection");
+        developer.log(
+          name: "AuthenticationServices -> addUserToCollection",
+          "User ${userCredential.user?.email} has been added to collection");
       },
     );
 
@@ -170,12 +211,18 @@ class AuthenticationServices {
 
       if (currentPassword.isEmpty || newPassword.isEmpty ||  confirmPassword.isEmpty) {
         showAlertMessage('Form fields can not be empty!', 2);
+        developer.log(
+          name: "AuthenticationServices -> changePassword",
+          "Form fields can not be empty");
         isError = true;
         return;
       }
 
       if (newPassword != confirmPassword) {
         showAlertMessage('New password and confirmation must be the same!', 2);
+        developer.log(
+          name: "AuthenticationServices -> changePassword",
+          "New password and confirmation must be the same");
         isError = true;
         return;
       }
@@ -185,7 +232,9 @@ class AuthenticationServices {
           currentUser.updatePassword(newPassword);
         });
       } on FirebaseAuthException catch (e) {
-        developer.log("Log: changePassword -> ${e.code}");
+        developer.log(
+          name: "AuthenticationServices -> changePassword -> FirebaseAuthException",
+          "$e");
         showAlertMessage(e.code, 2);
         isError = true;
       }
@@ -195,13 +244,18 @@ class AuthenticationServices {
       confirmPasswordController.clear();
 
       if (!isError) {
-        developer.log("Log: changePassword -> Password has been changed!");
         showAlertMessage("Password has been changed!", 2);
+        developer.log(
+          name: "AuthenticationServices -> changePassword",
+          "Password has been changed");
         return;
       }
 
     } on FirebaseAuthException catch (e) {
       showAlertMessage(e.code, 2);
+      developer.log(
+        name: "AuthenticationServices -> changePassword -> FirebaseAuthException",
+        "$e");
       return;
     }
   }
@@ -210,13 +264,16 @@ class AuthenticationServices {
     User? currentUser = FirebaseAuth.instance.currentUser;
 
     if (currentUser == null) {
-      developer.log("Log: signOutCurrentUser() -> currentUser is null");
+      developer.log(
+        name: "AuthenticationServices -> signOutCurrentUser",
+        "Current user is null");
+      return;
     }
 
     try {
       QuerySnapshot<Map<String, dynamic>> userQuerySnapshot =
         await FirebaseFirestore.instance.collection('users')
-        .where('uid', isEqualTo: currentUser!.uid).get();
+        .where('uid', isEqualTo: currentUser.uid).get();
 
       await FirebaseFirestore.instance.collection("users")
       .doc(userQuerySnapshot.docs.first.id).update(
@@ -225,11 +282,18 @@ class AuthenticationServices {
         },
       );
 
-      developer.log("Log: token is now empty");
+      developer.log(
+        name: "AuthenticationServices -> signOutCurrentUser",
+        "User Token has been removed");
+
       FirebaseAuth.instance.signOut();
-      developer.log("Log: current user has been signed out");
+      developer.log(
+        name: "AuthenticationServices -> signOutCurrentUser",
+        "User has been signed out");
     } catch (e) {
-      developer.log("Log: signOutCurrentUser() -> exception: $e");
+      developer.log(
+        name: "AuthenticationServices -> signOutCurrentUser -> exception",
+        "$e");
     }
   }
 
@@ -242,9 +306,13 @@ class AuthenticationServices {
     );
 
     if (exists) {
-      developer.log("Log: user with $uid already exists");
+      developer.log(
+        name: "AuthenticationServices -> userExists",
+        "User with $uid already exists");
     } else {
-      developer.log("Log: user with $uid does not exist");
+      developer.log(
+        name: "AuthenticationServices -> userExists",
+        "User with $uid does not exist");
     }
 
     return exists;
@@ -268,7 +336,9 @@ class AuthenticationServices {
 
       return true;
     } on FirebaseAuthException catch (e) {
-      developer.log("Log: reauthenticateCurrentUser() -> ${e.code}");
+      developer.log(
+        name: "AuthenticationServices -> reauthenticateCurrentUser -> FirebaseAuthException",
+        "$e");
       return false;
     }
   }
@@ -278,7 +348,9 @@ class AuthenticationServices {
     String avatarImage = "";
 
     if (currentUser == null) {
-      developer.log("Log: deleteCurrentUser() -> currentUser is null");
+      developer.log(
+        name: "AuthenticationServices -> deleteCurrentUser",
+        "Current user is null");
       return;
     }
 
@@ -301,9 +373,13 @@ class AuthenticationServices {
 
       await MyApp.navigatorKey.currentState!.pushNamedAndRemoveUntil("/login", (route) => false);
 
-      developer.log("Log: deleteCurrentUser() -> user has been deleted correctly");
+      developer.log(
+        name: "AuthenticationServices -> deleteCurrentUser",
+        "Current user has been deleted correctly");
     } on FirebaseAuthException catch (e) {
-      developer.log("Log: deleteCurrentUser() -> $e");
+      developer.log(
+        name: "AuthenticationServices -> deleteCurrentUser -> FirebaseAuthException",
+        "$e");
     }
   }
 
@@ -319,9 +395,13 @@ class AuthenticationServices {
 
       await FirestoreDataHandler().removeUserAvatarImage(inUid: uid);
 
-      developer.log("Log: deleteUser() -> user has been deleted correctly");
+      developer.log(
+        name: "AuthenticationServices -> deleteUser",
+        "User has been deleted correctly");
     } on FirebaseAuthException catch (e) {
-      developer.log("Log: deleteUser() -> $e");
+      developer.log(
+        name: "AuthenticationServices -> deleteUser -> FirebaseAuthException",
+        "$e");
     }
   }
 }
