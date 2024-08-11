@@ -282,7 +282,9 @@ class FirestoreDataHandler {
 
       if (userData["caughtDragons"].isEmpty) {
         showAlertMessage("None of the dragons need to be released", 2);
-        developer.log("None of the dragons need to be released");
+        developer.log(
+          name: "FirestoreDatahandler -> releaseAllDragons",
+          "None of the dragons need to be released");
         return;
       }
 
