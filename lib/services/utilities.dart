@@ -25,7 +25,20 @@ String utilchoosenObjectDetectionMethod = objectDetectionMethods.first;
   cameraStream
 }*/
 
-void showAlertMessage(final String message, int durationTime) {
+void showAlertMessage(final String message) {
+  showDialog<String>(context: MyApp.navigatorKey.currentContext!, builder: (context) => Center(
+    child: AlertDialog(
+      backgroundColor: const Color.fromRGBO(128, 128, 0, 1),
+      title: Text(
+        message,
+        style: const TextStyle(color: Colors.black),
+        textAlign: TextAlign.center
+      )
+    )
+  ));
+}
+
+void showAlertMessageWithTimer(final String message, int durationTime) {
   Timer timer = Timer(Duration(seconds: durationTime), () {
     Navigator.of(MyApp.navigatorKey.currentContext!).pop();
   });
@@ -76,7 +89,7 @@ void showConfirmationMessage(final String message, Function() onPressed) {
   ));
 }
 
-Future<Uint8List> pickImage(ImageSource source) async {
+Future<Uint8List> pickGalleryImage(ImageSource source) async {
   final ImagePicker imagePicker = ImagePicker();
   XFile? pickedImage = await imagePicker.pickImage(source: source);
 

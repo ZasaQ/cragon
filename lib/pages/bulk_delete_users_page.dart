@@ -102,7 +102,7 @@ class _BulkDeleteUsersPageState extends State<BulkDeleteUsersPage> {
 
               LRButton(inText: "Confirm", onPressed: () {
                 if (checkedItems.isEmpty) {
-                  showAlertMessage("No user has been selected", 2);
+                  showAlertMessageWithTimer("No user has been selected", 2);
                   return;
                 }
 

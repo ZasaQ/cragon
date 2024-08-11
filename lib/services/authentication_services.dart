@@ -43,14 +43,14 @@ class AuthenticationServices {
       developer.log(
         name: "AuthenticationServices -> signUpWithEmail",
         "Email can not be empty");
-      return showAlertMessage('Email can not be empty', 2);
+      return showAlertMessageWithTimer('Email can not be empty', 2);
     }
 
     if (password.isEmpty || confirmPassword.isEmpty) {
       developer.log(
         name: "AuthenticationServices -> signUpWithEmail",
         "Password can not be empty");
-      return showAlertMessage('Password can not be empty', 2);
+      return showAlertMessageWithTimer('Password can not be empty', 2);
     }
 
     try {
@@ -58,7 +58,7 @@ class AuthenticationServices {
         developer.log(
           name: "AuthenticationServices -> signUpWithEmail",
           "Password must be the same");
-        return showAlertMessage("Password must be the same", 2);
+        return showAlertMessageWithTimer("Password must be the same", 2);
       }
 
       await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
@@ -87,15 +87,15 @@ class AuthenticationServices {
         developer.log(
           name: "AuthenticationServices -> signUpWithEmail -> FirebaseAuthException",
           "$e");
-        return showAlertMessage('The account already exists for that email', 2);
+        return showAlertMessageWithTimer('The account already exists for that email', 2);
       } else if (e.code == 'weak-password') {
         developer.log(
           name: "AuthenticationServices -> signUpWithEmail -> FirebaseAuthException",
           "$e");
-        return showAlertMessage('Provided password is too weak', 2);
+        return showAlertMessageWithTimer('Provided password is too weak', 2);
       }
 
-      return showAlertMessage(e.code, 2);
+      return showAlertMessageWithTimer(e.code, 2);
     } catch (e) {
       developer.log(
         name: "AuthenticationServices -> signUpWithEmail -> exception",
@@ -121,14 +121,14 @@ class AuthenticationServices {
       developer.log(
         name: "AuthenticationServices -> signInWithEmail ->",
         "Email can not be empty");
-      return showAlertMessage('Email can not be empty', 2);
+      return showAlertMessageWithTimer('Email can not be empty', 2);
     }
 
     if (password.isEmpty) {
       developer.log(
         name: "AuthenticationServices -> signInWithEmail ->",
         "Password can not be empty");
-      return showAlertMessage('Password can not be empty', 2);
+      return showAlertMessageWithTimer('Password can not be empty', 2);
     }
 
     try {
@@ -149,25 +149,25 @@ class AuthenticationServices {
         developer.log(
           name: "AuthenticationServices -> signInWithEmail -> FirebaseAuthException",
           "$e");
-        return showAlertMessage('Wrong email or password', 2);
+        return showAlertMessageWithTimer('Wrong email or password', 2);
       } else if (e.code == 'user-not-found') {
         developer.log(
           name: "AuthenticationServices -> signInWithEmail -> FirebaseAuthException",
           "$e");
-        return showAlertMessage('No user found for that email.', 2);
+        return showAlertMessageWithTimer('No user found for that email.', 2);
       } else if (e.code == 'wrong-password') {
         developer.log(
           name: "AuthenticationServices -> signInWithEmail -> FirebaseAuthException",
           "$e");
-        return showAlertMessage('Wrong password provided for that user.', 2);
+        return showAlertMessageWithTimer('Wrong password provided for that user.', 2);
       } else if (e.code == 'email-already-in-use') {
         developer.log(
           name: "AuthenticationServices -> signInWithEmail -> FirebaseAuthException",
           "$e");
-        return showAlertMessage('The account already exists for that email.', 2);
+        return showAlertMessageWithTimer('The account already exists for that email.', 2);
       }
 
-      return showAlertMessage(e.code, 2);
+      return showAlertMessageWithTimer(e.code, 2);
     } catch (e) {
       developer.log(
         name: "AuthenticationServices -> signInWithEmail -> exception",
@@ -210,7 +210,7 @@ class AuthenticationServices {
       final AuthCredential credential = EmailAuthProvider.credential(email: currentUser!.email.toString(), password: currentPassword);
 
       if (currentPassword.isEmpty || newPassword.isEmpty ||  confirmPassword.isEmpty) {
-        showAlertMessage('Form fields can not be empty!', 2);
+        showAlertMessageWithTimer('Form fields can not be empty!', 2);
         developer.log(
           name: "AuthenticationServices -> changePassword",
           "Form fields can not be empty");
@@ -219,7 +219,7 @@ class AuthenticationServices {
       }
 
       if (newPassword != confirmPassword) {
-        showAlertMessage('New password and confirmation must be the same!', 2);
+        showAlertMessageWithTimer('New password and confirmation must be the same!', 2);
         developer.log(
           name: "AuthenticationServices -> changePassword",
           "New password and confirmation must be the same");
@@ -235,7 +235,7 @@ class AuthenticationServices {
         developer.log(
           name: "AuthenticationServices -> changePassword -> FirebaseAuthException",
           "$e");
-        showAlertMessage(e.code, 2);
+        showAlertMessageWithTimer(e.code, 2);
         isError = true;
       }
 
@@ -244,7 +244,7 @@ class AuthenticationServices {
       confirmPasswordController.clear();
 
       if (!isError) {
-        showAlertMessage("Password has been changed!", 2);
+        showAlertMessageWithTimer("Password has been changed!", 2);
         developer.log(
           name: "AuthenticationServices -> changePassword",
           "Password has been changed");
@@ -252,7 +252,7 @@ class AuthenticationServices {
       }
 
     } on FirebaseAuthException catch (e) {
-      showAlertMessage(e.code, 2);
+      showAlertMessageWithTimer(e.code, 2);
       developer.log(
         name: "AuthenticationServices -> changePassword -> FirebaseAuthException",
         "$e");

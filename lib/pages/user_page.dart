@@ -89,7 +89,7 @@ class _UserPageState extends State<UserPage> {
                         right: -10,
                         child: ElevatedButton(
                           onPressed: () async {
-                            Uint8List image = await pickImage(ImageSource.gallery);
+                            Uint8List image = await pickGalleryImage(ImageSource.gallery);
                             if (image.isEmpty) {
                               return;
                             }

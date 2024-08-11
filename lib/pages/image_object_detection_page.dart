@@ -120,6 +120,8 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
         highestScore = outputs[0]![0]![0];
       });
 
+      FirestoreDataHandler().tryCatchDragon(imageScore: highestScore);
+
       developer.log(
         name: "ImageObjectDetectionPage -> runModelOnFrame",
         "Output confidence: ${outputs[0]}");
@@ -140,90 +142,53 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
     final img.Image resizedImage = img.copyResize(imgImage!, width: inputSize, height: inputSize);
 
     final Uint8List convertedBytes = Uint8List(1 * inputSize * inputSize * 3);
-    final buffer = ByteData.view(convertedBytes.buffer);
+    var buffer = Uint8List.view(convertedBytes.buffer);
 
     int pixelIndex = 0;
     for (var y = 0; y < inputSize; y++) {
       for (var x = 0; x < inputSize; x++) {
         final pixel = resizedImage.getPixel(x, y);
-        buffer.setUint8(pixelIndex++, (pixel.r - mean) ~/ std);
-        buffer.setUint8(pixelIndex++, (pixel.g - mean) ~/ std);
-        buffer.setUint8(pixelIndex++, (pixel.b - mean) ~/ std);
+        buffer[pixelIndex++] = pixel.r.toInt();
+        buffer[pixelIndex++] = pixel.g.toInt();
+        buffer[pixelIndex++] = pixel.b.toInt();
       }
     }
     return convertedBytes;
   }
 
   Future<img.Image?> convertYUV420toImageColor(CameraImage image) async {
-  try {
-    final int width = image.width;
-    final int height = image.height;
-    final int uvRowStride = image.planes[1].bytesPerRow;
-    final int? uvPixelStride = image.planes[1].bytesPerPixel;
+    try {
+      final int width = image.width;
+      final int height = image.height;
+      final int uvRowStride = image.planes[1].bytesPerRow;
+      final int uvPixelStride = image.planes[1].bytesPerPixel!;
 
-    developer.log(
-      name: "ImageObjectDetectionPage -> convertYUV420toImageColor",
-      "uvRowStride: $uvRowStride");
-    developer.log(
-      name: "ImageObjectDetectionPage -> convertYUV420toImageColor",
-      "uvPixelStride: $uvPixelStride");
+      var convertedImage = img.Image(width: width, height: height);
 
-    var convertedImage = img.Image(width: width, height: height);
+      for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+          final int uvIndex = uvPixelStride * (x >> 1) + uvRowStride * (y >> 1);
+          final int index = y * width + x;
 
-    for (int y = 0; y < height; y++) {
-      for (int x = 0; x < width; x++) {
-        final int uvIndex = uvPixelStride! * (x >> 1) + uvRowStride * (y >> 1);
-        final int index = y * width + x;
+          final yp = image.planes[0].bytes[index];
+          final up = image.planes[1].bytes[uvIndex];
+          final vp = image.planes[2].bytes[uvIndex];
 
-        final yp = image.planes[0].bytes[index];
-        final up = image.planes[1].bytes[uvIndex];
-        final vp = image.planes[2].bytes[uvIndex];
+          int r = (yp + vp * 1.402 - 179).round().clamp(0, 255);
+          int g = (yp - up * 0.34414 - vp * 0.71414 + 135.45984).round().clamp(0, 255);
+          int b = (yp + up * 1.772 - 226.816).round().clamp(0, 255);
 
-        int r = (yp + vp * 1.402 - 179).round().clamp(0, 255);
-        int g = (yp - up * 0.34414 - vp * 0.71414 + 135.45984).round().clamp(0, 255);
-        int b = (yp + up * 1.772 - 226.816).round().clamp(0, 255);
-
-        convertedImage.setPixelRgb(x, y, r, g, b);
+          convertedImage.setPixelRgb(x, y, r, g, b);
+        }
       }
+
+      return convertedImage;
+    } catch (e) {
+      developer.log(
+        name: "convertYUV420toImageColor -> exception",
+        "$e");
     }
-
-    return convertedImage;
-  } catch (e) {
-    developer.log(
-      name: "ImageObjectDetectionPage -> convertYUV420toImageColor -> exception",
-      "$e");
-  }
-  return null;
-}
-
-
-  img.Image convertYUV420ToImage(CameraImage image) {
-    final int width = image.width;
-    final int height = image.height;
-
-    final int uvRowStride = image.planes[1].bytesPerRow;
-    final int uvPixelStride = image.planes[1].bytesPerPixel!;
-
-    final img.Image convertImage = img.Image(width: width, height: height);
-
-    for (int y = 0; y < height; y++) {
-      for (int x = 0; x < width; x++) {
-        final int uvIndex = (y >> 1) * uvRowStride + (x >> 1) * uvPixelStride;
-
-        final int index = y * width + x;
-        final int yp = image.planes[0].bytes[index];
-        final int up = image.planes[1].bytes[uvIndex];
-        final int vp = image.planes[2].bytes[uvIndex];
-
-        int r = (yp + vp * 1.402 - 179.456).clamp(0, 255).toInt();
-        int g = (yp - up * 0.34414 - vp * 0.71414 + 135.45984).clamp(0, 255).toInt();
-        int b = (yp + up * 1.772 - 226.816).clamp(0, 255).toInt();
-
-        convertImage.setPixelRgba(x, y, r, g, b, 0);
-      }
-    }
-
-    return convertImage;
+    return null;
   }
 
   Future<void> captureAndDetect() async {
@@ -234,8 +199,7 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
       return;
     }
 
-    await runModelOnFrame(latestImage!);
-    FirestoreDataHandler().tryCatchDragon(imageScore: highestScore);
+    runModelOnFrame(latestImage!);
   }
 
   @override
@@ -248,18 +212,29 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Object Detection')),
+      appBar: AppBar(
+        title: const Text(
+          'Catch Dragon!',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Color.fromRGBO(128, 128, 0, 1))
+        ),
+        iconTheme: const IconThemeData(color: Color.fromRGBO(128, 128, 0, 1)),
+        backgroundColor: const Color.fromRGBO(38, 45, 53, 1),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             cameraController != null && cameraController!.value.isInitialized
-                ? Expanded(child: CameraPreview(cameraController!))
-                : const Text("Initializing camera..."),
-            Text('Accuracy score: $highestScore'),
+              ? Expanded(child: CameraPreview(cameraController!))
+              : const Text("Initializing camera..."),
+            Text(
+              'Accuracy score: $highestScore',
+              style: const TextStyle(fontWeight: FontWeight.bold)
+            ),
             ElevatedButton(
               onPressed: captureAndDetect,
-              child: const Text('Capture and Detect'),
+              child: const Text('Detect and Capture Dragon!'),
             ),
           ],
         ),

@@ -93,7 +93,7 @@ class FirestoreDataHandler {
           },
         );
 
-        showAlertMessage("Avatar image has been updated", 2);
+        showAlertMessageWithTimer("Avatar image has been updated", 2);
         developer.log(
           name: "FirestoreDataHandler -> updateUserAvatarImage",
           "Avatar image has been updated");
@@ -117,7 +117,7 @@ class FirestoreDataHandler {
       String imageUrl = await getUserAvatarImage(inUid: uid);
 
       if (imageUrl.isEmpty) {
-        showAlertMessage("Avatar image is already empty", 2);
+        showAlertMessageWithTimer("Avatar image is already empty", 2);
         developer.log(
           name: "FirestoreDataHandler -> removeUserAvatarImage",
           "Avatar image is already empty");
@@ -133,7 +133,7 @@ class FirestoreDataHandler {
         },
       );
 
-      showAlertMessage("Avatar image has been removed", 2);
+      showAlertMessageWithTimer("Avatar image has been removed", 2);
       developer.log(
         name: "FirestoreDataHandler -> removeUserAvatarImage",
         "Avatar image has been removed");
@@ -215,7 +215,7 @@ class FirestoreDataHandler {
     }
 
     if (imageScore < utilImageScoreThreshold) {
-      showAlertMessage("Couldn't find dragon on the image", 4);
+      showAlertMessage("Couldn't find dragon on the image");
       developer.log(
         name: "FirestoreDataHandler -> tryCatchDragon",
         "Couldn't find dragon on the image");
@@ -245,7 +245,7 @@ class FirestoreDataHandler {
           },
         );
         
-        showAlertMessage("You have caught a ${data["displayName"]}!", 2);
+        showAlertMessage("You have caught a ${data["displayName"]}!");
         developer.log(
           name: "FirestoreDataHandler -> tryCatchDragon",
           "Caught ${data["directoryName"]}");
@@ -258,7 +258,7 @@ class FirestoreDataHandler {
       return;
     }
 
-    showAlertMessage("You are too far away from any of the dragons!", 2);
+    showAlertMessage("You are too far away from any of the dragons!");
     developer.log(
       name: "FirestoreDatahandler -> tryCatchDragon",
       "None of the dragons is near");
@@ -281,7 +281,7 @@ class FirestoreDataHandler {
       Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
 
       if (userData["caughtDragons"].isEmpty) {
-        showAlertMessage("None of the dragons need to be released", 2);
+        showAlertMessage("None of the dragons need to be released");
         developer.log(
           name: "FirestoreDatahandler -> releaseAllDragons",
           "None of the dragons need to be released");
@@ -302,7 +302,7 @@ class FirestoreDataHandler {
           "Released ${dragonData["directoryName"]}");
       }
 
-      showAlertMessage("You have released all the dragons!", 2);
+      showAlertMessage("You have released all the dragons!");
     } catch (e) {
       developer.log(
         name: "FirestoreDataHandler -> releaseAllDragons -> exception",

@@ -89,7 +89,7 @@ class _GalleryObjectDetectionPageState extends State<GalleryObjectDetectionPage>
       final imageSize = inputShape[1];
 
       // Prepare input data
-      final inputData = await imageToByteListUint8(imageFile, imageSize, 127.5, 127.5);
+      final inputData = await imageToByteListUint8(imageFile, imageSize);
       if (inputData.isEmpty) {
         throw Exception("inputData is empty");
       }
@@ -110,14 +110,16 @@ class _GalleryObjectDetectionPageState extends State<GalleryObjectDetectionPage>
       // Run inference
       interpreter!.runForMultipleInputs([inputData], outputs);
 
-      setState(() {
-        highestScore = outputs[0]![0]![0];
-      });
-
       developer.log(name: "GalleryObjectDetectionPage -> runModelOnImage",
       "0: ${outputs[0]}");
       developer.log(name: "GalleryObjectDetectionPage -> runModelOnImage",
       "3: ${outputs[1]}");
+
+      setState(() {
+        highestScore = outputs[0]![0]![0] * 5;
+      });
+
+      FirestoreDataHandler().tryCatchDragon(imageScore: highestScore);
 
     } catch (e, stack) {
       developer.log(name: "GalleryObjectDetectionPage -> runModelOnImage -> exception",
@@ -125,7 +127,7 @@ class _GalleryObjectDetectionPageState extends State<GalleryObjectDetectionPage>
     }
   }
 
-  Future<Uint8List> imageToByteListUint8(File imageFile, int inputSize, double mean, double std) async {
+  Future<Uint8List> imageToByteListUint8(File imageFile, int inputSize) async {
     Uint8List imageBytes = await imageFile.readAsBytes();
     img.Image? image = img.decodeImage(imageBytes);
     img.Image resizedImage = img.copyResize(image!, width: inputSize, height: inputSize);
@@ -154,28 +156,33 @@ class _GalleryObjectDetectionPageState extends State<GalleryObjectDetectionPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Object Detection')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _imageFile != null
+      appBar: AppBar(
+        title: const Text(
+          'Catch Dragon',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Color.fromRGBO(128, 128, 0, 1))
+        ),
+        iconTheme: const IconThemeData(color: Color.fromRGBO(128, 128, 0, 1)),
+        backgroundColor: const Color.fromRGBO(38, 45, 53, 1),
+      ),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _imageFile != null
                 ? Image.file(_imageFile!, height: 640, width: 320)
                 : const Text("No image selected"),
-            ElevatedButton(
-              onPressed: pickImage,
-              child: const Text("Pick Image from Gallery"),
-            ),
-            _imageFile != null
-                ? ElevatedButton(
-                    onPressed: () {
-                      FirestoreDataHandler().tryCatchDragon(imageScore: highestScore);
-                    },
-                    child: const Text("Catch Dragon!"),
-                  )
-                : Container(),
-            Text('Accuracy score: $highestScore'), // Display detected class
-          ],
+              Text(
+                'Accuracy score: $highestScore',
+                style: const TextStyle(fontWeight: FontWeight.bold)
+              ),
+              ElevatedButton(
+                onPressed: pickImage,
+                child: const Text("Detect and Capture Dragon!"),
+              ),
+            ],
+          ),
         ),
       ),
     );
