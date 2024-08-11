@@ -9,6 +9,8 @@ class SettingsItem extends StatelessWidget {
   final Widget? leadingIcon;
   final Widget? trailingIcon;
   final VoidCallback? onTap;
+  final bool isExpandable;
+  final List<Widget>? expansionTileChildren;
 
   const SettingsItem({
     super.key,
@@ -19,28 +21,47 @@ class SettingsItem extends StatelessWidget {
     this.leadingIcon,
     this.trailingIcon,
     this.onTap,
+    this.isExpandable = false,
+    this.expansionTileChildren,
   });
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(15),
-      child: ListTile(
-        leading: leadingIcon,
-        onTap: onTap,
-        title: Text(
-          titleText,
-          style: titleStyle ?? const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: (subtitleText != null)
-          ? Text(
-              subtitleText!,
-              style: subtitleStyle ?? Theme.of(context).textTheme.bodyMedium!,
-              overflow: TextOverflow.ellipsis,
+      child: isExpandable
+          ? ExpansionTile(
+              leading: leadingIcon,
+              title: Text(
+                titleText,
+                style: titleStyle ?? const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: (subtitleText != null)
+                  ? Text(
+                      subtitleText!,
+                      style: subtitleStyle ?? Theme.of(context).textTheme.bodyMedium!,
+                      overflow: TextOverflow.ellipsis,
+                    )
+                  : null,
+              trailing: trailingIcon,
+              children: expansionTileChildren ?? []
             )
-          : null,
-        trailing: trailingIcon,
-      ),
+          : ListTile(
+              leading: leadingIcon,
+              onTap: onTap,
+              title: Text(
+                titleText,
+                style: titleStyle ?? const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: (subtitleText != null)
+                  ? Text(
+                      subtitleText!,
+                      style: subtitleStyle ?? Theme.of(context).textTheme.bodyMedium!,
+                      overflow: TextOverflow.ellipsis,
+                    )
+                  : null,
+              trailing: trailingIcon,
+            ),
     );
   }
 }

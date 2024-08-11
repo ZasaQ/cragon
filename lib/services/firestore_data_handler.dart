@@ -211,7 +211,7 @@ class FirestoreDataHandler {
       return;
     }
 
-    showAlertMessage("You could't catch a dragon", 4);
+    showAlertMessage("You are too far away from any of the dragons!", 4);
     developer.log("None of the dragons is near");
   }
 }

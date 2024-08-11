@@ -12,7 +12,7 @@ Widget bottomNavigationBar() {
   return BottomAppBar(
     color: const Color.fromRGBO(38, 45, 53, 1),
     shape: const CircularNotchedRectangle(),
-    notchMargin: 6,
+    notchMargin: 6.0,
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [

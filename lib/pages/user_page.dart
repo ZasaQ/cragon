@@ -1,3 +1,4 @@
+import 'package:cragon/pages/change_object_detection_method_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:typed_data';
@@ -138,10 +139,21 @@ class _UserPageState extends State<UserPage> {
                       SettingsItem(
                         onTap: () {
                           MyApp.navigatorKey.currentState!.push(
+                            MaterialPageRoute(builder: (context) => const ChangeObjectDetectionMethodPage()));
+                        },
+                        titleText: 'Change Object Detection Method',
+                        leadingIcon: const Icon(Icons.camera_front, color: Colors.black),
+                        trailingIcon: const Icon(Icons.arrow_right)
+                      ),
+
+                      SettingsItem(
+                        onTap: () {
+                          MyApp.navigatorKey.currentState!.push(
                             MaterialPageRoute(builder: (context) => const ChangePasswordPage()));
                         },
                         titleText: 'Change password',
                         leadingIcon: const Icon(Icons.password_sharp, color: Colors.black),
+                        trailingIcon: const Icon(Icons.arrow_right)
                       ),
                 
                       SettingsItem(
@@ -160,6 +172,7 @@ class _UserPageState extends State<UserPage> {
                         titleText: 'Delete account',
                         titleStyle: TextStyle(color: Colors.red.shade500),
                         leadingIcon: Icon(Icons.remove, color: Colors.red.shade500),
+                        trailingIcon: const Icon(Icons.arrow_right)
                       )
                     ]
                   ),
@@ -195,7 +208,8 @@ class _UserPageState extends State<UserPage> {
                                   MaterialPageRoute(builder: (context) => const BulkDeleteUsersPage()));
                               },
                               titleText: 'Delete users',
-                              leadingIcon: const Icon(Icons.delete_forever, color: Colors.black)
+                              leadingIcon: const Icon(Icons.delete_forever, color: Colors.black),
+                              trailingIcon: const Icon(Icons.arrow_right)
                             ),
                             SettingsItem(
                               onTap: () {
@@ -203,7 +217,8 @@ class _UserPageState extends State<UserPage> {
                                   MaterialPageRoute(builder: (context) => const ManageUsersPrivilegesPage()));
                               },
                               titleText: 'Manage users privileges',
-                              leadingIcon: const Icon(Icons.admin_panel_settings, color: Colors.black)
+                              leadingIcon: const Icon(Icons.admin_panel_settings, color: Colors.black),
+                              trailingIcon: const Icon(Icons.arrow_right)
                             ),
                           ],
                         );

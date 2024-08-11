@@ -16,6 +16,14 @@ int utilDragonsAmount = 0;
 int utilCaughtDragonsAmount = 0;
 Map<String, LatLng> utilsDragonsPositions = {};
 double utilImageScoreThreshold = 0.6;
+final List<String> objectDetectionMethods = ["Gallery", "Image", "CameraStream"];
+String utilchoosenObjectDetectionMethod = objectDetectionMethods.first;
+
+/*enum ObjectDetectionVariants {
+  gallery,
+  image,
+  cameraStream
+}*/
 
 void showAlertMessage(final String message, int durationTime) {
   Timer timer = Timer(Duration(seconds: durationTime), () {
