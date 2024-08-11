@@ -143,9 +143,20 @@ class _UserPageState extends State<UserPage> {
                           MyApp.navigatorKey.currentState!.push(
                             MaterialPageRoute(builder: (context) => const ChangeObjectDetectionMethodPage()));
                         },
-                        titleText: 'Change Object Detection Method',
+                        titleText: 'Change object detection method',
                         leadingIcon: const Icon(Icons.camera_front, color: Colors.black),
                         trailingIcon: const Icon(Icons.arrow_right)
+                      ),
+
+                      SettingsItem(
+                        onTap: () {
+                          FirestoreDataHandler().releaseAllDragons();
+                          setState(() {
+                            utilCaughtDragonsAmount = 0;
+                          });
+                        },
+                        titleText: 'Release all caught dragons',
+                        leadingIcon: const Icon(Icons.remove, color: Colors.black),
                       ),
 
                       SettingsItem(
@@ -173,7 +184,7 @@ class _UserPageState extends State<UserPage> {
                         },
                         titleText: 'Delete account',
                         titleStyle: TextStyle(color: Colors.red.shade500),
-                        leadingIcon: Icon(Icons.remove, color: Colors.red.shade500),
+                        leadingIcon: Icon(Icons.person_remove, color: Colors.red.shade500),
                         trailingIcon: const Icon(Icons.arrow_right)
                       )
                     ]
@@ -210,7 +221,7 @@ class _UserPageState extends State<UserPage> {
                                   MaterialPageRoute(builder: (context) => const BulkDeleteUsersPage()));
                               },
                               titleText: 'Delete users',
-                              leadingIcon: const Icon(Icons.delete_forever, color: Colors.black),
+                              leadingIcon: const Icon(Icons.group_remove, color: Colors.black),
                               trailingIcon: const Icon(Icons.arrow_right)
                             ),
                             SettingsItem(

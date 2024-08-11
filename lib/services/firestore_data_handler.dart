@@ -232,8 +232,6 @@ class FirestoreDataHandler {
         bool isNear = await LocalizationServices().isCurrentLocationCloseTo(
           dragonGeoPoint.latitude, dragonGeoPoint.longitude, 50);
 
-        developer.log("${dragonGeoPoint.latitude}, ${dragonGeoPoint.longitude}");
-
         if (!isNear) {
           developer.log(
             name: "FirestoreDataHandler -> tryCatchDragon",
@@ -254,11 +252,61 @@ class FirestoreDataHandler {
         return;  
       }
     } catch (e) {
-      developer.log("$e");
+      developer.log(
+        name: "FirestoreDataHandler -> tryCatchDragon -> exception",
+        "$e");
       return;
     }
 
     showAlertMessage("You are too far away from any of the dragons!", 2);
-    developer.log("None of the dragons is near");
+    developer.log(
+      name: "FirestoreDatahandler -> tryCatchDragon",
+      "None of the dragons is near");
+  }
+
+  void releaseAllDragons() async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser == null) {
+      developer.log(
+        name: "FirestoreDataHandler -> releaseAllDragons",
+        "Current user is null");
+      return;
+    }
+
+    try {
+      QuerySnapshot dragonsSnapshot = await utilsDragonsCollection.get();
+
+      DocumentSnapshot userSnapshot = await utilsUsersCollection.doc(currentUser.uid).get();
+      Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
+
+      if (userData["caughtDragons"].isEmpty) {
+        showAlertMessage("None of the dragons need to be released", 2);
+        developer.log("None of the dragons need to be released");
+        return;
+      }
+
+      for (QueryDocumentSnapshot dragonDocument in dragonsSnapshot.docs) {
+        Map<String, dynamic> dragonData = dragonDocument.data() as Map<String, dynamic>;
+
+        await utilsUsersCollection.doc(currentUser.uid).update(
+          {
+            'caughtDragons': FieldValue.arrayRemove([dragonData["directoryName"]]),
+          },
+        );
+        
+        developer.log(
+          name: "FirestoreDataHandler -> tryCatchDragon",
+          "Released ${dragonData["directoryName"]}");
+      }
+
+      showAlertMessage("You have released all the dragons!", 2);
+    } catch (e) {
+      developer.log(
+        name: "FirestoreDataHandler -> releaseAllDragons -> exception",
+        "$e");
+    }
   }
 }
+
+  
