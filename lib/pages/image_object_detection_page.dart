@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'package:cragon/services/firestore_data_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +19,8 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
   Interpreter? interpreter;
   CameraController? cameraController;
   CameraImage? latestImage;
+  bool dragonCaught = false;
+  bool wasLaunched = false;
   double highestScore = 0.0;
   late List<int> inputShape;
   late List<int> outputShape;
@@ -117,10 +118,11 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
       interpreter!.runForMultipleInputs([inputData], outputs);
 
       setState(() {
-        highestScore = outputs[0]![0]![0];
+        highestScore = outputs[0]![0]![0] * 6;
       });
 
-      FirestoreDataHandler().tryCatchDragon(imageScore: highestScore);
+      dragonCaught = await FirestoreDataHandler().tryCatchDragon(imageScore: highestScore);
+      wasLaunched = true;
 
       developer.log(
         name: "ImageObjectDetectionPage -> runModelOnFrame",
@@ -216,28 +218,70 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
         title: const Text(
           'Catch Dragon!',
           textAlign: TextAlign.center,
-          style: TextStyle(color: Color.fromRGBO(128, 128, 0, 1))
+          style: TextStyle(color: Color.fromRGBO(128, 128, 0, 1)),
         ),
         iconTheme: const IconThemeData(color: Color.fromRGBO(128, 128, 0, 1)),
         backgroundColor: const Color.fromRGBO(38, 45, 53, 1),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            cameraController != null && cameraController!.value.isInitialized
-              ? Expanded(child: CameraPreview(cameraController!))
-              : const Text("Initializing camera..."),
-            Text(
-              'Accuracy score: $highestScore',
-              style: const TextStyle(fontWeight: FontWeight.bold)
+      body: Stack(
+        children: [
+          if (cameraController != null && cameraController!.value.isInitialized)
+            CameraPreview(cameraController!)
+          else
+            const Center(child: Text("Initializing camera...")),
+
+          if (wasLaunched)
+            Positioned(
+              top: 5.0,
+              left: 5.0,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width - 10,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      padding: const EdgeInsets.all(4.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: const Color.fromRGBO(128, 128, 0, 1),
+                      ),
+                      child: Text(
+                        "Previous accuracy score: $highestScore",
+                        textAlign: TextAlign.left,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+
+                    const SizedBox(height: 5),
+
+                    Container(
+                      padding: const EdgeInsets.all(4.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: const Color.fromRGBO(128, 128, 0, 1),
+                      ),
+                      child: Text(
+                        "Dragon has been caught: $dragonCaught",
+                        textAlign: TextAlign.left,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            ElevatedButton(
+
+          Positioned(
+            bottom: 16.0,
+            left: MediaQuery.of(context).size.width / 2 - 28.0,
+            child: FloatingActionButton(
               onPressed: captureAndDetect,
-              child: const Text('Detect and Capture Dragon!'),
+              child: const Icon(Icons.photo_camera),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

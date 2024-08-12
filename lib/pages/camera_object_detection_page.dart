@@ -18,6 +18,7 @@ class _CameraObjectDetectionPageState extends State<CameraObjectDetectionPage> {
   Interpreter? interpreter;
   CameraController? cameraController;
   double highestScore = 0.0;
+  bool dragonCaught = false;
   late List<int> inputShape;
   late List<int> outputShape;
   late TensorType inputType;
@@ -133,10 +134,8 @@ class _CameraObjectDetectionPageState extends State<CameraObjectDetectionPage> {
       interpreter!.runForMultipleInputs([inputData], outputs);
 
       setState(() {
-        highestScore = outputs[0]![0]![0] * 6;
+        highestScore = outputs[0]![0]![0] * 2;
       });
-
-      FirestoreDataHandler().tryCatchDragon(imageScore: highestScore);
 
       developer.log(
         name: "CameraObjectDetectionPage -> _runModelOnFrame",
@@ -217,7 +216,7 @@ class _CameraObjectDetectionPageState extends State<CameraObjectDetectionPage> {
       return;
     }
 
-    FirestoreDataHandler().tryCatchDragon(imageScore: highestScore);
+    dragonCaught = await FirestoreDataHandler().tryCatchDragon(imageScore: highestScore);
   }
 
   @override
@@ -232,23 +231,65 @@ class _CameraObjectDetectionPageState extends State<CameraObjectDetectionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Object Detection')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            cameraController != null && cameraController!.value.isInitialized
-              ? Expanded(child: CameraPreview(cameraController!))
-              : const Text("Initializing camera..."),
-            Text(
-              'Accuracy score: $highestScore',
-              style: const TextStyle(fontWeight: FontWeight.bold)
+      body: Stack(
+        children: [
+          if (cameraController != null && cameraController!.value.isInitialized)
+            CameraPreview(cameraController!)
+          else
+            const Center(child: Text("Initializing camera...")),
+
+          if (cameraController != null && cameraController!.value.isInitialized)
+            Positioned(
+              top: 5.0,
+              left: 5.0,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width - 10,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      padding: const EdgeInsets.all(4.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: const Color.fromRGBO(128, 128, 0, 1),
+                      ),
+                      child: Text(
+                        "Previous accuracy score: $highestScore",
+                        textAlign: TextAlign.left,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+
+                    const SizedBox(height: 5),
+
+                    Container(
+                      padding: const EdgeInsets.all(4.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: const Color.fromRGBO(128, 128, 0, 1),
+                      ),
+                      child: Text(
+                        "Dragon has been caught: $dragonCaught",
+                        textAlign: TextAlign.left,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            ElevatedButton(
+          
+          Positioned(
+            bottom: 16.0,
+            left: MediaQuery.of(context).size.width / 2 - 28.0,
+            child: FloatingActionButton(
               onPressed: tryCatch,
-              child: const Text('Detect and Capture Dragon!'),
+              child: const Icon(Icons.photo_camera),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

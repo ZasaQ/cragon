@@ -74,12 +74,15 @@ void showConfirmationMessage(final String message, Function() onPressed) {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               TextButton(
-                onPressed: onPressed,
-                child: const Text('Confirm'),
+                onPressed: () {
+                  Navigator.of(context).pop(); 
+                  onPressed();
+                },
+                child: const Text('Confirm', style: TextStyle(color: Colors.black),),
               ),
               TextButton(
                 onPressed: () {Navigator.of(context).pop();},
-                child: const Text('Cancel'),
+                child: const Text('Cancel', style: TextStyle(color: Colors.black),),
               ),
             ],
           ),

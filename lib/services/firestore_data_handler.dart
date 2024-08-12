@@ -204,22 +204,22 @@ class FirestoreDataHandler {
     }
   }
 
-  void tryCatchDragon({required double imageScore}) async {
+  Future<bool> tryCatchDragon({required double imageScore}) async {
     User? currentUser = FirebaseAuth.instance.currentUser;
 
     if (currentUser == null) {
       developer.log(
         name: "FirestoreDataHandler -> tryCatchDragon",
         "Current user is null");
-      return;
+      return false;
     }
 
     if (imageScore < utilImageScoreThreshold) {
-      showAlertMessage("Couldn't find dragon on the image");
+      showAlertMessage("Accuracy: $imageScore\n\nCouldn't find dragon on the image");
       developer.log(
         name: "FirestoreDataHandler -> tryCatchDragon",
         "Couldn't find dragon on the image");
-      return;
+      return false;
     }
 
     try {
@@ -245,23 +245,25 @@ class FirestoreDataHandler {
           },
         );
         
-        showAlertMessage("You have caught a ${data["displayName"]}!");
+        showAlertMessage("Accuracy: $imageScore\n\nYou have caught a ${data["displayName"]}!");
         developer.log(
           name: "FirestoreDataHandler -> tryCatchDragon",
           "Caught ${data["directoryName"]}");
-        return;  
+        return true;  
       }
     } catch (e) {
       developer.log(
         name: "FirestoreDataHandler -> tryCatchDragon -> exception",
         "$e");
-      return;
+      return false;
     }
 
-    showAlertMessage("You are too far away from any of the dragons!");
+    showAlertMessage("Accuracy: $imageScore\n\nYou are too far away from any of the dragons!");
     developer.log(
       name: "FirestoreDatahandler -> tryCatchDragon",
       "None of the dragons is near");
+
+    return false;
   }
 
   void releaseAllDragons() async {
@@ -301,6 +303,8 @@ class FirestoreDataHandler {
           name: "FirestoreDataHandler -> tryCatchDragon",
           "Released ${dragonData["directoryName"]}");
       }
+
+      utilCaughtDragonsAmount = 0;
 
       showAlertMessage("You have released all the dragons!");
     } catch (e) {

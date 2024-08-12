@@ -75,6 +75,8 @@ class _UserPageState extends State<UserPage> {
                            
                           Map<String, dynamic> userData = userSnapshot.data!.data() as Map<String, dynamic>;
                           String avatarImageUrl = userData["avatarImage"].toString();
+
+                          utilCaughtDragonsAmount = userData["caughtDragons"].length;
                       
                           return userAvatarViaSnapshot(
                             imageUrl: avatarImageUrl,
@@ -150,10 +152,8 @@ class _UserPageState extends State<UserPage> {
 
                       SettingsItem(
                         onTap: () {
-                          FirestoreDataHandler().releaseAllDragons();
-                          setState(() {
-                            utilCaughtDragonsAmount = 0;
-                          });
+                          showConfirmationMessage("Are you sure?", () =>
+                            {FirestoreDataHandler().releaseAllDragons()});
                         },
                         titleText: 'Release all caught dragons',
                         leadingIcon: const Icon(Icons.remove, color: Colors.black),

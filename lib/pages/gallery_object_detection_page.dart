@@ -18,6 +18,8 @@ class _GalleryObjectDetectionPageState extends State<GalleryObjectDetectionPage>
   Interpreter? interpreter;
   File? _imageFile;
   double highestScore = 0.0;
+  bool dragonCaught = false;
+  bool wasLaunched = false;
 
   late List<int> inputShape;
   late List<int> outputShape;
@@ -116,11 +118,11 @@ class _GalleryObjectDetectionPageState extends State<GalleryObjectDetectionPage>
       "3: ${outputs[1]}");
 
       setState(() {
-        highestScore = outputs[0]![0]![0] * 5;
+        highestScore = outputs[0]![0]![0];
       });
 
-      FirestoreDataHandler().tryCatchDragon(imageScore: highestScore);
-
+      dragonCaught = await FirestoreDataHandler().tryCatchDragon(imageScore: highestScore);
+      wasLaunched = true;
     } catch (e, stack) {
       developer.log(name: "GalleryObjectDetectionPage -> runModelOnImage -> exception",
       "$e\n$stack");
@@ -173,10 +175,23 @@ class _GalleryObjectDetectionPageState extends State<GalleryObjectDetectionPage>
               _imageFile != null
                 ? Image.file(_imageFile!, height: 640, width: 320)
                 : const Text("No image selected"),
-              Text(
-                'Accuracy score: $highestScore',
-                style: const TextStyle(fontWeight: FontWeight.bold)
-              ),
+
+              if (wasLaunched)
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Accuracy score: $highestScore',
+                      style: const TextStyle(fontWeight: FontWeight.bold)
+                    ),
+
+                    Text(
+                      "Dragon has been caught: $dragonCaught",
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                
               ElevatedButton(
                 onPressed: pickImage,
                 child: const Text("Detect and Capture Dragon!"),
