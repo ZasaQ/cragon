@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_statusbarcolor_ns/flutter_statusbarcolor_ns.dart';
 import 'dart:developer' as developer;
 
 import 'package:cragon/pages/login_page.dart';
@@ -13,7 +12,6 @@ import 'package:cragon/pages/home_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  FlutterStatusbarcolor.setStatusBarColor(const Color.fromRGBO(128, 128, 0, 1));
 
   runApp(const MyApp());
 }

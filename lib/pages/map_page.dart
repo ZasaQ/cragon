@@ -301,11 +301,14 @@ class _MapPageState extends State<MapPage> {
       return [];
     }
 
+    PolylineRequest polylineRequest = PolylineRequest(
+      origin: PointLatLng(currentLocation!.latitude, currentLocation!.longitude),
+      destination: PointLatLng(targetedDragonLocation!.latitude, targetedDragonLocation!.longitude),
+      mode: TravelMode.walking);
+
     PolylineResult polylineResult = await polylinePoints.getRouteBetweenCoordinates(
-      googleApiKey,
-      PointLatLng(currentLocation!.latitude, currentLocation!.longitude),
-      PointLatLng(targetedDragonLocation!.latitude, targetedDragonLocation!.longitude),
-      travelMode: TravelMode.walking
+      request: polylineRequest,
+      googleApiKey: googleApiKey
     );
     
     if (polylineResult.points.isEmpty) {
