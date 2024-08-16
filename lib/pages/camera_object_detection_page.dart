@@ -15,16 +15,18 @@ class CameraObjectDetectionPage extends StatefulWidget {
 }
 
 class _CameraObjectDetectionPageState extends State<CameraObjectDetectionPage> {
-  Interpreter? interpreter;
   CameraController? cameraController;
-  double highestScore = 0.0;
-  bool dragonCaught = false;
+  late List<CameraDescription> cameras;
+  CameraLensDirection currentLensDirection = CameraLensDirection.back;
+  Interpreter? interpreter;
   late List<int> inputShape;
   late List<int> outputShape;
   late TensorType inputType;
   late TensorType outputType;
-  Timer? throttleTimer;
   CameraImage? latestImage;
+  double highestScore = 0.0;
+  bool dragonCaught = false;
+  Timer? throttleTimer;
   bool shouldRunModel = false;
 
   @override
@@ -40,9 +42,26 @@ class _CameraObjectDetectionPageState extends State<CameraObjectDetectionPage> {
   }
 
   Future<void> initializeCamera() async {
-    final cameras = await availableCameras();
+    cameras = await availableCameras();
+
+    for (CameraDescription camera in cameras) {
+      if (camera.lensDirection != CameraLensDirection.back) continue;
+
+      setCamera(camera);
+      break;
+    }
+
+    throttleTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
+      if (shouldRunModel) {
+        shouldRunModel = false;
+        runModelOnFrame();
+      }
+    });
+  }
+
+  Future<void> setCamera(CameraDescription camera) async {
     cameraController = CameraController(
-      cameras[0],
+      camera,
       ResolutionPreset.high,
     );
     await cameraController!.initialize();
@@ -52,12 +71,25 @@ class _CameraObjectDetectionPageState extends State<CameraObjectDetectionPage> {
       shouldRunModel = true;
     });
 
-    throttleTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
-      if (shouldRunModel) {
-        shouldRunModel = false;
-        runModelOnFrame();
-      }
-    });
+    developer.log(
+      name: "CameraObjectDetectionPage -> setCamera",
+      "Camera lens direction change to $currentLensDirection");
+
+    setState(() {currentLensDirection = currentLensDirection;});
+  }
+
+  Future<void> switchCamera() async {
+    await cameraController!.dispose();
+
+    currentLensDirection = (currentLensDirection == CameraLensDirection.back) 
+        ? CameraLensDirection.front : CameraLensDirection.back;
+
+    for (CameraDescription camera in cameras) {
+      if (camera.lensDirection != currentLensDirection) continue;
+
+      await setCamera(camera);
+      break;
+    }
 
     setState(() {});
   }
@@ -134,7 +166,7 @@ class _CameraObjectDetectionPageState extends State<CameraObjectDetectionPage> {
       interpreter!.runForMultipleInputs([inputData], outputs);
 
       setState(() {
-        highestScore = outputs[0]![0]![0] * 2;
+        highestScore = outputs[0]![0]![0];
       });
 
       developer.log(
@@ -232,6 +264,7 @@ class _CameraObjectDetectionPageState extends State<CameraObjectDetectionPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Object Detection')),
       body: Stack(
+        fit: StackFit.expand,
         children: [
           if (cameraController != null && cameraController!.value.isInitialized)
             CameraPreview(cameraController!)
@@ -280,11 +313,22 @@ class _CameraObjectDetectionPageState extends State<CameraObjectDetectionPage> {
                 ),
               ),
             ),
+
+          Positioned(
+            bottom: 16.0,
+            right: 16.0,
+            child: FloatingActionButton(
+              heroTag: "switchCamera",
+              onPressed: switchCamera,
+              child: const Icon(Icons.switch_camera),
+            ),
+          ),
           
           Positioned(
             bottom: 16.0,
             left: MediaQuery.of(context).size.width / 2 - 28.0,
             child: FloatingActionButton(
+              heroTag: "tryCatch",
               onPressed: tryCatch,
               child: const Icon(Icons.photo_camera),
             ),

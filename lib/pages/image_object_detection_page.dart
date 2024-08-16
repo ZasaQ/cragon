@@ -16,16 +16,19 @@ class ImageObjectDetectionPage extends StatefulWidget {
 }
 
 class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
-  Interpreter? interpreter;
+  late List<CameraDescription> cameras;
+  CameraLensDirection currentLensDirection = CameraLensDirection.back;
   CameraController? cameraController;
-  CameraImage? latestImage;
-  bool dragonCaught = false;
-  bool wasLaunched = false;
-  double highestScore = 0.0;
+  int currentCameraIndex = 0;
+  Interpreter? interpreter;
   late List<int> inputShape;
   late List<int> outputShape;
   late TensorType inputType;
   late TensorType outputType;
+  CameraImage? latestImage;
+  double highestScore = 0.0;
+  bool dragonCaught = false;
+  bool wasLaunched = false;
 
   @override
   void initState() {
@@ -40,9 +43,19 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
   }
 
   Future<void> initializeCamera() async {
-    final cameras = await availableCameras();
+    cameras = await availableCameras();
+
+    for (CameraDescription camera in cameras) {
+      if (camera.lensDirection != CameraLensDirection.back) continue;
+
+      setCamera(camera);
+      return;
+    }
+  }
+
+  Future<void> setCamera(CameraDescription camera) async {
     cameraController = CameraController(
-      cameras[0],
+      camera,
       ResolutionPreset.high,
     );
     await cameraController!.initialize();
@@ -50,6 +63,26 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
     cameraController!.startImageStream((CameraImage image) {
       latestImage = image;
     });
+
+    developer.log(
+      name: "ImageObjectDetectionPage -> setCamera",
+      "Camera lens direction change to $currentLensDirection");
+
+    setState(() {currentLensDirection = currentLensDirection;});
+  }
+
+  Future<void> switchCamera() async {
+    await cameraController!.dispose();
+
+    currentLensDirection = (currentLensDirection == CameraLensDirection.back) 
+        ? CameraLensDirection.front : CameraLensDirection.back;
+
+    for (CameraDescription camera in cameras) {
+      if (camera.lensDirection != currentLensDirection) continue;
+
+      await setCamera(camera);
+      break;
+    }
 
     setState(() {});
   }
@@ -118,7 +151,7 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
       interpreter!.runForMultipleInputs([inputData], outputs);
 
       setState(() {
-        highestScore = outputs[0]![0]![0] * 6;
+        highestScore = outputs[0]![0]![0];
       });
 
       dragonCaught = await FirestoreDataHandler().tryCatchDragon(imageScore: highestScore);
@@ -224,6 +257,7 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
         backgroundColor: const Color.fromRGBO(38, 45, 53, 1),
       ),
       body: Stack(
+        fit: StackFit.expand,
         children: [
           if (cameraController != null && cameraController!.value.isInitialized)
             CameraPreview(cameraController!)
@@ -275,8 +309,19 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
 
           Positioned(
             bottom: 16.0,
+            right: 16.0,
+            child: FloatingActionButton(
+              heroTag: "switchCamera",
+              onPressed: switchCamera,
+              child: const Icon(Icons.switch_camera),
+            ),
+          ),
+
+          Positioned(
+            bottom: 16.0,
             left: MediaQuery.of(context).size.width / 2 - 28.0,
             child: FloatingActionButton(
+              heroTag: "captureAndDetect",
               onPressed: captureAndDetect,
               child: const Icon(Icons.photo_camera),
             ),
