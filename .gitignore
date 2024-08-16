@@ -66,6 +66,7 @@ analysis_benchmark.json
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
 **/android/key.properties
+**/android/app/google-services.json
 *.jks
 
 # iOS/XCode related
@@ -123,6 +124,7 @@ coverage/
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
 !.vscode/settings.json
+.vscode/settings.json
 
 # Generated files
 macos/Flutter/GeneratedPluginRegistrant.swift
@@ -133,9 +135,11 @@ linux/flutter/generated_plugin_registrant.cc
 linux/flutter/generated_plugin_registrant.h
 linux/flutter/generated_plugins.cmake
 functions/package-lock.json
+pubspec.lock
 
 # API
 lib/services/api_utils.dart
-lib/firebase_options.dart
+
+# Firebase
 firebase.json
-pubspec.lock
+lib/firebase_options.dart
