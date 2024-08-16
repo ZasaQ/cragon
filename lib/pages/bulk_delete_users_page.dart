@@ -1,3 +1,4 @@
+import 'package:cragon/components/header_item.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -30,10 +31,8 @@ class _BulkDeleteUsersPageState extends State<BulkDeleteUsersPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromRGBO(128, 128, 0, 1),
-      ),
       resizeToAvoidBottomInset: false,
+      appBar: AppBar(title: const Text("Delete users")),
       body: StreamBuilder<QuerySnapshot>(
         stream: utilsUsersCollection.orderBy('email').snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> userSnapshot) {
@@ -52,18 +51,11 @@ class _BulkDeleteUsersPageState extends State<BulkDeleteUsersPage> {
           return Column(
             mainAxisSize: MainAxisSize.max,
             children: [
-              const Image(
-                image: AssetImage('lib/images/delete_account_icon.png'),
-                height: 100.0,
-                width: 100.0,
+              const HeaderItem(
+                headerIcon: Icons.group_remove,
+                headerText: "Here you can delete multiple accounts remotly!",
+                headerPadding: EdgeInsets.only(bottom: 20, top: 20),
               ),
-              const Center(
-                child: Text('Here you can delete multiple accounts remotly', 
-                  style: TextStyle(color: Colors.black, fontSize: 16.0)
-                ),
-              ),
-
-              const SizedBox(height: 50,),
           
               Flexible(
                 child: SingleChildScrollView(

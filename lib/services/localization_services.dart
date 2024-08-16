@@ -1,7 +1,9 @@
 import 'dart:math' show asin, cos, pi, sin, sqrt;
 import 'dart:developer' as developer;
-import 'package:cragon/services/utilities.dart';
 import 'package:location/location.dart';
+
+import 'package:cragon/services/utilities.dart';
+
 
 class LocalizationServices {
   double calculateDistance(double lat1, double lon1, double lat2, double lon2) {

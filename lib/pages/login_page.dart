@@ -1,3 +1,4 @@
+import 'package:cragon/services/utilities.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
 
@@ -7,6 +8,7 @@ import 'package:cragon/components/form_text_item.dart';
 import 'package:cragon/components/lr_button.dart';
 import 'package:cragon/services/authentication_services.dart';
 import 'package:cragon/pages/forgot_password_page.dart';
+import 'package:cragon/components/header_item.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -33,39 +35,25 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(128, 128, 0, 1),
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              const Align(
-                alignment: Alignment.topCenter,
-                child: Image(
-                  image: AssetImage('lib/images/lock_icon.png'),
-                  height: 100,
-                  width: 100
-                )
+              const HeaderItem(
+                headerIcon: Icons.lock_outline,
+                headerText: "Welcom! Try to Sign In"
               ),
-                
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Column(
-                  children: [
-                    const SizedBox(height: 50),
-                
-                    const Center(
-                      child: Text('Welcome! Try to Sign In',
-                        style: TextStyle(fontSize: 16)),
-                    ),
-                
-                    const SizedBox(height: 50),
-                
+                  children: [                                
                     FormTextItem(
                       controller: emailController,
                       inLabelText: "Email",
                       inHintText: "name@example.com",
-                      prefixIcon: const Icon(Icons.email, color: Colors.black),
+                      prefixIcon: const Icon(Icons.email),
                       isPasswordForm: false
                     ),
                 
@@ -75,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
                       controller: passwordController,
                       inLabelText: "Password",
                       inHintText: 'Your Password',
-                      prefixIcon: const Icon(Icons.lock, color: Colors.black),
+                      prefixIcon: const Icon(Icons.lock),
                       isPasswordForm: true
                     ),
                 
@@ -90,8 +78,8 @@ class _LoginPageState extends State<LoginPage> {
                                 MaterialPageRoute(builder: (context) => const ForgotPasswordPage()),
                               );
                             },
-                            child: const Text('Forgot password?',
-                              style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)
+                            child: Text('Forgot password?',
+                              style: Theme.of(context).textTheme.bodySmall
                             ),
                           )
                         ]
@@ -112,20 +100,20 @@ class _LoginPageState extends State<LoginPage> {
                         Expanded(
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 15.0),
-                            child: Divider(thickness: 2, color: Colors.black)
+                            child: Divider(thickness: 2, color: utilMainTextColor)
                           ),
                         ),
                 
                         Center(
                           child: Text("or continue with",
-                            style: TextStyle(fontSize: 16),
+                            style: TextStyle(fontSize: 16, color: utilMainTextColor),
                           )
                         ),
                 
                         Expanded(
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 15.0),
-                            child: Divider(thickness: 2, color: Colors.black)
+                            child: Divider()
                           ),
                         ), 
                       ],
@@ -133,20 +121,16 @@ class _LoginPageState extends State<LoginPage> {
                 
                     const SizedBox(height: 30),
                 
-                    Center(
-                      child: GestureDetector(
-                        onTap: () => authenticationServices.authenticateGoogleUser(context: context),
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black),
-                            borderRadius: BorderRadius.circular(10),
-                            color: const Color.fromRGBO(128, 128, 0, 0)
-                          ),
+                    SizedBox(
+                      width: 70,
+                      height: 70,
+                      child: FittedBox(
+                        child: FloatingActionButton(
+                          onPressed: () => authenticationServices.authenticateGoogleUser(context: context),
                           child: const Image(
-                            image: AssetImage('lib/images/google_icon.png'), 
-                            height: 50,
-                          )
+                            image: AssetImage('lib/images/google_icon.png'),
+                            height: 40,
+                          ),
                         ),
                       ),
                     ),
@@ -160,7 +144,10 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text("Don't have an account? ",
-                    style: TextStyle(fontSize: 16)
+                    style: TextStyle(
+                      color: utilMainTextColor,
+                      fontSize: 16
+                    )
                   ),
                 
                   Align(
@@ -171,12 +158,13 @@ class _LoginPageState extends State<LoginPage> {
                           MaterialPageRoute(builder: (context) => const RegisterPage()),
                         );
                       },
-                      child: const Text("Sign Up!",
+                      child: const Text(
+                        "Sign Up!",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 16
-                        )
-                      )
+                          fontSize: 16,
+                          color: utilMainTextColor
+                        ))
                     )
                   )
                 ]

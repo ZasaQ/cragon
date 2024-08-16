@@ -1,19 +1,20 @@
+import 'package:flutter/material.dart';
+
 import 'package:cragon/pages/camera_object_detection_page.dart';
 import 'package:cragon/pages/gallery_object_detection_page.dart';
 import 'package:cragon/pages/image_object_detection_page.dart';
 import 'package:cragon/services/utilities.dart';
-import 'package:flutter/material.dart';
-
 import 'package:cragon/main.dart';
 
 
 Widget floatingCameraButton() {
   return Container(
     decoration: const BoxDecoration(
-      color: Color.fromRGBO(128, 128, 0, 1),
+      color: utilMainBackgroundColor,
       shape: BoxShape.circle,
-    ),  
+    ),
     child: IconButton(
+      color: utilMainTextColor,
       iconSize: 50,
       icon: const Icon(Icons.camera),
       onPressed: () {

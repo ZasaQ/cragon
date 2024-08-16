@@ -1,3 +1,4 @@
+import 'package:cragon/components/header_item.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
 
@@ -26,36 +27,33 @@ class _ChangeObjectDetectionMethodPageState extends State<ChangeObjectDetectionM
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(128, 128, 0, 1),
       appBar: AppBar(
-        backgroundColor: const Color.fromRGBO(128, 128, 0, 1),
+        title: const Text("Change Method"),
       ),
       resizeToAvoidBottomInset: false,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          const Column(
-            children: <Widget>[
-              Align(
-                alignment: Alignment.topCenter,
-                child: Icon(Icons.camera_front, size: 100,)
-              ),
-              Center(
-                child: Text('Here you can change object detection method!',
-                  style: TextStyle(color: Colors.black, fontSize: 16.0)),
-              ),
-            ],
+          const HeaderItem(
+            headerIcon: Icons.camera_front,
+            headerText: "Here you can change object detection method!",
+            headerPadding: EdgeInsets.only(bottom: 20, top: 20),
           ),
-          const SizedBox(height: 50),
-          // Wrap ListView.builder with Expanded
+
           Expanded(
             child: ListView.builder(
               itemCount: objectDetectionMethods.length,
               itemBuilder: (context, index) {
                 return RadioListTile<String>(
                   title: objectDetectionMethods[index] != objectDetectionMethods.last
-                    ? Text(objectDetectionMethods[index])
-                    : Text("${objectDetectionMethods[index]}\n(Warning! High Memory Usage)"),
+                    ? Text(
+                      objectDetectionMethods[index],
+                      style: Theme.of(context).textTheme.bodyMedium
+                    )
+                    : Text(
+                      "${objectDetectionMethods[index]}\n(Warning! High Memory Usage)",
+                      style: Theme.of(context).textTheme.bodyMedium
+                    ),
                   value: objectDetectionMethods[index],
                   groupValue: selectedOption,
                   onChanged: (value) {

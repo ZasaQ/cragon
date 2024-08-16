@@ -40,18 +40,9 @@ class _HomeState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: Color.fromRGBO(128, 128, 0, 1)),
-        backgroundColor: const Color.fromRGBO(38, 45, 53, 1),
-        title: const Text(
-          "Cragon",
-          style: TextStyle(
-            color: Color.fromRGBO(128, 128, 0, 1),
-            fontWeight: FontWeight.bold
-          ),
-        ),
-        centerTitle: true,
+        title: const Text("Cragon"),
       ),
-      backgroundColor: const Color.fromRGBO(128, 128, 0, 1),
+      backgroundColor: utilMainBackgroundColor,
       body: Column(
         children: <Widget>[
           Expanded(
@@ -140,19 +131,23 @@ class _HomeState extends State<HomePage> {
                                           )
                                         : null,
                                       color: isDragonCaught
-                                        ? const Color.fromRGBO(0, 0, 0, 0.2)
+                                        ? const Color.fromRGBO(0, 0, 0, 0.4)
                                         : const Color.fromRGBO(0, 0, 0, 0.1)
                                     ),
                                     child: ExpansionTile(
                                       leading: isDragonCaught
-                                        ? const Icon(Icons.check)
+                                        ? const Icon(Icons.check, color: Colors.black,)
                                         : null,
                                       title: Text(
                                         dragonData["displayName"],
                                         style: isDragonCaught 
-                                          ? const TextStyle(fontWeight: FontWeight.bold,
+                                          ? const TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
                                               decoration: TextDecoration.lineThrough)
-                                          : const TextStyle(fontWeight: FontWeight.bold)
+                                          : const TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold)
                                       ),
                                       children: <Widget>[
                                         Wrap(
@@ -160,7 +155,7 @@ class _HomeState extends State<HomePage> {
                                           children: [
                                             TextButton(
                                               onPressed: () {
-                                                MyApp.navigatorKey.currentState!.pushReplacement(
+                                                MyApp.navigatorKey.currentState!.push(
                                                   MaterialPageRoute(builder: (context) =>
                                                     DragonPage(dragonData: dragonData)
                                                   )

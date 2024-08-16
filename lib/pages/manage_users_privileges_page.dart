@@ -1,3 +1,4 @@
+import 'package:cragon/components/header_item.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:developer' as developer;
@@ -27,22 +28,14 @@ class _ManageUsersPrivilegesPageState extends State<ManageUsersPrivilegesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromRGBO(128, 128, 0, 1),
+        title: const Text("Manage users privileges"),
       ),
       body: Column(
         children: <Widget>[
-          const Icon(
-            Icons.admin_panel_settings,
-            size: 100,
+          const HeaderItem(
+            headerIcon: Icons.admin_panel_settings,
+            headerText: "Here you can manage privileges of users!"
           ),
-
-          const Center(
-            child: Text('Here you can manage privileges of users',
-              style: TextStyle(color: Colors.black, fontSize: 16.0)
-            ),
-          ),
-
-          const SizedBox(height: 50,),
 
           StreamBuilder(
             stream: utilsUsersCollection.orderBy('email').snapshots(),

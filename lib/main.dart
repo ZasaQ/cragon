@@ -7,7 +7,7 @@ import 'package:cragon/pages/login_page.dart';
 import 'package:cragon/pages/register_page.dart';
 import 'package:cragon/firebase_options.dart';
 import 'package:cragon/pages/home_page.dart';
-
+import 'package:cragon/services/utilities.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,8 +55,22 @@ class _MyAppState extends State<MyApp> {
       onGenerateRoute: onGenerateRoute,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        scaffoldBackgroundColor: const Color.fromRGBO(128, 128, 0, 1.0),
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromRGBO(128, 128, 0, 1)),
+        appBarTheme: const AppBarTheme(
+          centerTitle: true,
+          titleTextStyle: TextStyle(color: utilMainBackgroundColor, fontSize: 24.0, fontWeight: FontWeight.bold),
+          backgroundColor: utilMainTextColor,
+          actionsIconTheme: IconThemeData(color: utilMainBackgroundColor),
+          iconTheme: IconThemeData(color: utilMainBackgroundColor)
+        ),
+        textTheme: const TextTheme(
+          titleMedium: TextStyle(color: utilMainTextColor, fontSize: 20.0),
+          bodyMedium: TextStyle(color: utilMainTextColor, fontSize: 16.0),
+          bodySmall: TextStyle(color: utilMainTextColor, fontSize: 14.0, fontWeight: FontWeight.bold)
+        ),
+        dividerTheme: const DividerThemeData(color: utilMainTextColor, thickness: 2.0),
+        iconTheme: const IconThemeData(color: utilMainTextColor),
+        scaffoldBackgroundColor: utilMainBackgroundColor,
+        colorScheme: ColorScheme.fromSeed(seedColor: utilMainBackgroundColor),
         useMaterial3: true,
       ),
     );

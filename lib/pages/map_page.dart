@@ -155,29 +155,22 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Navigation",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Color.fromRGBO(128, 128, 0, 1),
-            fontWeight: FontWeight.bold
-          )
-        ),
+        title: const Text("Navigation"),
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Color.fromRGBO(128, 128, 0, 1)),
-        backgroundColor: const Color.fromRGBO(38, 45, 53, 1),
+        iconTheme: const IconThemeData(color: utilMainBackgroundColor),
+        backgroundColor: utilMainTextColor,
         actions: <Widget>[
           TextButton(onPressed: () {
             setState(() {
               followUser = !followUser;
             });
           },
-            child: followUser 
-              ? const Icon(Icons.my_location)
-              : const Icon(Icons.location_searching))
+          child: followUser 
+            ? const Icon(Icons.my_location)
+            : const Icon(Icons.location_searching))
         ],
       ),
-      body: currentLocation == null 
+      body: currentLocation == null
         ? const Center(
             child: CircularProgressIndicator()
           )
@@ -339,7 +332,7 @@ class _MapPageState extends State<MapPage> {
     PolylineId id = const PolylineId("route");
     Polyline inPolyline = Polyline(
       polylineId: id,
-      color: const Color.fromRGBO(128, 128, 0, 1),
+      color: utilMainBackgroundColor,
       points: polylineCoordinates,
       width: 8
     );

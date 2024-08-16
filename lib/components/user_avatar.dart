@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+
+import 'package:cragon/services/utilities.dart';
 import 'package:cragon/services/firestore_data_handler.dart';
+
 
 Widget userAvatarViaSnapshot({required String imageUrl, required double radius, double? fontSize}) {
   return imageUrl.isNotEmpty 
     ? Container(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(width: 6, color: const Color.fromRGBO(38, 45, 53, 1))
+          border: Border.all(width: 6, color: utilMainTextColor)
         ),
         child: CircleAvatar(
           radius: radius,
@@ -35,7 +38,7 @@ Widget userAvatarViaSnapshot({required String imageUrl, required double radius, 
     : Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(width: 6, color: const Color.fromRGBO(38, 45, 53, 1))
+        border: Border.all(width: 6, color: utilMainTextColor)
       ),
       child: CircleAvatar(
           radius: radius,
@@ -56,7 +59,7 @@ Future<Widget> userAvatarViaFuture({required double radius, double? fontSize}) a
     ? Container(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(width: 6, color: const Color.fromRGBO(38, 45, 53, 1))
+          border: Border.all(width: 6, color: utilMainTextColor)
         ),
         child: CircleAvatar(
           radius: radius,
@@ -83,7 +86,7 @@ Future<Widget> userAvatarViaFuture({required double radius, double? fontSize}) a
     : Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(width: 6, color: const Color.fromRGBO(38, 45, 53, 1))
+        border: Border.all(width: 6, color: utilMainTextColor)
       ),
       child: CircleAvatar(
           radius: radius,

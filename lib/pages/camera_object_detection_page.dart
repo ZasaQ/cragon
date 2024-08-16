@@ -1,11 +1,14 @@
-import 'dart:async';
-import 'package:cragon/services/firestore_data_handler.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'dart:developer' as developer;
 import 'package:image/image.dart' as img;
 import 'package:camera/camera.dart';
+
+import 'package:cragon/services/firestore_data_handler.dart';
+import 'package:cragon/services/utilities.dart';
+
 
 class CameraObjectDetectionPage extends StatefulWidget {
   const CameraObjectDetectionPage({Key? key}) : super(key: key);
@@ -286,7 +289,7 @@ class _CameraObjectDetectionPageState extends State<CameraObjectDetectionPage> {
                       padding: const EdgeInsets.all(4.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
-                        color: const Color.fromRGBO(128, 128, 0, 1),
+                        color: utilMainBackgroundColor,
                       ),
                       child: Text(
                         "Previous accuracy score: $highestScore",
@@ -301,7 +304,7 @@ class _CameraObjectDetectionPageState extends State<CameraObjectDetectionPage> {
                       padding: const EdgeInsets.all(4.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
-                        color: const Color.fromRGBO(128, 128, 0, 1),
+                        color: utilMainBackgroundColor,
                       ),
                       child: Text(
                         "Dragon has been caught: $dragonCaught",

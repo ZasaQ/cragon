@@ -9,7 +9,8 @@ import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 import 'package:cragon/main.dart';
 
-
+const Color utilMainTextColor = Color.fromRGBO(38, 45, 53, 1);
+const Color utilMainBackgroundColor = Color.fromRGBO(128, 128, 0, 1.0);
 CollectionReference utilsUsersCollection = FirebaseFirestore.instance.collection("users");
 CollectionReference utilsDragonsCollection = FirebaseFirestore.instance.collection("dragons");
 int utilDragonsAmount = 0;
@@ -28,7 +29,7 @@ String utilchoosenObjectDetectionMethod = objectDetectionMethods.first;
 void showAlertMessage(final String message) {
   showDialog<String>(context: MyApp.navigatorKey.currentContext!, builder: (context) => Center(
     child: AlertDialog(
-      backgroundColor: const Color.fromRGBO(128, 128, 0, 1),
+      backgroundColor: utilMainBackgroundColor,
       title: Text(
         message,
         style: const TextStyle(color: Colors.black),
@@ -45,7 +46,7 @@ void showAlertMessageWithTimer(final String message, int durationTime) {
 
   showDialog<String>(context: MyApp.navigatorKey.currentContext!, builder: (context) => Center(
     child: AlertDialog(
-      backgroundColor: const Color.fromRGBO(128, 128, 0, 1),
+      backgroundColor: utilMainBackgroundColor,
       title: Text(
         message,
         style: const TextStyle(color: Colors.black),
@@ -62,7 +63,7 @@ void showAlertMessageWithTimer(final String message, int durationTime) {
 void showConfirmationMessage(final String message, Function() onPressed) {
   showDialog<String>(context: MyApp.navigatorKey.currentContext!, builder: (context) => Center(
     child: AlertDialog(
-      backgroundColor: const Color.fromRGBO(128, 128, 0, 1),
+      backgroundColor: utilMainBackgroundColor,
       title: Text(
         message,
         style: const TextStyle(color: Colors.black),

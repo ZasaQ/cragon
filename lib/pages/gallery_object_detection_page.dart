@@ -1,11 +1,14 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'dart:developer' as developer;
 import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+
 import 'package:cragon/services/firestore_data_handler.dart';
+import 'package:cragon/services/utilities.dart';
+
 
 class GalleryObjectDetectionPage extends StatefulWidget {
   const GalleryObjectDetectionPage({Key? key}) : super(key: key);
@@ -162,10 +165,10 @@ class _GalleryObjectDetectionPageState extends State<GalleryObjectDetectionPage>
         title: const Text(
           'Catch Dragon',
           textAlign: TextAlign.center,
-          style: TextStyle(color: Color.fromRGBO(128, 128, 0, 1))
+          style: TextStyle(color: utilMainBackgroundColor)
         ),
-        iconTheme: const IconThemeData(color: Color.fromRGBO(128, 128, 0, 1)),
-        backgroundColor: const Color.fromRGBO(38, 45, 53, 1),
+        iconTheme: const IconThemeData(color: utilMainBackgroundColor),
+        backgroundColor: utilMainTextColor,
       ),
       body: SingleChildScrollView(
         child: Center(

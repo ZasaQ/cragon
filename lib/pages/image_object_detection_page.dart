@@ -1,11 +1,12 @@
-import 'dart:async';
-import 'package:cragon/services/firestore_data_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'dart:developer' as developer;
 import 'package:image/image.dart' as img;
 import 'package:camera/camera.dart';
+
+import 'package:cragon/services/firestore_data_handler.dart';
+import 'package:cragon/services/utilities.dart';
 
 
 class ImageObjectDetectionPage extends StatefulWidget {
@@ -248,13 +249,7 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Catch Dragon!',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Color.fromRGBO(128, 128, 0, 1)),
-        ),
-        iconTheme: const IconThemeData(color: Color.fromRGBO(128, 128, 0, 1)),
-        backgroundColor: const Color.fromRGBO(38, 45, 53, 1),
+        title: const Text('Catch Dragon!')
       ),
       body: Stack(
         fit: StackFit.expand,
@@ -279,7 +274,7 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
                       padding: const EdgeInsets.all(4.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
-                        color: const Color.fromRGBO(128, 128, 0, 1),
+                        color: utilMainBackgroundColor,
                       ),
                       child: Text(
                         "Previous accuracy score: $highestScore",
@@ -294,7 +289,7 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
                       padding: const EdgeInsets.all(4.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
-                        color: const Color.fromRGBO(128, 128, 0, 1),
+                        color: utilMainBackgroundColor,
                       ),
                       child: Text(
                         "Dragon has been caught: $dragonCaught",

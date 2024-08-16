@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:cragon/services/utilities.dart';
 
 
 class FormTextItem extends StatefulWidget {
   final TextEditingController controller;
+  final Color cursorColor = utilMainTextColor;
+  final enableBorder = const OutlineInputBorder(
+            borderSide: BorderSide(color: utilMainTextColor, width: 2.0));
+  final focusedBorder = const OutlineInputBorder(
+            borderSide: BorderSide(color: utilMainTextColor, width: 2.0));
   final String inLabelText;
+  final TextStyle labelTextStyle = const TextStyle(color: utilMainTextColor);
   final String inHintText;
+  final TextStyle hintTextStyle = const TextStyle(color: Color.fromRGBO(75, 75, 75, 1), fontSize: 16.0);
   final Widget? prefixIcon;
+  final Color iconColor = utilMainTextColor;
   final bool isPasswordForm;
 
   const FormTextItem({
@@ -30,18 +39,18 @@ class _FormTextItemState extends State<FormTextItem> {
       margin: const EdgeInsets.only(bottom: 10, left: 20, right: 20),
       child: TextField(
         controller: widget.controller,
-        cursorColor: Colors.black,
+        cursorColor: widget.cursorColor,
         decoration: InputDecoration(
           labelText: widget.inLabelText,
-          labelStyle: const TextStyle(color: Colors.black),
+          labelStyle: widget.labelTextStyle,
           hintText: widget.inHintText,
-          hintStyle: const TextStyle(color: Color.fromRGBO(75, 75, 75, 1)),
+          hintStyle: widget.hintTextStyle,
           prefixIcon: widget.prefixIcon,
           suffixIcon: widget.isPasswordForm 
             ? IconButton(
                 icon: isPasswordHidden
-                    ? const Icon(Icons.visibility_off, color: Colors.black)
-                    : const Icon(Icons.visibility, color: Colors.black),
+                    ? Icon(Icons.visibility_off, color: widget.iconColor)
+                    : Icon(Icons.visibility, color: widget.iconColor),
                 onPressed: () =>
                     setState(() => isPasswordHidden = !isPasswordHidden),
               )
@@ -51,12 +60,8 @@ class _FormTextItemState extends State<FormTextItem> {
                   icon: const Icon(Icons.close),
                   onPressed: () => widget.controller.clear(),
                 ),
-          enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.black, width: 2.0)
-          ),
-          focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.black, width: 2.0)
-          ),
+          enabledBorder: widget.enableBorder,
+          focusedBorder: widget.focusedBorder
         ),
         obscureText: widget.isPasswordForm ? isPasswordHidden : false
       )

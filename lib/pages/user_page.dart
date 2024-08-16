@@ -41,7 +41,6 @@ class _UserPageState extends State<UserPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(128, 128, 0, 1),
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -101,7 +100,7 @@ class _UserPageState extends State<UserPage> {
                           style: ButtonStyle(
                             shape: MaterialStateProperty.all(const CircleBorder()),
                             padding: MaterialStateProperty.all(const EdgeInsets.all(2)),
-                            backgroundColor: MaterialStateProperty.all(const Color.fromRGBO(38, 45, 53, 1)) 
+                            backgroundColor: MaterialStateProperty.all(utilMainTextColor) 
                           ), 
                           child: const Icon(Icons.add_a_photo, color: Colors.white,),
                         ),

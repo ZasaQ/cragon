@@ -1,3 +1,4 @@
+import 'package:cragon/components/header_item.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
 
@@ -31,33 +32,17 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(128, 128, 0, 1),
       appBar: AppBar(
-        backgroundColor: const Color.fromRGBO(128, 128, 0, 1),
+        title: const Text('Change password')
       ),
       resizeToAvoidBottomInset: false,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          const Column(
-            children: <Widget>[
-              Align(
-                alignment: Alignment.topCenter,
-                child: Image(
-                  image: AssetImage('lib/images/change_password_icon.png'),
-                  height: 100,
-                  width: 100
-                ),
-              ),
-
-              Center(
-                child: Text('Here you can change your password!',
-                  style: TextStyle(color: Colors.black, fontSize: 16.0)),
-              ),
-            ],
+          const HeaderItem(
+            headerIcon: Icons.password_sharp,
+            headerText: "Here you can change your password"
           ),
-
-          const SizedBox(height: 50),
       
           Expanded(
             child: Column(
@@ -90,7 +75,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   isPasswordForm: true
                 ),
                       
-                const SizedBox(height: 20),
+                const SizedBox(height: 60),
                       
                 LRButton(inText: "Change password", onPressed: () {
                   AuthenticationServices().changePassword(
