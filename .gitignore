@@ -124,7 +124,7 @@ coverage/
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
 !.vscode/settings.json
-.vscode/settings.json
+.vscode/
 
 # Generated files
 macos/Flutter/GeneratedPluginRegistrant.swift
