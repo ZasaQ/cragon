@@ -136,3 +136,6 @@ functions/package-lock.json
 
 # API
 lib/services/api_utils.dart
+lib/firebase_options.dart
+firebase.json
+pubspec.lock

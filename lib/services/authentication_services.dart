@@ -78,7 +78,7 @@ class AuthenticationServices {
           },
         );
         developer.log(
-          name: "AuthenticationServices -> signUpWithEmail -> exception",
+          name: "AuthenticationServices -> signUpWithEmail",
           "User ${currentUser?.email} has been added to collection");
       },
     );

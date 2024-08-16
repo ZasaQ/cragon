@@ -74,6 +74,8 @@ class _CheckAuthenticationStatusState extends State<CheckAuthenticationStatus> {
 
   @override
   void initState() {
+    super.initState();
+
     FirebaseAuth.instance.authStateChanges().listen((User? user) async {
       if (user != null) {
         MyApp.navigatorKey.currentState!.pushReplacement(
@@ -91,8 +93,6 @@ class _CheckAuthenticationStatusState extends State<CheckAuthenticationStatus> {
         developer.log("Log: ${MyApp.navigatorKey.currentState}");
       }
     });
-
-    super.initState();
   }
 
   @override

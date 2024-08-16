@@ -135,7 +135,7 @@ class _LoginPageState extends State<LoginPage> {
                 
                     Center(
                       child: GestureDetector(
-                        onTap: () => authenticationServices.signInWithGoogle(),
+                        onTap: () => authenticationServices.authenticateGoogleUser(context: context),
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
