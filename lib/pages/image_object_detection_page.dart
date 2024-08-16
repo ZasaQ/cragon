@@ -66,9 +66,9 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
 
     developer.log(
       name: "ImageObjectDetectionPage -> setCamera",
-      "Camera lens direction change to $currentLensDirection");
+      "Camera has been changed: ${camera.name}, ${camera.lensDirection}");
 
-    setState(() {currentLensDirection = currentLensDirection;});
+    setState(() {});
   }
 
   Future<void> switchCamera() async {
