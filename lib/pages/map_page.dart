@@ -7,7 +7,7 @@ import 'dart:developer' as developer;
 import "dart:async";
 
 import "package:cragon/services/api_utils.dart";
-
+import "package:cragon/services/utilities.dart";
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key, this.targetDragonData});
@@ -55,7 +55,7 @@ class _MapPageState extends State<MapPage> {
     if (dragonMarkerIcon == null) {
       await BitmapDescriptor.fromAssetImage(
         const ImageConfiguration(),
-        'lib/images/dragon_location_icon.png').then((onValue) {dragonMarkerIcon = onValue;});
+        "lib/images/dragon_location_icon.png").then((onValue) {dragonMarkerIcon = onValue;});
     }
   }
 
@@ -252,10 +252,16 @@ class _MapPageState extends State<MapPage> {
 
     localizationPermissionGranted = await locationController.hasPermission();
 
+    if (localizationPermissionGranted == PermissionStatus.deniedForever) {
+      showAlertMessage("Access to localization can't be denied");
+      return;
+    }
+
     if (localizationPermissionGranted == PermissionStatus.denied) {
       localizationPermissionGranted = await locationController.requestPermission();
 
       if (localizationPermissionGranted != PermissionStatus.granted) {
+        showAlertMessage("Access to localization can't be denied");
         return;
       }
     }

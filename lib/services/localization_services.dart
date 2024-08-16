@@ -1,7 +1,7 @@
 import 'dart:math' show asin, cos, pi, sin, sqrt;
-import 'package:geolocator/geolocator.dart';
 import 'dart:developer' as developer;
-
+import 'package:cragon/services/utilities.dart';
+import 'package:location/location.dart';
 
 class LocalizationServices {
   double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
@@ -27,31 +27,35 @@ class LocalizationServices {
   }
 
   Future<bool> isCurrentLocationCloseTo(double targetLat, double targetLon, double thresholdInMeters) async {
-    bool serviceEnabled;
-    LocationPermission permission;
+    Location location = Location();
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    bool serviceEnabled = await location.serviceEnabled();
     if (!serviceEnabled) {
-      return false;
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) {
         return false;
       }
     }
 
-    if (permission == LocationPermission.deniedForever) {
+    PermissionStatus permissionGranted = await location.hasPermission();
+    if (permissionGranted == PermissionStatus.deniedForever) {
+      showAlertMessage("Access to localization can't be denied");
       return false;
     }
 
-    Position currentPosition = await Geolocator.getCurrentPosition();
+    if (permissionGranted == PermissionStatus.denied) {
+      permissionGranted = await location.requestPermission();
+      if (permissionGranted != PermissionStatus.granted) {
+        showAlertMessage("Access to localization can't be denied");
+        return false;
+      }
+    }
+
+    LocationData currentPosition = await location.getLocation();
 
     double distance = calculateDistance(
-      currentPosition.latitude,
-      currentPosition.longitude,
+      currentPosition.latitude!,
+      currentPosition.longitude!,
       targetLat,
       targetLon,
     );
