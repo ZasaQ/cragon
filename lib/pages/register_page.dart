@@ -36,13 +36,48 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        backgroundColor: utilMainBackgroundColor,
+        actionsIconTheme: const IconThemeData(color: utilMainTextColor),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: GestureDetector(
+              onTap: () {
+                MyApp.navigatorKey.currentState!.pushReplacement(
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Sign In!",
+                    style: TextStyle(
+                      color: utilMainTextColor,
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold
+                    )
+                  ),
+                  SizedBox(width: 4.0),
+                  Icon(Icons.keyboard_arrow_right, color: utilMainTextColor, size: 24.0,),
+                ],
+              ),
+            ),
+          )
+        ]
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Column(
               children: <Widget>[
-                const HeaderItem(headerIcon: Icons.book, headerText: "Welcome! Try to Sign Up"),
+                const HeaderItem(
+                  headerIcon: Icons.book,
+                  headerText: "Welcome! Try to Sign Up.",
+                  headerPadding: EdgeInsets.only(bottom: 40),
+                ),
         
                 FormTextItem(
                   controller: emailController,
@@ -120,36 +155,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                   ),
-                ),
-        
-                const SizedBox(height: 30),
-        
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("Already have an account? ",
-                        style: Theme.of(context).textTheme.bodyMedium
-                    ),
-        
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: GestureDetector(
-                        onTap: () {
-                          MyApp.navigatorKey.currentState!.pushReplacement(
-                            MaterialPageRoute(builder: (context) => const LoginPage()),
-                          );
-                        },
-                        child: const Text("Sign In",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: utilMainTextColor
-                          )
-                        )
-                      )
-                    )
-                  ],
-                ),
+                ),      
               ],
             ),
           ),

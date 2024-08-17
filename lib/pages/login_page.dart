@@ -36,13 +36,45 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        backgroundColor: utilMainBackgroundColor,
+        actionsIconTheme: const IconThemeData(color: utilMainTextColor),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: GestureDetector(
+              onTap: () {
+                MyApp.navigatorKey.currentState!.pushReplacement(
+                  MaterialPageRoute(builder: (context) => const RegisterPage()),
+                );
+              },
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Sign Up!",
+                    style: TextStyle(
+                      color: utilMainTextColor,
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold
+                    )
+                  ),
+                  SizedBox(width: 4.0),
+                  Icon(Icons.keyboard_arrow_right, color: utilMainTextColor, size: 24.0,),
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
               const HeaderItem(
                 headerIcon: Icons.lock_outline,
-                headerText: "Welcom! Try to Sign In"
+                headerText: "Welcom! Try to Sign In.",
+                headerPadding: EdgeInsets.only(bottom: 40),
               ),
 
               Padding(
@@ -137,38 +169,6 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                 ),
               ),
-                
-              const SizedBox(height: 30),
-                
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Don't have an account? ",
-                    style: TextStyle(
-                      color: utilMainTextColor,
-                      fontSize: 16
-                    )
-                  ),
-                
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: GestureDetector(
-                      onTap: () {
-                        MyApp.navigatorKey.currentState!.pushReplacement(
-                          MaterialPageRoute(builder: (context) => const RegisterPage()),
-                        );
-                      },
-                      child: const Text(
-                        "Sign Up!",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: utilMainTextColor
-                        ))
-                    )
-                  )
-                ]
-              )
             ],
           ),
         ),
