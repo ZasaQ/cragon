@@ -55,7 +55,7 @@ class _MapPageState extends State<MapPage> {
     if (dragonMarkerIcon == null) {
       await BitmapDescriptor.fromAssetImage(
         const ImageConfiguration(),
-        "lib/images/dragon_location_icon.png").then((onValue) {dragonMarkerIcon = onValue;});
+        "assets/images/dragon_location_icon.png").then((onValue) {dragonMarkerIcon = onValue;});
     }
   }
 

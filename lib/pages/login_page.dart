@@ -160,7 +160,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: FloatingActionButton(
                           onPressed: () => authenticationServices.authenticateGoogleUser(context: context),
                           child: const Image(
-                            image: AssetImage('lib/images/google_icon.png'),
+                            image: AssetImage('assets/images/google_icon.png'),
                             height: 40,
                           ),
                         ),

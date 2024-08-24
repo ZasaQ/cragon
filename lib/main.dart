@@ -9,6 +9,7 @@ import 'package:cragon/firebase_options.dart';
 import 'package:cragon/pages/home_page.dart';
 import 'package:cragon/services/utilities.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);

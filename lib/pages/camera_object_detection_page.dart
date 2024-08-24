@@ -99,7 +99,7 @@ class _CameraObjectDetectionPageState extends State<CameraObjectDetectionPage> {
 
   Future<void> loadModel() async {
     try {
-      interpreter = await Interpreter.fromAsset('assets/third_detect_quant.tflite');
+      interpreter = await Interpreter.fromAsset('assets/models/third_detect_quant.tflite');
       interpreter!.allocateTensors();
 
       if (!interpreter!.isAllocated) {
