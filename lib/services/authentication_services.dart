@@ -113,6 +113,10 @@ class AuthenticationServices {
       idToken: googleSignInAuthentication?.idToken
     );
 
+    developer.log(
+      name: "AuthenticationServices -> signInWithGoogle",
+      "idToken: ${googleSignInAuthentication?.idToken}");
+
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 

@@ -97,15 +97,22 @@ class _CheckAuthenticationStatusState extends State<CheckAuthenticationStatus> {
           MaterialPageRoute(builder: (context) => const HomePage()),
         );
 
-        developer.log("Log: current user is not null, pushing HomePage");
-        developer.log("Log: ${MyApp.navigatorKey.currentState}");
+        String? idToken = await user.getIdToken(true);
+        developer.log(
+          name: "CheckAuthenticationStatus -> initState",
+          "idToken: $idToken");
+
+        developer.log(
+          name: "CheckAuthenticationStatus -> initState",
+          "Current user is NOT NULL, pushing HomePage");
       } else {
         MyApp.navigatorKey.currentState!.pushReplacement(
           MaterialPageRoute(builder: (context) => const LoginPage()),
         );
 
-        developer.log("Log: current user is null, pushing LoginPage");
-        developer.log("Log: ${MyApp.navigatorKey.currentState}");
+        developer.log(
+          name: "CheckAuthenticationStatus -> initState",
+          "Current user is NULL, pushing LoginPage");
       }
     });
   }

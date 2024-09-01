@@ -71,3 +71,19 @@ export const deleteFirebaseAuthUser = functions.https.onCall(async (data) => {
     return null;
   }
 });
+
+export const getData = functions.https.onRequest((request, response) => {
+  response.send("Hello! This is a GET request.");
+});
+
+export const postData = functions.https.onRequest((request, response) => {
+  if (request.method !== "POST") {
+    response.status(405).send("Request method is not POST");
+    return;
+  }
+
+  const data = request.body;
+
+  response.send(`Hello! Sending: ${JSON.stringify(data)}.`);
+  return;
+});
