@@ -151,12 +151,11 @@ class _ImageObjectDetectionPageState extends State<ImageObjectDetectionPage> {
 
       interpreter!.runForMultipleInputs([inputData], outputs);
 
-      setState(() {
-        highestScore = outputs[0]![0]![0];
-      });
+      highestScore = outputs[0]![0]![0];
 
       dragonCaught = await FirestoreDataHandler().tryCatchDragon(imageScore: highestScore);
-      wasLaunched = true;
+
+      setState(() => wasLaunched = true);
 
       developer.log(
         name: "ImageObjectDetectionPage -> runModelOnFrame",
